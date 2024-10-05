@@ -40,34 +40,6 @@
     <!--nav -->
     <div id="navbar-container"></div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        fetch("navbar.html")
-          .then((response) => response.text())
-          .then((data) => {
-            document.getElementById("navbar-container").innerHTML = data;
-            const userIcon = document.querySelector("#userDropdown");
-            const dropdownMenu = document.querySelector(".dropdown-menu");
-
-            userIcon.addEventListener("mouseover", function () {
-              dropdownMenu.style.display = "block";
-            });
-
-            userIcon.addEventListener("mouseout", function () {
-              dropdownMenu.style.display = "none";
-            });
-
-            dropdownMenu.addEventListener("mouseover", function () {
-              dropdownMenu.style.display = "block";
-            });
-
-            dropdownMenu.addEventListener("mouseout", function () {
-              dropdownMenu.style.display = "none";
-            });
-          })
-          .catch((error) => console.error("Error loading navbar:", error));
-      });
-    </script>
     <!-- END nav -->
     <section
       class="hero-wrap hero-wrap-2"
@@ -867,5 +839,33 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
     <script src="js/google-map.js"></script>
     <script src="js/main.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        fetch("navbar.html")
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("navbar-container").innerHTML = data;
+            const userIcon = document.querySelector("#userDropdown");
+            const dropdownMenu = document.querySelector(".dropdown-menu");
+
+            userIcon.addEventListener("mouseover", function () {
+              dropdownMenu.style.display = "block";
+            });
+
+            userIcon.addEventListener("mouseout", function () {
+              dropdownMenu.style.display = "none";
+            });
+
+            dropdownMenu.addEventListener("mouseover", function () {
+              dropdownMenu.style.display = "block";
+            });
+
+            dropdownMenu.addEventListener("mouseout", function () {
+              dropdownMenu.style.display = "none";
+            });
+          })
+          .catch((error) => console.error("Error loading navbar:", error));
+      });
+    </script>
   </body>
 </html>
