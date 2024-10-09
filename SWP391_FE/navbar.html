@@ -1,293 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leopard Salon</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="./css/style.css" />
-    <style>
-      .login-button {
-        background-color: #4caf50;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
 
-      .login-button:hover {
-        background-color: #3e8e41;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leopard Salon</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <style>
+    .login-button {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-      .login-button i {
-        margin-right: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- INFO NEU CAN
-   <div class="wrap">
+    .login-button:hover {
+      background-color: #3e8e41;
+    }
+
+    .login-button i {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
     <div class="container">
-      <div class="row">
-        <div class="col-md-6 d-flex align-items-center">
-          <p class="mb-0 phone pl-md-2">
-            <a href="#" class="mr-2"><span class="fa fa-phone mr-1"></span> +00 1234 567</a> 
-            <a href="#"><span class="fa fa-paper-plane mr-1"></span> youremail@email.com</a>
-          </p>
+      <a class="navbar-brand" href="index.html" style="margin-right: 70px; margin-left: -30px">
+        <span> <img style="width: 15%" src="images/logo.png" alt="" /></span>Leopard Salon
+      </a>
+
+      <!-- Navigation Menu -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ftco-nav"
+        aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="fa fa-bars"></span> Menu
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-center" id="ftco-nav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a href="index.html" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="about.html" class="nav-link" style="white-space: nowrap">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a href="stylist.html" class="nav-link">Stylist</a>
+          </li>
+          <li class="nav-item">
+            <a href="services.html" class="nav-link">Services</a>
+          </li>
+          <li class="nav-item">
+            <a href="gallery.html" class="nav-link">Gallery</a>
+          </li>
+          <li class="nav-item">
+            <a href="blog.html" class="nav-link">Blog</a>
+          </li>
+          <li class="nav-item">
+            <a href="contact.html" class="nav-link">Contact</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- User Icon Section -->
+      <li class="nav-item dropdown d-flex align-items-center" style="margin-left: 50px">
+        <a href="#" class="nav-link" id="userDropdown">
+          <img src="images/user.png" alt="User" style="width: 30px; border-radius: 50%; vertical-align: middle" />
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown" style="position: absolute">
+          <a class="dropdown-item" href="profile.html">
+            <i class="fa-solid fa-user"></i>View Profile
+          </a>
+          <a class="dropdown-item" href="#">
+            <i class="fa-solid fa-medal"></i>Loyal Point
+          </a>
+          <a class="dropdown-item" href="#">
+            <i class="fa-solid fa-right-from-bracket"></i>Logout
+          </a>
         </div>
-        <div class="col-md-6 d-flex justify-content-md-end">
-          <div class="social-media">
-            <p class="mb-0 d-flex">
-              <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-facebook"><i class="sr-only">Facebook</i></span></a>
-              <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-twitter"><i class="sr-only">Twitter</i></span></a>
-              <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-instagram"><i class="sr-only">Instagram</i></span></a>
-              <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-dribbble"><i class="sr-only">Dribbble</i></span></a>
-            </p>
-          </div>
+      </li>
+      <button class="login-button" type="button" data-bs-toggle="modal" data-bs-target="#loginSelectionModal">
+        <i class="fa-solid fa-lock" style="white-space: nowrap"> Login</i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Login Selection Modal -->
+  <div class="modal fade" id="loginSelectionModal" tabindex="-1" aria-labelledby="loginSelectionModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1)">
+        <div class="modal-header" style="background-color: #e0dede; border-radius: 15px 15px 0 0">
+          <h5 class="modal-title text-center w-100" id="loginSelectionModalLabel">
+            Choose Login Type
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="background-color: #f7f7f7; padding: 30px; text-align: center">
+          <button class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#customerLoginModal"
+            data-bs-dismiss="modal" style="border-radius: 10px; background-color: #6dbe45">
+            Login for Customer
+          </button>
+          <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#internalLoginModal"
+            data-bs-dismiss="modal" style="border-radius: 10px; background-color: #6dbe45">
+            Login for Internal
+          </button>
         </div>
       </div>
     </div>
-  </div> -->
-    <nav
-      class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light"
-      id="ftco-navbar"
-    >
-      <div class="container">
-        <a
-          class="navbar-brand"
-          href="index.html"
-          style="margin-right: 70px; margin-left: -30px"
-        >
-          <span> <img style="width: 15%" src="images/logo.png" alt="" /></span
-          >Leopard Salon
-        </a>
+  </div>
 
-        <!-- Navigation Menu -->
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#ftco-nav"
-          aria-controls="ftco-nav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="fa fa-bars"></span> Menu
-        </button>
-
-        <div
-          class="collapse navbar-collapse justify-content-center"
-          id="ftco-nav"
-        >
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a href="index.html" class="nav-link">Home</a>
-            </li>
-            <li class="nav-item">
-              <a href="about.html" class="nav-link" style="white-space: nowrap"
-                >About Us</a
-              >
-            </li>
-            <li class="nav-item">
-              <a href="stylist.html" class="nav-link">Stylist</a>
-            </li>
-            <li class="nav-item">
-              <a href="services.html" class="nav-link">Services</a>
-            </li>
-            <li class="nav-item">
-              <a href="gallery.html" class="nav-link">Gallery</a>
-            </li>
-            <li class="nav-item">
-              <a href="blog.html" class="nav-link">Blog</a>
-            </li>
-            <li class="nav-item">
-              <a href="contact.html" class="nav-link">Contact</a>
-            </li>
-          </ul>
+  <!-- Login for Customer Modal -->
+  <div class="modal fade" id="customerLoginModal" tabindex="-1" aria-labelledby="customerLoginModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1)">
+        <div class="modal-header" style="background-color: #e0dede; border-radius: 15px 15px 0 0">
+          <h5 class="modal-title text-center w-100" id="loginModalLabel">
+            <img src="images/logo.png" alt="salon icon" style="width: 50px; margin-right: 10px" />
+            Sign In to Leopard Salon
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-
-        <!-- User Icon Section -->
-        <li
-          class="nav-item dropdown d-flex align-items-center"
-          style="margin-left: 50px"
-        >
-          <a href="#" class="nav-link" id="userDropdown">
-            <img
-              src="images/user.png"
-              alt="User"
-              style="width: 30px; border-radius: 50%; vertical-align: middle"
-            />
-          </a>
-          <div
-            class="dropdown-menu dropdown-menu-right"
-            aria-labelledby="userDropdown"
-            style="position: absolute"
-          >
-            <a class="dropdown-item" href="profile.html">
-              <i class="fa-solid fa-user"></i>View Profile
-            </a>
-            <a class="dropdown-item" href="#">
-              <i class="fa-solid fa-medal"></i>Loyal Point
-            </a>
-            <a class="dropdown-item" href="#">
-              <i class="fa-solid fa-right-from-bracket"></i>Logout
-            </a>
-          </div>
-        </li>
-        <button
-          class="login-button"
-          type="button"
-          data-bs-toggle="modal"
-          data-bs-target="#loginModal"
-        >
-          <i class="fa-solid fa-lock" style="white-space: nowrap"> Login</i>
-        </button>
-      </div>
-    </nav>
-
- <!--Model Login  -->
-    <div
-      class="modal fade"
-      id="loginModal"
-      tabindex="-1"
-      aria-labelledby="loginModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div
-          class="modal-content"
-          style="border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1)"
-        >
-          <div
-            class="modal-header"
-            style="background-color: #e0dede; border-radius: 15px 15px 0 0"
-          >
-            <h5 class="modal-title text-center w-100" id="loginModalLabel">
-              <img
-                src="images/logo.png"
-                alt="salon icon"
-                style="width: 50px; margin-right: 10px"
-              />
-              Sign In to Leopard Salon
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div
-            class="modal-body"
-            style="background-color: #f7f7f7; padding: 30px"
-          >
-            <p class="text-center" style="font-style: italic; font-size: 16px">
-              Welcome to Leopard Salon. Sign in and enjoy booking our exclusive
-              services today!
-            </p>
-            <form>
-              <div class="mb-3">
-                <label for="username" class="form-label">Phone Number</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="username"
-                  placeholder="Enter phone number"
-                  style="border-radius: 10px; padding: 10px"
-                />
-              </div>
-              <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="password"
-                  placeholder="Enter your password"
-                  style="border-radius: 10px; padding: 10px"
-                />
-              </div>
-              <div class="form-check mb-3">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="rememberMe"
-                />
-                <label class="form-check-label" for="rememberMe"
-                  >Remember me</label
-                >
-              </div>
-              <div class="d-flex justify-content-between">
-                <a href="#" class="text-decoration-none">Forgot Password?</a>
-              </div>
-              <button
-                type="button"
-                class="btn btn-primary w-100 mt-3"
-                style="
-                  border-radius: 10px;
-                  background-color: #6dbe45;
-                  border-color: #6dbe45;
-                "
-              >
-                Log In
-              </button>
-            </form>
-            <div class="text-center mt-3">
-              <p>or sign in with</p>
-              <div class="d-flex justify-content-center">
-                <a
-                  href="#"
-                  class="btn btn-primary mx-1 d-flex justify-content-center align-items-center"
-                  style="border-radius: 50%; width: 40px; height: 40px"
-                >
-                  <i class="fab fa-facebook-f fs-4"></i>
-                </a>
-                <a
-                  href="#"
-                  class="btn btn-danger mx-4 d-flex justify-content-center align-items-center"
-                  style="border-radius: 50%; width: 40px; height: 40px"
-                >
-                  <i class="fab fa-google fs-4"></i>
-                </a>
-                <a
-                  href="#"
-                  class="btn btn-info mx-1 d-flex justify-content-center align-items-center"
-                  style="border-radius: 50%; width: 40px; height: 40px"
-                >
-                  <i class="fab fa-twitter fs-4"></i>
-                </a>
-              </div>
+        <div class="modal-body" style="background-color: #f7f7f7; padding: 30px">
+          <p class="text-center" style="font-style: italic; font-size: 16px">
+            Welcome to Leopard Salon. Sign in and enjoy booking our exclusive
+            services today!
+          </p>
+          <form>
+            <div class="mb-3">
+              <label for="username" class="form-label">Phone Number</label>
+              <input type="text" class="form-control" id="username" placeholder="Enter phone number"
+                style="border-radius: 10px; padding: 10px" />
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" placeholder="Enter your password"
+                style="border-radius: 10px; padding: 10px" />
+            </div>
+            <div class="form-check mb-3">
+              <input type="checkbox" class="form-check-input" id="rememberMe" />
+              <label class="form-check-label" for="rememberMe">Remember me</label>
+            </div>
+            <div class="d-flex justify-content-between">
+              <a href="#" class="text-decoration-none">Forgot Password?</a>
+            </div>
+            <button type="button" class="btn btn-primary w-100 mt-3" style="
+                border-radius: 10px;
+                background-color: #6dbe45;
+                border-color: #6dbe45;
+              ">
+              Log In
+            </button>
+          </form>
+          <div class="text-center mt-3">
+            <p>or sign in with</p>
+            <div class="d-flex justify-content-center">
+              <a href="#" class="btn btn-primary mx-1 d-flex justify-content-center align-items-center"
+                style="border-radius: 50%; width: 40px; height: 40px">
+                <i class="fab fa-facebook-f fs-4"></i>
+              </a>
+              <a href="#" class="btn btn-danger mx-4 d-flex justify-content-center align-items-center"
+                style="border-radius: 50%; width: 40px; height: 40px">
+                <i class="fab fa-google fs-4"></i>
+              </a>
+              <a href="#" class="btn btn-info mx-1 d-flex justify-content-center align-items-center"
+                style="border-radius: 50%; width: 40px; height: 40px">
+                <i class="fab fa-twitter fs-4"></i>
+              </a>
             </div>
           </div>
+          <div class="text-center mt-3"> Don't Have Account Yet?
+            <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#registerCustomerModal"
+              data-bs-dismiss="modal">
+              Register Now
+            </a>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- END MODAL LOGIN -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
-      integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
-      integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
-      crossorigin="anonymous"
-    ></script>
-  </body>
+  <!-- Register for Customer Modal -->
+  <div class="modal fade" id="registerCustomerModal" tabindex="-1" aria-labelledby="registerCustomerModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1)">
+        <div class="modal-header" style="background-color: #e0dede; border-radius: 15px 15px 0 0">
+          <h5 class="modal-title text-center w-100" id="registerCustomerModalLabel">
+            Register as Customer
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="background-color: #f7f7f7; padding: 30px">
+          <form>
+            <!-- Register Form -->
+            <div class="mb-3">
+              <label for="registerPhone" class="form-label">Phone Number</label>
+              <input type="text" class="form-control" id="registerPhone" placeholder="Enter phone number"
+                style="border-radius: 10px; padding: 10px" />
+            </div>
+            <div class="mb-3">
+              <label for="registerPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="registerPassword" placeholder="Enter your password"
+                style="border-radius: 10px; padding: 10px" />
+            </div>
+            <button type="button" class="btn btn-primary w-100 mt-3"
+              style="background-color: #6dbe45; border-radius: 10px">
+              Register
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login for Internal Modal -->
+  <div class="modal fade" id="internalLoginModal" tabindex="-1" aria-labelledby="internalLoginModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1)">
+        <div class="modal-header" style="background-color: #e0dede; border-radius: 15px 15px 0 0">
+          <h5 class="modal-title text-center w-100" id="internalLoginModalLabel">
+            Internal Login
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="background-color: #f7f7f7; padding: 30px">
+          <form>
+            <!-- Internal Login Form -->
+            <div class="mb-3">
+              <label for="internalUsername" class="form-label">Username</label>
+              <input type="text" class="form-control" id="internalUsername" placeholder="Enter your username"
+                style="border-radius: 10px; padding: 10px" />
+            </div>
+            <div class="mb-3">
+              <label for="internalPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="internalPassword" placeholder="Enter your password"
+                style="border-radius: 10px; padding: 10px" />
+            </div>
+            <button type="button" class="btn btn-primary w-100 mt-3"
+              style="background-color: #6dbe45; border-radius: 10px">
+              Log In
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+    integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+    crossorigin="anonymous"></script>
+</body>
+
 </html>
