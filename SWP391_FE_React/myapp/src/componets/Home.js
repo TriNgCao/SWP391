@@ -1,6 +1,11 @@
+import { Link } from "react-router-dom";
+import Footer from "./Footer";
+import Navbar from "./NavBar";
+
 export default function Home() {
   return (
     <div>
+      <Navbar />
       <section>
         <div
           className="hero-wrap js-fullheight d-flex align-items-center"
@@ -16,18 +21,21 @@ export default function Home() {
           <div className="container">
             <div className="row justify-content-center text-center">
               <div className="col-lg-8">
-                <h1 className="display-4 text-white mb-4 animated slideInRight" style={{fontWeight: 'Bold'}}>
-                Highest Quality Care For Hair You'll Like It
+                <h1
+                  className="display-4 text-white mb-4 animated slideInRight"
+                  style={{ fontWeight: "bold" }}
+                >
+                  Highest Quality Care For Hair You'll Like It
                 </h1>
                 <p className="text-white mb-4 animated slideInRight">
                   Booking To Meet Our Stylist to Make Your Day Awesome
                 </p>
-                <a
-                  href=""
-                  className="btn btn-light py-sm-3 px-sm-5 rounded-pill me-3 animated slideInRight" 
+                <Link
+                  to="/booking"
+                  className="btn btn-light py-sm-3 px-sm-5 rounded-pill me-3 animated slideInRight"
                 >
                   Booking Now
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -52,89 +60,50 @@ export default function Home() {
                 <h2 className="mb-4">Why Choose Us?</h2>
               </div>
               <div className="row">
-                <div className="col-md-6 services-2 w-100 d-flex">
-                  <div className="icon d-flex align-items-center justify-content-center">
-                    <img
-                      src="images/hair-cut.png"
-                      alt=""
-                      style={{
-                        width: 50,
-                        height: 50,
-                        filter: "brightness(0) invert(1)",
-                      }}
-                    />
+                {[
+                  {
+                    title: "Expert Haircuts",
+                    description:
+                      "We offer modern, creative haircuts from top experts, tailored to all ages and styles.",
+                    image: "images/hair-cut.png",
+                  },
+                  {
+                    title: "Hair Coloring",
+                    description:
+                      "A wide range of hair coloring services, from natural shades to bold tones, using high-quality products to ensure safety and long-lasting color.",
+                    image: "images/hair-care.png",
+                  },
+                  {
+                    title: "Hair Treatment",
+                    description:
+                      "Deep hair treatment services to repair damaged hair, nourish from root to tip, ensuring healthy and shiny locks.",
+                    image: "images/hair-treatment.png",
+                  },
+                  {
+                    title: "Styling & Makeup",
+                    description:
+                      "We offer professional hairstyling and makeup services for special occasions such as weddings, events, and photoshoots.",
+                    image: "images/hair.png",
+                  },
+                ].map((service, index) => (
+                  <div key={index} className="col-md-6 services-2 w-100 d-flex">
+                    <div className="icon d-flex align-items-center justify-content-center">
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        style={{
+                          width: 50,
+                          height: 50,
+                          filter: "brightness(0) invert(1)",
+                        }}
+                      />
+                    </div>
+                    <div className="text pl-3">
+                      <h4>{service.title}</h4>
+                      <p>{service.description}</p>
+                    </div>
                   </div>
-                  <div className="text pl-3">
-                    <h4>Expert Haircuts</h4>
-                    <p>
-                      We offer modern, creative haircuts from top experts,
-                      tailored to all ages and styles.
-                    </p>
-                  </div>
-                </div>
-                <div className="col-md-6 services-2 w-100 d-flex">
-                  <div className="icon d-flex align-items-center justify-content-center">
-                    <img
-                      src="images/hair-care.png"
-                      alt=""
-                      style={{
-                        width: 50,
-                        height: 50,
-                        filter: "brightness(0) invert(1)",
-                      }}
-                    />
-                  </div>
-                  <div className="text pl-3">
-                    <h4>Hair Coloring</h4>
-                    <p>
-                      A wide range of hair coloring services, from natural
-                      shades to bold tones, using high-quality products to
-                      ensure safety and long-lasting color.
-                    </p>
-                  </div>
-                </div>
-                <div className="col-md-6 services-2 w-100 d-flex">
-                  <div className="icon d-flex align-items-center justify-content-center">
-                    <img
-                      src="images/hair-treatment.png"
-                      alt=""
-                      style={{
-                        width: 50,
-                        height: 50,
-                        filter: "brightness(0) invert(1)",
-                      }}
-                    />
-                  </div>
-                  <div className="text pl-3">
-                    <h4>Hair Treatment</h4>
-                    <p>
-                      Deep hair treatment services to repair damaged hair,
-                      nourish from root to tip, ensuring healthy and shiny
-                      locks.
-                    </p>
-                  </div>
-                </div>
-                <div className="col-md-6 services-2 w-100 d-flex">
-                  <div className="icon d-flex align-items-center justify-content-center">
-                    <img
-                      src="images/hair.png"
-                      alt=""
-                      style={{
-                        width: 50,
-                        height: 50,
-                        filter: "brightness(0) invert(1)",
-                      }}
-                    />
-                  </div>
-                  <div className="text pl-3">
-                    <h4>Styling & Makeup</h4>
-                    <p>
-                      We offer professional hairstyling and makeup services for
-                      special occasions such as weddings, events, and
-                      photoshoots.
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -144,102 +113,91 @@ export default function Home() {
       <section className="ftco-counter" id="section-counter">
         <div className="container">
           <div className="row">
-          <div className="row g-1 pt-1">
-                        <div className="col-sm-3">
-                            <div className="d-flex rounded p-3" style={{background: 'rgba(256, 256, 256, 0.1)'}}>
-                                <i className="fa fa-users fa-3x text-white"></i>
-                                <div className="ms-3">
-                                    <h2 className="text-white mb-0">9999</h2>
-                                    <p className="text-white mb-0">Happy Clients</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-sm-3">
-                            <div className="d-flex rounded p-3" style={{background: 'rgba(256, 256, 256, 0.1)'}}>
-                                <i className="fa fa-check fa-3x text-white"></i>
-                                <div className="ms-3">
-                                    <h2 className="text-white mb-0">9999</h2>
-                                    <p className="text-white mb-0">Services Complete</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-sm-3">
-                            <div className="d-flex rounded p-3" style={{background: 'rgba(256, 256, 256, 0.1)'}}>
-                                <i className="fa fa-check fa-3x text-white"></i>
-                                <div className="ms-3">
-                                    <h2 className="text-white mb-0">9999</h2>
-                                    <p className="text-white mb-0">Services Complete</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-sm-3">
-                            <div className="d-flex rounded p-3" style={{background: 'rgba(256, 256, 256, 0.1)'}}>
-                                <i className="fa fa-check fa-3x text-white"></i>
-                                <div className="ms-3">
-                                    <h2 className="text-white mb-0">9999</h2>
-                                    <p className="text-white mb-0">Services Complete</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-              
+            {[
+              { count: 9999, label: "Happy Clients" },
+              { count: 9999, label: "Services Complete" },
+              { count: 9999, label: "Services Complete" },
+              { count: 9999, label: "Services Complete" },
+            ].map((item, index) => (
+              <div key={index} className="col-sm-3">
+                <div
+                  className="d-flex rounded p-3"
+                  style={{ background: "rgba(256, 256, 256, 0.1)" }}
+                >
+                  <i className="fa fa-check fa-3x text-white"></i>
+                  <div className="ms-3">
+                    <h2 className="text-white mb-0">{item.count}</h2>
+                    <p className="text-white mb-0">{item.label}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       <section>
         <div className="container-xxl py-5">
-        <div className="container py-5">
+          <div className="container py-5">
             <div className="row g-5">
-                <div className="col-lg-5 wow fadeIn" data-wow-delay="0.1s">
-                    <div className="btn btn-sm border rounded-pill text-primary px-3 mb-3">Happy Clients & Feedbacks</div>
-                    <h1 className="mb-4">What Say Our Clients!</h1>
-                    <p className="mb-4">Tempor erat elitr rebum at clita. Diam dolor diam ipsum et tempor sit. Aliqu diam
-                        amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus
-                        clita duo justo et tempor eirmod magna dolore erat amet</p>
+              <div className="col-lg-5 wow fadeIn" data-wow-delay="0.1s">
+                <div className="btn btn-sm border rounded-pill text-primary px-3 mb-3">
+                  Happy Clients & Feedbacks
                 </div>
-                <div className="col-lg-7">
-                    <div className="testimonial-carousel border-start border-primary">
-                        <div className="testimonial-item ps-5">
-                            <i className="fa"></i>
-                            <p className="fs-4">Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod magna dolore erat amet</p>
-                            <div className="d-flex align-items-center">
-                                <img className="img-fluid flex-shrink-0 rounded-circle" src="images/person_2.jpg"
-                                    style={{width: '60px', height: '60px'}}/>
-                                <div className="ps-3">
-                                    <h5 className="mb-1">Client Name</h5>
-                                    <span>Profession</span>
-                                </div>
-                            </div>
+                <h1 className="mb-4">What Say Our Clients!</h1>
+                <p className="mb-4">
+                  Tempor erat elitr rebum at clita. Diam dolor diam ipsum et
+                  tempor sit. Aliqu diam amet diam et eos labore. Clita erat
+                  ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus
+                  clita duo justo et tempor eirmod magna dolore erat amet.
+                </p>
+              </div>
+              <div className="col-lg-7">
+                <div className="testimonial-carousel border-start border-primary">
+                  {[
+                    {
+                      quote:
+                        "Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod magna dolore erat amet.",
+                      name: "Client Name",
+                      profession: "Profession",
+                      image: "images/person_2.jpg",
+                    },
+                    {
+                      quote:
+                        "Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod magna dolore erat amet.",
+                      name: "Client Name",
+                      profession: "Profession",
+                      image: "images/person_1.jpg",
+                    },
+                    {
+                      quote:
+                        "Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod magna dolore erat amet.",
+                      name: "Client Name",
+                      profession: "Profession",
+                      image: "images/person_3.jpg",
+                    },
+                  ].map((testimonial, index) => (
+                    <div key={index} className="testimonial-item ps-5">
+                      <i className="fa fa-quote-left fa-2x text-primary mb-3"></i>
+                      <p className="fs-4">{testimonial.quote}</p>
+                      <div className="d-flex align-items-center">
+                        <img
+                          className="img-fluid flex-shrink-0 rounded-circle"
+                          src={testimonial.image}
+                          alt={testimonial.name}
+                          style={{ width: "60px", height: "60px" }}
+                        />
+                        <div className="ps-3">
+                          <h5 className="mb-1">{testimonial.name}</h5>
+                          <span>{testimonial.profession}</span>
                         </div>
-                        <div className="testimonial-item ps-5">
-                            <i className="fa fa-quote-left fa-2x text-primary mb-3"></i>
-                            <p className="fs-4">Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod magna dolore erat amet</p>
-                            <div className="d-flex align-items-center">
-                                <img className="img-fluid flex-shrink-0 rounded-circle" src="images/person_1.jpg"
-                                    style={{width: '60px', height: '60px'}}/>
-                                <div className="ps-3">
-                                    <h5 className="mb-1">Client Name</h5>
-                                    <span>Profession</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="testimonial-item ps-5">
-                            <i className="fa fa-quote-left fa-2x text-primary mb-3"></i>
-                            <p className="fs-4">Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod magna dolore erat amet</p>
-                            <div className="d-flex align-items-center">
-                                <img className="img-fluid flex-shrink-0 rounded-circle" src='images/person_3.jpg'
-                                    style={{width: '60px', height: '60px'}}/>
-                                <div className="ps-3">
-                                    <h5 className="mb-1">Client Name</h5>
-                                    <span>Profession</span>
-                                </div>
-                            </div>
-                        </div>
+                      </div>
                     </div>
+                  ))}
                 </div>
+              </div>
             </div>
-        </div>
+          </div>
         </div>
       </section>
 
@@ -251,270 +209,73 @@ export default function Home() {
             </div>
           </div>
           <div className="row">
-            <div className="col-md-4">
-              <div className="block-7">
-                <div
-                  className="img"
-                  style={{ backgroundImage: "url(images/pricing-1.jpg)" }}
-                ></div>
-                <div className="text-center p-4">
-                  <span className="excerpt d-block">Basic Cut</span>
-                  <span className="price">
-                    <sup>$</sup> <span className="number">35</span>
-                    <sub>/visit</sub>
-                  </span>
-
-                  <ul className="pricing-text mb-5">
-                    <li>
-                      <span className="fa fa-check mr-2"></span> Shampoo &
-                      Condition
-                    </li>
-                    <li>
-                      <span className="fa fa-check mr-2"></span> Haircut
-                    </li>
-                    <li>
-                      <span className="fa fa-check mr-2"></span> Style
-                      Consultation
-                    </li>
-                    <li>
-                      <span className="fa fa-check mr-2"></span> Blow Dry
-                    </li>
-                  </ul>
-
-                  <a href="#" className="btn btn-primary d-block px-2 py-3">
-                    Book Now
-                  </a>
+            {[
+              {
+                title: "Basic Cut",
+                price: 35,
+                services: [
+                  "Shampoo & Condition",
+                  "Haircut",
+                  "Style Consultation",
+                  "Blow Dry",
+                ],
+                image: "images/pricing-1.jpg",
+              },
+              {
+                title: "Color & Style",
+                price: 85,
+                services: [
+                  "All Basic Cut Services",
+                  "Hair Coloring",
+                  "Deep Conditioning",
+                  "Styling",
+                ],
+                image: "images/pricing-2.jpg",
+              },
+              {
+                title: "Deluxe Package",
+                price: 125,
+                services: [
+                  "All Color & Style Services",
+                  "Hair Treatment",
+                  "Scalp Massage",
+                  "Makeup Application",
+                ],
+                image: "images/pricing-3.jpg",
+              },
+            ].map((packageItem, index) => (
+              <div key={index} className="col-lg-4 col-md-6 mb-4">
+                <div className="pricing-box">
+                  <img
+                    src={packageItem.image}
+                    className="img-fluid"
+                    alt={packageItem.title}
+                    style={{
+                      borderRadius: "10px 10px 0 0",
+                      width: "100%",
+                      height: "200px",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <div className="text-center py-3">
+                    <h3>{packageItem.title}</h3>
+                    <h4>${packageItem.price}</h4>
+                    <ul className="list-unstyled">
+                      {packageItem.services.map((service, i) => (
+                        <li key={i}>{service}</li>
+                      ))}
+                    </ul>
+                    <Link to="/book" className="btn btn-primary rounded-pill">
+                      Book Now
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-4">
-              <div className="block-7">
-                <div
-                  className="img"
-                  style={{ backgroundImage: "url(images/pricing-2.jpg)" }}
-                ></div>
-                <div className="text-center p-4">
-                  <span className="excerpt d-block">Color & Style</span>
-                  <span className="price">
-                    <sup>$</sup> <span className="number">85</span>
-                    <sub>/visit</sub>
-                  </span>
-
-                  <ul className="pricing-text mb-5">
-                    <li>
-                      <span className="fa fa-check mr-2"></span> All Basic Cut
-                      Services
-                    </li>
-                    <li>
-                      <span className="fa fa-check mr-2"></span> Hair Coloring
-                    </li>
-                    <li>
-                      <span className="fa fa-check mr-2"></span> Deep
-                      Conditioning
-                    </li>
-                    <li>
-                      <span className="fa fa-check mr-2"></span>Styling
-                    </li>
-                  </ul>
-
-                  <a href="#" className="btn btn-primary d-block px-2 py-3">
-                    Book Now
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="block-7">
-                <div
-                  className="img"
-                  style={{ backgroundImage: "url(images/pricing-3.jpg)" }}
-                ></div>
-                <div className="text-center p-4">
-                  <span className="excerpt d-block">Deluxe Package</span>
-                  <span className="price">
-                    <sup>$</sup> <span className="number">125</span>
-                    <sub>/visit</sub>
-                  </span>
-
-                  <ul className="pricing-text mb-5">
-                    <li>
-                      <span className="fa fa-check mr-2"></span> All Color &
-                      Style Services
-                    </li>
-                    <li>
-                      <span className="fa fa-check mr-2"></span> Hair Treatment
-                    </li>
-                    <li>
-                      <span className="fa fa-check mr-2"></span> Scalp Massage
-                    </li>
-                    <li>
-                      <span className="fa fa-check mr-2"></span> Makeup
-                      Application
-                    </li>
-                  </ul>
-
-                  <a href="#" className="btn btn-primary d-block px-2 py-3">
-                    Book Now
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            className="col-lg-12 text-center"
-            style={{ marginLeft: "14px" }}
-          >
-            <p>
-              <a
-                href="services.html"
-                className="btn btn-primary mr-md-4 py-3 px-4"
-              >
-                View More Our Services{" "}
-                <span className="ion-ios-arrow-forward"></span>
-              </a>
-            </p>
+            ))}
           </div>
         </div>
       </section>
-
-      <section className="ftco-section">
-        <div className="container">
-          <div className="row justify-content-center pb-5 mb-3">
-            <div className="col-md-7 heading-section text-center">
-              <h2>Pets Gallery</h2>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md-4">
-              <div
-                className="work mb-4 img d-flex align-items-end"
-                style={{ backgroundImage: "url(images/gallery-1.jpg)" }}
-              >
-                <a
-                  href="images/gallery-1.jpg"
-                  className="icon image-popup d-flex justify-content-center align-items-center"
-                >
-                  <span className="fa fa-expand"></span>
-                </a>
-                <div className="desc w-100 px-4">
-                  <div className="text w-100 mb-3">
-                    <span>Cat</span>
-                    <h2>
-                      <a href="work-single.html">Persian Cat</a>
-                    </h2>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div
-                className="work mb-4 img d-flex align-items-end"
-                style={{ backgroundImage: "url(images/gallery-2.jpg)" }}
-              >
-                <a
-                  href="images/gallery-2.jpg"
-                  className="icon image-popup d-flex justify-content-center align-items-center"
-                >
-                  <span className="fa fa-expand"></span>
-                </a>
-                <div className="desc w-100 px-4">
-                  <div className="text w-100 mb-3">
-                    <span>Dog</span>
-                    <h2>
-                      <a href="work-single.html">Pomeranian</a>
-                    </h2>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div
-                className="work mb-4 img d-flex align-items-end"
-                style={{ backgroundImage: "url(images/gallery-3.jpg)" }}
-              >
-                <a
-                  href="images/gallery-3.jpg"
-                  className="icon image-popup d-flex justify-content-center align-items-center"
-                >
-                  <span className="fa fa-expand"></span>
-                </a>
-                <div className="desc w-100 px-4">
-                  <div className="text w-100 mb-3">
-                    <span>Cat</span>
-                    <h2>
-                      <a href="work-single.html">Sphynx Cat</a>
-                    </h2>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-md-4">
-              <div
-                className="work mb-4 img d-flex align-items-end"
-                style={{ backgroundImage: "url(images/gallery-4.jpg)" }}
-              >
-                <a
-                  href="images/gallery-4.jpg"
-                  className="icon image-popup d-flex justify-content-center align-items-center"
-                >
-                  <span className="fa fa-expand"></span>
-                </a>
-                <div className="desc w-100 px-4">
-                  <div className="text w-100 mb-3">
-                    <span>Cat</span>
-                    <h2>
-                      <a href="work-single.html">British Shorthair</a>
-                    </h2>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div
-                className="work mb-4 img d-flex align-items-end"
-                style={{ backgroundImage: "url(images/gallery-5.jpg)" }}
-              >
-                <a
-                  href="images/gallery-5.jpg"
-                  className="icon image-popup d-flex justify-content-center align-items-center"
-                >
-                  <span className="fa fa-expand"></span>
-                </a>
-                <div className="desc w-100 px-4">
-                  <div className="text w-100 mb-3">
-                    <span>Dog</span>
-                    <h2>
-                      <a href="work-single.html">Beagle</a>
-                    </h2>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div
-                className="work mb-4 img d-flex align-items-end"
-                style={{ backgroundImage: "url(images/gallery-6.jpg)" }}
-              >
-                <a
-                  href="images/gallery-6.jpg"
-                  className="icon image-popup d-flex justify-content-center align-items-center"
-                >
-                  <span className="fa fa-expand"></span>
-                </a>
-                <div className="desc w-100 px-4">
-                  <div className="text w-100 mb-3">
-                    <span>Dog</span>
-                    <h2>
-                      <a href="work-single.html">Pug</a>
-                    </h2>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Footer />
     </div>
   );
 }
