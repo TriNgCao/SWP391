@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../Header";
 
 import SidebarStylist from "./SidebarStylist";
+import { Outlet } from "react-router-dom";
 
 export default function StylistDashboard() {
   return (
@@ -9,9 +10,9 @@ export default function StylistDashboard() {
       <Header />
       <div style={{ display: "flex", flex: 1 }}>
         <SidebarStylist />
-        <div
-          style={{ marginLeft: "200px", padding: "20px", flexGrow: 1 }}
-        ></div>
+        <div style={{ marginLeft: "200px", padding: "20px" }}>
+          <Outlet />
+        </div>
       </div>
     </div>
   );
