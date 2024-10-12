@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../Header";
 
 import SidebarManage from "./SidebarManage";
+import { Outlet } from "react-router-dom";
 
 export default function ManageDashboard() {
   return (
@@ -9,9 +10,9 @@ export default function ManageDashboard() {
       <Header />
       <div style={{ display: "flex", flex: 1 }}>
         <SidebarManage />
-        <div
-          style={{ marginLeft: "200px", padding: "20px", flexGrow: 1 }}
-        ></div>
+        <div style={{ marginLeft: "200px", padding: "20px" }}>
+          <Outlet />
+        </div>
       </div>
     </div>
   );

@@ -1,16 +1,17 @@
 import React from "react";
 import { Nav } from "react-bootstrap";
 import "../sidebar.css";
+import { Link } from "react-router-dom";
 
 const SidebarStylist = () => {
   return (
     <div className="sidebar">
       <Nav className="flex-column">
-        <Nav.Link href="#manage-appointments" className="active">
+        <Link to="profile" className="active">
           Profile
-        </Nav.Link>
-        <Nav.Link href="#payroll">Salary</Nav.Link>
-        <Nav.Link href="#manage-account">View Schedule</Nav.Link>
+        </Link>
+        <Link to="salary">Salary</Link>
+        <Link to="schedule">View Schedule</Link>
       </Nav>
     </div>
   );

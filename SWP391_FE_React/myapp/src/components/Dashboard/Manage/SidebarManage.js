@@ -1,19 +1,20 @@
 import React from "react";
 import { Nav } from "react-bootstrap";
 import "../sidebar.css";
+import { Link } from "react-router-dom";
 
 const SidebarManage = () => {
   return (
     <div className="sidebar">
       <Nav className="flex-column">
-        <Nav.Link href="#manage-appointments" className="active">
+        <Link to="revenue" className="active">
           Revenue
-        </Nav.Link>
-        <Nav.Link href="#manage-appointments">Profile</Nav.Link>
-        <Nav.Link href="#transaction">Manage Appointments</Nav.Link>
-        <Nav.Link href="#payroll">Transaction</Nav.Link>
-        <Nav.Link href="#payroll">Payroll</Nav.Link>
-        <Nav.Link href="#manage-account">Manage Account</Nav.Link>
+        </Link>
+        <Link to="profile">Profile</Link>
+        <Link to="manage-appointments">Manage Appointments</Link>
+        <Link to="transaction">Transaction</Link>
+        <Link to="payroll">Payroll</Link>
+        <Link to="manage-account">Manage Account</Link>
       </Nav>
     </div>
   );
