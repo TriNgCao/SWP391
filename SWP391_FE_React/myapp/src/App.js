@@ -31,7 +31,7 @@ function App() {
             <Route path="manage-account" element={<Manage_Account />} />
           </Route>
           {/* MANAGE */}
-          <Route path="/manage" element={<ManageDashboard />}>
+          <Route path="/manager" element={<ManageDashboard />}>
             <Route path="profile" element={<Profile />}></Route>
             <Route path="revenue" element={<Revenue />}></Route>
             <Route path="manage-account" element={<Manage_Account />} />
