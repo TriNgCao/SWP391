@@ -6,14 +6,14 @@ import Stylist from "./components/Stylist";
 import Payroll from "./components/Dashboard/Manage/Payroll";
 import Transaction from "./components/Dashboard/Manage/Transaction";
 import AdminDashboard from "./components/Dashboard/Admin/AdminDashboard";
-import Manage_Appointments from "./components/Dashboard/Manage_Appointments";
+import Manage_Appointments from "./components/Dashboard/Staff/Manage_Appointments";
 import Profile from "./components/Dashboard/Profile";
 import Manage_Account from "./components/Dashboard/Manage_Account";
 import ManageDashboard from "./components/Dashboard/Manage/ManageDashboard";
-import Revenue from "./components/Dashboard/Revenue";
+import Revenue from "./components/Dashboard/Manage/Revenue";
 import StaffDashboard from "./components/Dashboard/Staff/StaffDashboard";
 import Salary from "./components/Dashboard/Salary";
-import Schedule from "./components/Dashboard/Schedule";
+import Schedule from "./components/Dashboard/Stylist/Schedule";
 import StylistDashboard from "./components/Dashboard/Stylist/StylistDashboard";
 
 function App() {
