@@ -3,8 +3,8 @@ import Home from "./components/Home";
 import AboutUs from "./components/AboutUs";
 import Contact from "./components/Contact";
 import Stylist from "./components/Stylist";
-import Payroll from "./components/Dashboard/Payroll";
-import Transaction from "./components/Dashboard/Transaction";
+import Payroll from "./components/Dashboard/Manage/Payroll";
+import Transaction from "./components/Dashboard/Manage/Transaction";
 import AdminDashboard from "./components/Dashboard/Admin/AdminDashboard";
 import Manage_Appointments from "./components/Dashboard/Manage_Appointments";
 import Profile from "./components/Dashboard/Profile";
@@ -28,33 +28,24 @@ function App() {
           {/* ADMIN  */}
           <Route path="/admin" element={<AdminDashboard />}>
             <Route path="profile" element={<Profile />}></Route>
-            <Route
-              path="manage-appointments"
-              element={<Manage_Appointments />}
-            />
-            <Route path="payroll" element={<Payroll />} />
-            <Route path="transaction" element={<Transaction />} />
             <Route path="manage-account" element={<Manage_Account />} />
           </Route>
           {/* MANAGE */}
           <Route path="/manage" element={<ManageDashboard />}>
-            <Route path="revenue" element={<Revenue />}></Route>
             <Route path="profile" element={<Profile />}></Route>
-            <Route
-              path="manage-appointments"
-              element={<Manage_Appointments />}
-            />
-            <Route path="payroll" element={<Payroll />} />
-            <Route path="transaction" element={<Transaction />} />
+            <Route path="revenue" element={<Revenue />}></Route>
             <Route path="manage-account" element={<Manage_Account />} />
+            <Route path="transaction" element={<Transaction />} />
+            <Route path="payroll" element={<Payroll />} />
           </Route>
           {/* STAFF */}
           <Route path="/staff" element={<StaffDashboard />}>
+            <Route path="profile" element={<Profile />}></Route>
             <Route
               path="manage-appointments"
               element={<Manage_Appointments />}
             />
-            <Route path="profile" element={<Profile />}></Route>
+
             <Route path="transaction" element={<Transaction />} />
             <Route path="salary" element={<Salary />} />
           </Route>

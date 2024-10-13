@@ -7,14 +7,13 @@ const SidebarManage = () => {
   return (
     <div className="sidebar">
       <Nav className="flex-column">
-        <Link to="revenue" className="active">
-          Revenue
+        <Link to="profile" className="active">
+          Profile
         </Link>
-        <Link to="profile">Profile</Link>
-        <Link to="manage-appointments">Manage Appointments</Link>
+        <Link to="revenue">Revenue</Link>
+        <Link to="manage-account">Manage Account</Link>
         <Link to="transaction">Transaction</Link>
         <Link to="payroll">Payroll</Link>
-        <Link to="manage-account">Manage Account</Link>
       </Nav>
     </div>
   );
