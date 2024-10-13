@@ -10,9 +10,6 @@ const SidebarAdmin = () => {
         <Link to="profile" className="active">
           Profile
         </Link>
-        <Link to="manage-appointments">Manage Appointments</Link>
-        <Link to="transaction">Transaction</Link>
-        <Link to="payroll">Payroll</Link>
         <Link to="manage-account">Manage Account</Link>
       </Nav>
     </div>
