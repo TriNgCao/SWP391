@@ -11,6 +11,7 @@ const SidebarManage = () => {
           Profile
         </Link>
         <Link to="revenue">Revenue</Link>
+        <Link to="services">Manage Services</Link>
         <Link to="manage-account">Manage Account</Link>
         <Link to="transaction">Transaction</Link>
         <Link to="payroll">Payroll</Link>
