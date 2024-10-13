@@ -15,6 +15,7 @@ import StaffDashboard from "./components/Dashboard/Staff/StaffDashboard";
 import Salary from "./components/Dashboard/Salary";
 import Schedule from "./components/Dashboard/Stylist/Schedule";
 import StylistDashboard from "./components/Dashboard/Stylist/StylistDashboard";
+import Services from "./components/Dashboard/Manage/Services";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/manager" element={<ManageDashboard />}>
             <Route path="profile" element={<Profile />}></Route>
             <Route path="revenue" element={<Revenue />}></Route>
+            <Route path="services" element={<Services />}></Route>
             <Route path="manage-account" element={<Manage_Account />} />
             <Route path="transaction" element={<Transaction />} />
             <Route path="payroll" element={<Payroll />} />
