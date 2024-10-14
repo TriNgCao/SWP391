@@ -29,8 +29,6 @@ export default function Stylist() {
           </div>
         </div>
       </section>
-
-      
     </div>
   );
 }
