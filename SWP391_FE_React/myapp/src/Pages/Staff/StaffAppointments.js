@@ -98,7 +98,7 @@ const appointmentData = [
   },
 ];
 
-const ManagerAppointments = () => {
+const StaffAppointments = () => {
   const [accounts, setAccount] = useState([]);
   useEffect(() => {
     axios.get("https://jsonplaceholder.typicode.com/users").then((response) => {
@@ -148,6 +148,7 @@ const ManagerAppointments = () => {
                     <TableCell sx={{ color: "#fff" }}>Date</TableCell>
                     <TableCell sx={{ color: "#fff" }}>Services</TableCell>
                     <TableCell sx={{ color: "#fff" }}>Status</TableCell>
+                    <TableCell sx={{ color: "#fff" }}></TableCell>
                   </TableRow>
                 </TableHead>
 
@@ -160,6 +161,19 @@ const ManagerAppointments = () => {
                       <TableCell>{appointment.date}</TableCell>
                       <TableCell>{appointment.services}</TableCell>
                       <TableCell>{appointment.status}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="contained"
+                          size="small"
+                          sx={{
+                            marginRight: 1,
+                            backgroundColor: "#007BFF",
+                            color: "#fff",
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -172,4 +186,4 @@ const ManagerAppointments = () => {
   );
 };
 
-export default ManagerAppointments;
+export default StaffAppointments;
