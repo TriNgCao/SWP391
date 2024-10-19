@@ -1,4 +1,4 @@
-package com.swp391.hairsalon.pojo;
+package com.swp391.hairsalon.login;
 
 import lombok.*;
 

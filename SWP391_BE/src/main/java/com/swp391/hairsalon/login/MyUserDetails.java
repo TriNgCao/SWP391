@@ -1,15 +1,12 @@
-package com.swp391.hairsalon.pojo;
+package com.swp391.hairsalon.login;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.swp391.hairsalon.pojo.Account;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 public class MyUserDetails implements UserDetails {
 
@@ -20,7 +17,7 @@ public class MyUserDetails implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection<? extends GrantedAuthority> getAuthorities()  {
         return Collections.singletonList(new SimpleGrantedAuthority(mapRoleToAuthority(account.getRole())));
     }
 
