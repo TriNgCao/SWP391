@@ -74,7 +74,6 @@ export default function Footer() {
             <div className="col-md-12 text-center">
               <p className="copyright">
                 Copyright &copy; {new Date().getFullYear()}{" "}
-                {/* Sử dụng JS để hiển thị năm hiện tại */}
               </p>
             </div>
           </div>

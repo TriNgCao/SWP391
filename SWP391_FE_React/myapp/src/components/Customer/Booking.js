@@ -102,7 +102,7 @@ const Booking = () => {
 
   const generateTimeSlots = () => {
     const slots = [];
-    for (let hour = 6; hour <= 23; hour++) {
+    for (let hour = 8; hour <= 22; hour++) {
       const time = hour < 10 ? `0${hour}h00` : `${hour}h00`;
       slots.push(time);
     }

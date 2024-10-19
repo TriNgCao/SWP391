@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 const UserIconDropdown = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Functions to handle mouse events
   const handleMouseEnter = () => {
     setIsDropdownOpen(true);
   };
@@ -17,8 +16,8 @@ const UserIconDropdown = () => {
     <li
       className="nav-item dropdown d-flex align-items-center"
       style={{ marginLeft: "50px", position: "relative" }}
-      onMouseEnter={handleMouseEnter} // Show dropdown on mouse enter
-      onMouseLeave={handleMouseLeave} // Hide dropdown on mouse leave
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave} 
     >
       {/* User Icon */}
       <Link to="#" className="nav-link" id="userDropdown">
@@ -33,15 +32,14 @@ const UserIconDropdown = () => {
         />
       </Link>
 
-      {/* Dropdown menu - only shown when isDropdownOpen is true */}
       {isDropdownOpen && (
         <div
           className="dropdown-menu dropdown-menu-right"
           aria-labelledby="userDropdown"
           style={{
             position: "absolute",
-            top: "100%", // Dropdown below the icon
-            display: "block", // Show dropdown
+            top: "100%",
+            display: "block",
           }}
         >
           <Link className="dropdown-item" to="profile.html">

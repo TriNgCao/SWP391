@@ -7,9 +7,8 @@ export default function Stylist() {
       <Navbar />
       <section
         className="hero-wrap hero-wrap-2"
-        style="background-image: url('images/bg_2.jpg')"
-        data-stellar-background-ratio="0.5"
-      >
+        style={{backgroundImage: 'url(images/bg_2.jpg)'}}
+        data-stellar-background-ratio="0.5">
         <div className="overlay"></div>
         <div className="container">
           <div className="row no-gutters slider-text align-items-end">
