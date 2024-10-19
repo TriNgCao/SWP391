@@ -132,7 +132,7 @@ const ManagerServices = () => {
             >
               <MenuItem value="All">All</MenuItem>
               <MenuItem value="Complete">Complete</MenuItem>
-              <MenuItem value="Pending">Pending</MenuItem>
+              <MenuItem value="NotActive">Not Active</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -182,7 +182,6 @@ const ManagerServices = () => {
         </Grid>
       </Grid>
 
-      {/* Add Income and Expense Buttons */}
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
         <Button
           variant="contained"
@@ -193,7 +192,6 @@ const ManagerServices = () => {
         </Button>
       </Box>
 
-      {/* Transactions Table */}
       <TableContainer component={Paper} sx={{ backgroundColor: "#f5f5f5" }}>
         <Table>
           <TableHead>
@@ -214,14 +212,19 @@ const ManagerServices = () => {
                 <TableCell>{service.serviceName}</TableCell>
                 <TableCell>{service.price}</TableCell>
                 <TableCell>{service.timeToFinish}</TableCell>
-                <TableCell>{service.status}</TableCell>
+                <TableCell
+                  sx={{
+                    color: service.status === "Active" ? "#4CAF50" : "#F44336",
+                  }}
+                >
+                  {service.status}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
         <Pagination count={10} color="primary" />
       </Box>

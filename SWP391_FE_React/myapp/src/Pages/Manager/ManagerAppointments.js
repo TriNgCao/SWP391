@@ -159,7 +159,18 @@ const ManagerAppointments = () => {
                       <TableCell>{appointment.stylistName}</TableCell>
                       <TableCell>{appointment.date}</TableCell>
                       <TableCell>{appointment.services}</TableCell>
-                      <TableCell>{appointment.status}</TableCell>
+                      <TableCell
+                        sx={{
+                          color:
+                            appointment.status === "Complete"
+                              ? "#4CAF50"
+                              : appointment.status === "Process"
+                              ? "#FFCC00"
+                              : "#F44336",
+                        }}
+                      >
+                        {appointment.status}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

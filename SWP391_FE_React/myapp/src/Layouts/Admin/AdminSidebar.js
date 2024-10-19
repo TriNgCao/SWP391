@@ -20,6 +20,11 @@ const AdminSidebar = () => {
             <AccountBalanceIcon /> Manage Personnel
           </Link>
         </li>
+        <li style={listItemStyle}>
+          <Link to="admin-salon" style={linkStyle}>
+            <AccountBalanceIcon /> Manage Salon
+          </Link>
+        </li>
       </ul>
     </div>
   );

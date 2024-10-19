@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import GroupIcon from "@mui/icons-material/Group";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import PaidIcon from "@mui/icons-material/Paid";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
@@ -60,7 +60,7 @@ const sidebarStyle = {
 const listStyle = {
   listStyleType: "none",
   padding: 12,
-  color: "#333", // Changed to match the text color
+  color: "#4CAF50", // Changed to match the text color
   backgroundColor: "#DFDFDF",
 };
 
