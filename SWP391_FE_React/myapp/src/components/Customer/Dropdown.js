@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { FaRegUserCircle } from "react-icons/fa";
+import { HiOutlineLogout } from "react-icons/hi";
+import { RiVipDiamondLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 
 const UserIconDropdown = () => {
@@ -43,13 +46,13 @@ const UserIconDropdown = () => {
           }}
         >
           <Link className="dropdown-item" to="profile.html">
-            <i className="fa-solid fa-user"></i> View Profile
+          <FaRegUserCircle/> View Profile
           </Link>
           <Link className="dropdown-item" to="#">
-            <i className="fa-solid fa-medal"></i> Loyal Point
+          <RiVipDiamondLine /> Loyal Point
           </Link>
           <Link className="dropdown-item" to="#">
-            <i className="fa-solid fa-right-from-bracket"></i> Logout
+          <HiOutlineLogout /> Logout
           </Link>
         </div>
       )}
