@@ -197,7 +197,12 @@ const ManagerPersonnel = () => {
       <TableContainer component={Paper} sx={{ backgroundColor: "#f5f5f5" }}>
         <Table>
           <TableHead>
-            <TableRow sx={{ backgroundColor: "#4caf50", color: "#fff" }}>
+            <TableRow
+              sx={{
+                backgroundColor: "#4caf50",
+                color: "#fff",
+              }}
+            >
               <TableCell sx={{ color: "#fff" }}>ID</TableCell>
               <TableCell sx={{ color: "#fff" }}>Name</TableCell>
               <TableCell sx={{ color: "#fff" }}>Role</TableCell>
@@ -215,8 +220,12 @@ const ManagerPersonnel = () => {
                 <TableCell>{employee.role}</TableCell>
                 <TableCell>{employee.salary}</TableCell>
                 <TableCell>{employee.rank}</TableCell>
-                <TableCell>
-                  {employee.status === "Active" ? "✔️" : "❌"}
+                <TableCell
+                  sx={{
+                    color: employee.status === "Active" ? "#4CAF50" : "#F44336",
+                  }}
+                >
+                  {employee.status}
                 </TableCell>
                 <TableCell>
                   <Button

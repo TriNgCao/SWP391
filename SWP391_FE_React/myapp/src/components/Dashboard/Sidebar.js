@@ -16,6 +16,7 @@ const Sidebar = () => {
       setIsLoggedIn(true);
     }
   }, []);
+  s;
 
   return (
     <div className="sidebar">

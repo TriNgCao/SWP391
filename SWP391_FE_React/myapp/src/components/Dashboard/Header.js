@@ -13,7 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Link } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 
 const pages = [
   { label: "Home", route: "/" },
@@ -43,19 +43,24 @@ function Header() {
 
   const darkTheme = createTheme({
     palette: {
-      mode: "dark",
       primary: {
-        main: "#1976d2",
+        main: "#4CAF50",
       },
     },
   });
-
   return (
     <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
       <AppBar position="static">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+            <AdbIcon
+              sx={{
+                display: { xs: "none", md: "flex" },
+                mr: 1,
+                color: "white",
+              }}
+            />
             <Typography
               variant="h6"
               noWrap
@@ -66,7 +71,7 @@ function Header() {
                 fontFamily: "monospace",
                 fontWeight: 700,
                 letterSpacing: ".3rem",
-                color: "inherit",
+                color: "white",
                 textDecoration: "none",
               }}
             >
