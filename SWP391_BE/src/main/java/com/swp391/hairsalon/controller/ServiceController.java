@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/services")
+@RequestMapping("/services")
 public class ServiceController {
 
     @Autowired
@@ -24,12 +24,12 @@ public class ServiceController {
         return salonServiceService.getServiceByName(name);
     }
 
-    @GetMapping
+    @GetMapping("/fetchAll")
     public List<SalonService> getAllServices() {
         return salonServiceService.getAllServices();
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public SalonService createNewService(@RequestBody SalonService service) {
         return salonServiceService.addService(service);
     }

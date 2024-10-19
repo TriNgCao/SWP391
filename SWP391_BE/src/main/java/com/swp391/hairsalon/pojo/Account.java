@@ -8,27 +8,25 @@ import lombok.Setter;
 import java.sql.Date;
 
 @Entity
-@Table(name = "Account")
 @NoArgsConstructor
 @Getter
 @Setter
 public class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column (name = "account_id")
     private String id;
 
-    @Column (name = "name")
+    @Column (name = "name", nullable = true)
     private String name;
 
-    @Column (name = "password")
+    @Column (name = "password", nullable = true)
     private String password;
 
-    @Column (name = "email")
+    @Column (name = "email", nullable = true)
     private String email;
 
-    @Column (name = "phone_number")
+    @Column (name = "phone_number", nullable = true)
     private String phone;
 
     @Column (name = "role")
@@ -37,6 +35,19 @@ public class Account {
     @Column (name = "status")
     private boolean active;
 
-    @Column (name = "register_date")
+    @Column (name = "register_date", nullable = true)
     private Date registerDate;
+
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Customer customer;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Manager manager;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Staff staff;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Stylist stylist;
 }
