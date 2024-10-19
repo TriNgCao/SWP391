@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import UserIconDropdown from "./Dropdown";
-import { FaGoogle } from "react-icons/fa";
+import { FaGoogle, FaLock } from "react-icons/fa";
 export default function Navbar() {
   return (
     <div>
@@ -81,10 +81,10 @@ export default function Navbar() {
             data-bs-toggle="modal"
             data-bs-target="#loginSelectionModal"
           >
-            <i className="fa-solid fa-lock" style={{ whiteSpace: "nowrap" }}>
-              {" "}
-              Login
-            </i>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <FaLock style={{ marginRight: "8px" }} />
+              <span style={{ fontSize: "16px", fontWeight: "bold" }}>Login</span>
+            </div>
           </button>
         </div>
       </nav>
@@ -107,7 +107,10 @@ export default function Navbar() {
           >
             <div
               className="modal-header"
-              style={{ backgroundColor: "#e0dede", borderRadius: "15px 15px 0 0" }}
+              style={{
+                backgroundColor: "#e0dede",
+                borderRadius: "15px 15px 0 0",
+              }}
             >
               <h5
                 className="modal-title text-center w-100"
@@ -124,7 +127,11 @@ export default function Navbar() {
             </div>
             <div
               className="modal-body"
-              style={{ backgroundColor: "#f7f7f7", padding: "30px", textAlign: "center" }}
+              style={{
+                backgroundColor: "#f7f7f7",
+                padding: "30px",
+                textAlign: "center",
+              }}
             >
               <button
                 className="btn btn-primary w-100 mb-3"
@@ -160,13 +167,22 @@ export default function Navbar() {
         <div className="modal-dialog modal-dialog-centered">
           <div
             className="modal-content"
-            style={{ borderRadius: "15px", boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)" }}
+            style={{
+              borderRadius: "15px",
+              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+            }}
           >
             <div
               className="modal-header"
-              style={{ backgroundColor: "#e0dede", borderRadius: "15px 15px 0 0" }}
+              style={{
+                backgroundColor: "#e0dede",
+                borderRadius: "15px 15px 0 0",
+              }}
             >
-              <h5 className="modal-title text-center w-100" id="loginModalLabel">
+              <h5
+                className="modal-title text-center w-100"
+                id="loginModalLabel"
+              >
                 <img
                   src="images/logo.png"
                   alt="salon icon"
@@ -185,13 +201,18 @@ export default function Navbar() {
               className="modal-body"
               style={{ backgroundColor: "#f7f7f7", padding: "30px" }}
             >
-              <p className="text-center" style={{ fontStyle: "italic", fontSize: "16px" }}>
-                Welcome to Leopard Salon. Sign in and enjoy booking our exclusive
-                services today!
+              <p
+                className="text-center"
+                style={{ fontStyle: "italic", fontSize: "16px" }}
+              >
+                Welcome to Leopard Salon. Sign in and enjoy booking our
+                exclusive services today!
               </p>
               <form>
                 <div className="mb-3">
-                  <label htmlFor="username" className="form-label">Phone Number</label>
+                  <label htmlFor="username" className="form-label">
+                    Phone Number
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -201,7 +222,9 @@ export default function Navbar() {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="password" className="form-label">Password</label>
+                  <label htmlFor="password" className="form-label">
+                    Password
+                  </label>
                   <input
                     type="password"
                     className="form-control"
@@ -216,15 +239,23 @@ export default function Navbar() {
                     className="form-check-input"
                     id="rememberMe"
                   />
-                  <label className="form-check-label" htmlFor="rememberMe">Remember me</label>
+                  <label className="form-check-label" htmlFor="rememberMe">
+                    Remember me
+                  </label>
                 </div>
                 <div className="d-flex justify-content-between">
-                  <Link to="#" className="text-decoration-none">Forgot Password?</Link>
+                  <Link to="#" className="text-decoration-none">
+                    Forgot Password?
+                  </Link>
                 </div>
                 <button
                   type="button"
                   className="btn btn-primary w-100 mt-3"
-                  style={{ borderRadius: "10px", backgroundColor: "#6dbe45", borderColor: "#6dbe45" }}
+                  style={{
+                    borderRadius: "10px",
+                    backgroundColor: "#6dbe45",
+                    borderColor: "#6dbe45",
+                  }}
                 >
                   Log In
                 </button>
@@ -235,14 +266,18 @@ export default function Navbar() {
                   <Link
                     to="#"
                     className="btn btn-danger mx-4 d-flex justify-content-center align-items-center"
-                    style={{ borderRadius: "50%", width: "50px", height: "50px" }}
+                    style={{
+                      borderRadius: "50%",
+                      width: "50px",
+                      height: "50px",
+                    }}
                   >
                     <FaGoogle />
                   </Link>
                 </div>
               </div>
               <div className="text-center mt-3">
-                Don't Have Account Yet? 
+                Don't Have Account Yet?
                 <Link
                   to="#"
                   className="text-decoration-none"
@@ -250,7 +285,7 @@ export default function Navbar() {
                   data-bs-target="#registerCustomerModal"
                   data-bs-dismiss="modal"
                 >
-                   Register Now
+                  Register Now
                 </Link>
               </div>
             </div>
@@ -269,13 +304,22 @@ export default function Navbar() {
         <div className="modal-dialog modal-dialog-centered">
           <div
             className="modal-content"
-            style={{ borderRadius: "15px", boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)" }}
+            style={{
+              borderRadius: "15px",
+              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+            }}
           >
             <div
               className="modal-header"
-              style={{ backgroundColor: "#e0dede", borderRadius: "15px 15px 0 0" }}
+              style={{
+                backgroundColor: "#e0dede",
+                borderRadius: "15px 15px 0 0",
+              }}
             >
-              <h5 className="modal-title text-center w-100" id="registerModalLabel">
+              <h5
+                className="modal-title text-center w-100"
+                id="registerModalLabel"
+              >
                 <img
                   src="images/logo.png"
                   alt="salon icon"
@@ -294,12 +338,17 @@ export default function Navbar() {
               className="modal-body"
               style={{ backgroundColor: "#f7f7f7", padding: "30px" }}
             >
-            <p className="text-center" style={{ fontStyle: "italic", fontSize: "16px" }}>
+              <p
+                className="text-center"
+                style={{ fontStyle: "italic", fontSize: "16px" }}
+              >
                 Welcome to Leopard Salon. Register to use our awesome service!
               </p>
               <form>
                 <div className="mb-3">
-                  <label htmlFor="customerName" className="form-label">Full Name</label>
+                  <label htmlFor="customerName" className="form-label">
+                    Full Name
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -309,7 +358,9 @@ export default function Navbar() {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="customerEmail" className="form-label">Email</label>
+                  <label htmlFor="customerEmail" className="form-label">
+                    Email
+                  </label>
                   <input
                     type="email"
                     className="form-control"
@@ -319,7 +370,9 @@ export default function Navbar() {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="customerPhone" className="form-label">Phone Number</label>
+                  <label htmlFor="customerPhone" className="form-label">
+                    Phone Number
+                  </label>
                   <input
                     type="tel"
                     className="form-control"
@@ -329,7 +382,9 @@ export default function Navbar() {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="customerPassword" className="form-label">Password</label>
+                  <label htmlFor="customerPassword" className="form-label">
+                    Password
+                  </label>
                   <input
                     type="password"
                     className="form-control"
@@ -339,7 +394,9 @@ export default function Navbar() {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+                  <label htmlFor="confirmPassword" className="form-label">
+                    Confirm Password
+                  </label>
                   <input
                     type="password"
                     className="form-control"
@@ -351,7 +408,11 @@ export default function Navbar() {
                 <button
                   type="button"
                   className="btn btn-primary w-100"
-                  style={{ borderRadius: "10px", backgroundColor: "#6dbe45", borderColor: "#6dbe45" }}
+                  style={{
+                    borderRadius: "10px",
+                    backgroundColor: "#6dbe45",
+                    borderColor: "#6dbe45",
+                  }}
                 >
                   Register
                 </button>
@@ -372,13 +433,22 @@ export default function Navbar() {
         <div className="modal-dialog modal-dialog-centered">
           <div
             className="modal-content"
-            style={{ borderRadius: "15px", boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)" }}
+            style={{
+              borderRadius: "15px",
+              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+            }}
           >
             <div
               className="modal-header"
-              style={{ backgroundColor: "#e0dede", borderRadius: "15px 15px 0 0" }}
+              style={{
+                backgroundColor: "#e0dede",
+                borderRadius: "15px 15px 0 0",
+              }}
             >
-              <h5 className="modal-title text-center w-100" id="internalLoginModalLabel">
+              <h5
+                className="modal-title text-center w-100"
+                id="internalLoginModalLabel"
+              >
                 <img
                   src="images/logo.png"
                   alt="salon icon"
@@ -397,12 +467,17 @@ export default function Navbar() {
               className="modal-body"
               style={{ backgroundColor: "#f7f7f7", padding: "30px" }}
             >
-            <p className="text-center" style={{ fontStyle: "italic", fontSize: "16px" }}>
+              <p
+                className="text-center"
+                style={{ fontStyle: "italic", fontSize: "16px" }}
+              >
                 This Login Only For Internal Staff!!
               </p>
               <form>
                 <div className="mb-3">
-                  <label htmlFor="internalUsername" className="form-label">Username</label>
+                  <label htmlFor="internalUsername" className="form-label">
+                    Username
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -412,7 +487,9 @@ export default function Navbar() {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="internalPassword" className="form-label">Password</label>
+                  <label htmlFor="internalPassword" className="form-label">
+                    Password
+                  </label>
                   <input
                     type="password"
                     className="form-control"
@@ -424,7 +501,11 @@ export default function Navbar() {
                 <button
                   type="button"
                   className="btn btn-primary w-100"
-                  style={{ borderRadius: "10px", backgroundColor: "#6dbe45", borderColor: "#6dbe45" }}
+                  style={{
+                    borderRadius: "10px",
+                    backgroundColor: "#6dbe45",
+                    borderColor: "#6dbe45",
+                  }}
                 >
                   Log In
                 </button>
