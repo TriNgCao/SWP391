@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-
+import UserIconDropdown from "./Dropdown";
+import { FaGoogle } from "react-icons/fa";
 export default function Navbar() {
   return (
     <div>
@@ -19,7 +20,6 @@ export default function Navbar() {
             Leopard Salon
           </Link>
 
-          {/* <!-- Navigation Menu --> */}
           <button
             className="navbar-toggler"
             type="button"
@@ -52,18 +52,13 @@ export default function Navbar() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/stylist" className="nav-link">
-                  Stylist
-                </Link>
-              </li>
-              <li className="nav-item">
                 <Link to="/services" className="nav-link">
                   Services
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/gallery" className="nav-link">
-                  Gallery
+                <Link to="/booking" className="nav-link">
+                  Booking
                 </Link>
               </li>
               <li className="nav-item">
@@ -79,38 +74,7 @@ export default function Navbar() {
             </ul>
           </div>
 
-          {/* <!-- User Icon Section --> */}
-          <li
-            className="nav-item dropdown d-flex align-items-center"
-            style={{ marginLeft: "50px" }}
-          >
-            <Link to="#" className="nav-link" id="userDropdown">
-              <img
-                src="images/user.png"
-                alt="User"
-                style={{
-                  width: "30px",
-                  borderRadius: "50%",
-                  verticalAlign: "middle",
-                }}
-              />
-            </Link>
-            <div
-              className="dropdown-menu dropdown-menu-right"
-              aria-labelledby="userDropdown"
-              style={{ position: "absolute" }}
-            >
-              <Link className="dropdown-item" to="/profile">
-                <i className="fa-solid fa-user"></i>View Profile
-              </Link>
-              <Link className="dropdown-item" to="#">
-                <i className="fa-solid fa-medal"></i>Loyal Point
-              </Link>
-              <Link className="dropdown-item" to="#">
-                <i className="fa-solid fa-right-from-bracket"></i>Logout
-              </Link>
-            </div>
-          </li>
+          <UserIconDropdown />
           <button
             className="login-button"
             type="button"
@@ -124,6 +88,351 @@ export default function Navbar() {
           </button>
         </div>
       </nav>
+
+      {/* <!-- Login Selection Modal --> */}
+      <div
+        className="modal fade"
+        id="loginSelectionModal"
+        tabIndex="-1"
+        aria-labelledby="loginSelectionModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div
+            className="modal-content"
+            style={{
+              borderRadius: "15px",
+              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <div
+              className="modal-header"
+              style={{ backgroundColor: "#e0dede", borderRadius: "15px 15px 0 0" }}
+            >
+              <h5
+                className="modal-title text-center w-100"
+                id="loginSelectionModalLabel"
+              >
+                Choose Login Type
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div
+              className="modal-body"
+              style={{ backgroundColor: "#f7f7f7", padding: "30px", textAlign: "center" }}
+            >
+              <button
+                className="btn btn-primary w-100 mb-3"
+                data-bs-toggle="modal"
+                data-bs-target="#customerLoginModal"
+                data-bs-dismiss="modal"
+                style={{ borderRadius: "10px", backgroundColor: "#6dbe45" }}
+              >
+                Login for Customer
+              </button>
+              <button
+                className="btn btn-primary w-100"
+                data-bs-toggle="modal"
+                data-bs-target="#internalLoginModal"
+                data-bs-dismiss="modal"
+                style={{ borderRadius: "10px", backgroundColor: "#6dbe45" }}
+              >
+                Login for Internal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* <!-- Login for Customer Modal --> */}
+      <div
+        className="modal fade"
+        id="customerLoginModal"
+        tabIndex="-1"
+        aria-labelledby="customerLoginModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div
+            className="modal-content"
+            style={{ borderRadius: "15px", boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)" }}
+          >
+            <div
+              className="modal-header"
+              style={{ backgroundColor: "#e0dede", borderRadius: "15px 15px 0 0" }}
+            >
+              <h5 className="modal-title text-center w-100" id="loginModalLabel">
+                <img
+                  src="images/logo.png"
+                  alt="salon icon"
+                  style={{ width: "50px", marginRight: "10px" }}
+                />
+                Sign In to Leopard Salon
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div
+              className="modal-body"
+              style={{ backgroundColor: "#f7f7f7", padding: "30px" }}
+            >
+              <p className="text-center" style={{ fontStyle: "italic", fontSize: "16px" }}>
+                Welcome to Leopard Salon. Sign in and enjoy booking our exclusive
+                services today!
+              </p>
+              <form>
+                <div className="mb-3">
+                  <label htmlFor="username" className="form-label">Phone Number</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="username"
+                    placeholder="Enter phone number"
+                    style={{ borderRadius: "10px", padding: "10px" }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="password" className="form-label">Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    placeholder="Enter your password"
+                    style={{ borderRadius: "10px", padding: "10px" }}
+                  />
+                </div>
+                <div className="form-check mb-3">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="rememberMe"
+                  />
+                  <label className="form-check-label" htmlFor="rememberMe">Remember me</label>
+                </div>
+                <div className="d-flex justify-content-between">
+                  <Link to="#" className="text-decoration-none">Forgot Password?</Link>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-primary w-100 mt-3"
+                  style={{ borderRadius: "10px", backgroundColor: "#6dbe45", borderColor: "#6dbe45" }}
+                >
+                  Log In
+                </button>
+              </form>
+              <div className="text-center mt-3">
+                <p>or sign in with</p>
+                <div className="d-flex justify-content-center">
+                  <Link
+                    to="#"
+                    className="btn btn-danger mx-4 d-flex justify-content-center align-items-center"
+                    style={{ borderRadius: "50%", width: "50px", height: "50px" }}
+                  >
+                    <FaGoogle />
+                  </Link>
+                </div>
+              </div>
+              <div className="text-center mt-3">
+                Don't Have Account Yet? 
+                <Link
+                  to="#"
+                  className="text-decoration-none"
+                  data-bs-toggle="modal"
+                  data-bs-target="#registerCustomerModal"
+                  data-bs-dismiss="modal"
+                >
+                   Register Now
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* <!-- Register for Customer Modal --> */}
+      <div
+        className="modal fade"
+        id="registerCustomerModal"
+        tabIndex="-1"
+        aria-labelledby="registerCustomerModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div
+            className="modal-content"
+            style={{ borderRadius: "15px", boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)" }}
+          >
+            <div
+              className="modal-header"
+              style={{ backgroundColor: "#e0dede", borderRadius: "15px 15px 0 0" }}
+            >
+              <h5 className="modal-title text-center w-100" id="registerModalLabel">
+                <img
+                  src="images/logo.png"
+                  alt="salon icon"
+                  style={{ width: "50px", marginRight: "10px" }}
+                />
+                Register to Leopard Salon
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div
+              className="modal-body"
+              style={{ backgroundColor: "#f7f7f7", padding: "30px" }}
+            >
+            <p className="text-center" style={{ fontStyle: "italic", fontSize: "16px" }}>
+                Welcome to Leopard Salon. Register to use our awesome service!
+              </p>
+              <form>
+                <div className="mb-3">
+                  <label htmlFor="customerName" className="form-label">Full Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="customerName"
+                    placeholder="Enter your full name"
+                    style={{ borderRadius: "10px", padding: "10px" }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="customerEmail" className="form-label">Email</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="customerEmail"
+                    placeholder="Enter your email"
+                    style={{ borderRadius: "10px", padding: "10px" }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="customerPhone" className="form-label">Phone Number</label>
+                  <input
+                    type="tel"
+                    className="form-control"
+                    id="customerPhone"
+                    placeholder="Enter your phone number"
+                    style={{ borderRadius: "10px", padding: "10px" }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="customerPassword" className="form-label">Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="customerPassword"
+                    placeholder="Enter your password"
+                    style={{ borderRadius: "10px", padding: "10px" }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="confirmPassword"
+                    placeholder="Confirm your password"
+                    style={{ borderRadius: "10px", padding: "10px" }}
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-primary w-100"
+                  style={{ borderRadius: "10px", backgroundColor: "#6dbe45", borderColor: "#6dbe45" }}
+                >
+                  Register
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* <!-- Login for Internal Modal --> */}
+      <div
+        className="modal fade"
+        id="internalLoginModal"
+        tabIndex="-1"
+        aria-labelledby="internalLoginModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div
+            className="modal-content"
+            style={{ borderRadius: "15px", boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)" }}
+          >
+            <div
+              className="modal-header"
+              style={{ backgroundColor: "#e0dede", borderRadius: "15px 15px 0 0" }}
+            >
+              <h5 className="modal-title text-center w-100" id="internalLoginModalLabel">
+                <img
+                  src="images/logo.png"
+                  alt="salon icon"
+                  style={{ width: "50px", marginRight: "10px" }}
+                />
+                Internal Staff Login
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div
+              className="modal-body"
+              style={{ backgroundColor: "#f7f7f7", padding: "30px" }}
+            >
+            <p className="text-center" style={{ fontStyle: "italic", fontSize: "16px" }}>
+                This Login Only For Internal Staff!!
+              </p>
+              <form>
+                <div className="mb-3">
+                  <label htmlFor="internalUsername" className="form-label">Username</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="internalUsername"
+                    placeholder="Enter your username"
+                    style={{ borderRadius: "10px", padding: "10px" }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="internalPassword" className="form-label">Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="internalPassword"
+                    placeholder="Enter your password"
+                    style={{ borderRadius: "10px", padding: "10px" }}
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-primary w-100"
+                  style={{ borderRadius: "10px", backgroundColor: "#6dbe45", borderColor: "#6dbe45" }}
+                >
+                  Log In
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
