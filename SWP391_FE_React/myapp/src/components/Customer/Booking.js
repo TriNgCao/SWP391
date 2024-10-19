@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
 const Booking = () => {
