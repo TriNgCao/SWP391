@@ -1,11 +1,13 @@
 package com.swp391.hairsalon.controller;
 
-import com.swp391.hairsalon.pojo.JwtRequest;
-import com.swp391.hairsalon.pojo.JwtResponse;
-import com.swp391.hairsalon.pojo.MyUserDetails;
+import com.swp391.hairsalon.login.GoogleAuthRequest;
+import com.swp391.hairsalon.login.JwtRequest;
+import com.swp391.hairsalon.login.JwtResponse;
+import com.swp391.hairsalon.login.MyUserDetails;
 import com.swp391.hairsalon.security.JwtHelper;
+import com.swp391.hairsalon.login.GoogleTokenVerifierService;
 import com.swp391.hairsalon.service.IAccountService;
-import com.swp391.hairsalon.service.MyUserDetailsService;
+import com.swp391.hairsalon.login.MyUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,12 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
+    @Autowired
+    private GoogleTokenVerifierService googleTokenVerifierService;
 
     @Autowired
     private IAccountService iAccountService;
@@ -51,26 +54,47 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-        
+    @PostMapping("/auth/google")
+    public ResponseEntity<JwtResponse> authenticateGoogleUser(@RequestBody GoogleAuthRequest request) {
+        String idToken = request.getIdToken();
 
-    @PostMapping("/set-password")
-    public ResponseEntity<JwtResponse> setPassword(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        String password = request.get("password");
-
-//        // Cập nhật mật khẩu cho người dùng trong database
-//        myUserDetailsService.updatePassword(email, password);
+        // Xác thực Google ID Token
+        try {
+            String email = googleTokenVerifierService.verifyToken(idToken);
 
 
-        System.out.println(email + " " + password);
-        iAccountService.setPassword(email, password);
-        String token = this.helper.generateToken(email);
+                String token = this.helper.generateToken(email);
 
-        JwtResponse response = JwtResponse.builder()
-                .jwtToken(token)
-                .userName(email).build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+                JwtResponse response = JwtResponse.builder()
+                        .jwtToken(token)
+                        .userName(email)
+                        .build();
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
+
+    
+//    @PostMapping("/set-password")
+//    public ResponseEntity<JwtResponse> setPassword(@RequestBody Map<String, String> request) {
+//        String email = request.get("email");
+//        String password = request.get("password");
+//
+////        // Cập nhật mật khẩu cho người dùng trong database
+////        myUserDetailsService.updatePassword(email, password);
+//
+//
+//        System.out.println(email + " " + password);
+//        iAccountService.setPassword(email, password);
+//        String token = this.helper.generateToken(email);
+//
+//        JwtResponse response = JwtResponse.builder()
+//                .jwtToken(token)
+//                .userName(email).build();
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
 
 
 

@@ -1,7 +1,10 @@
 package com.swp391.hairsalon.controller;
 
+import com.swp391.hairsalon.dto.EmployeeInfo;
 import com.swp391.hairsalon.pojo.Account;
+import com.swp391.hairsalon.pojo.Manager;
 import com.swp391.hairsalon.service.IAccountService;
+//import com.swp391.hairsalon.service.IManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +18,22 @@ public class AccountController {
     @Autowired
     private IAccountService iAccountService;
 
-    @PostMapping("/insert")
+////    @Autowired
+//    private IManagerService iManagerService;
+
+
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public Account saveEmployees(@RequestBody Account account) {
+    public Account saveCustomers(@RequestBody Account account) {
+
         return iAccountService.addAccount(account);
+    }
+
+    @PostMapping("/insert/{salonId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account saveManager(@PathVariable int salonId, @RequestBody Account account) {
+
+        return iAccountService.insertAccount(salonId, account);
     }
 
     @GetMapping("/{id}")
@@ -32,8 +47,8 @@ public class AccountController {
         return ResponseEntity.ok(iAccountService.getAllCustomer());
     }
 
-    @GetMapping("/fetchAllEmployee")
-    public ResponseEntity<List<Account>> getAllEmployees() {
+    @GetMapping("/fetchAllEmployees")
+    public ResponseEntity<List<EmployeeInfo>> getAllEmployees() {
         return ResponseEntity.ok(iAccountService.getAllEmployees());
     }
 

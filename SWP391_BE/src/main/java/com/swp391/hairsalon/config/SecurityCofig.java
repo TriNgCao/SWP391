@@ -2,7 +2,7 @@ package com.swp391.hairsalon.config;
 
 import com.swp391.hairsalon.security.JWTAuthenticationEntryPoint;
 import com.swp391.hairsalon.security.JwtAuthenticationFilter;
-import com.swp391.hairsalon.service.OAuthAuthenticationSuccessHandler;
+import com.swp391.hairsalon.login.OAuthAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,9 +39,9 @@ public class SecurityCofig {
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers("/test").authenticated()
-                                .requestMatchers("/auth/login", "/home", "/login").permitAll()
-                                .anyRequest().authenticated()
+//                                .requestMatchers("/test").authenticated()
+//                                .requestMatchers("/auth/login", "/home", "/login").permitAll()
+                                .anyRequest().permitAll()
                 )
 
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(point))
