@@ -1,13 +1,13 @@
 
 import {Route, Routes } from "react-router-dom";
 
-import Home from "./componets/Customer/Home";
-import Footer from "./componets/Customer/Footer";
-import Navbar from "./componets/Customer/NavBar";
-import AboutUs from "./componets/Customer/AboutUs";
-import Contact from "./componets/Customer/Contact";
-import Services from "./componets/Customer/Services";
-import Booking from "./componets/Customer/Booking";
+import Home from "./components/Customer/Home";
+import Footer from "./components/Customer/Footer";
+import Navbar from "./components/Customer/NavBar";
+import AboutUs from "./components/Customer/AboutUs";
+import Contact from "./components/Customer/Contact";
+import Services from "./components/Customer/Services";
+import Booking from "./components/Customer/Booking";
 
 
 function App() {

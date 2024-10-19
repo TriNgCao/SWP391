@@ -100,94 +100,94 @@ export default function Home() {
         </div>
       </section>
 
-      <section class="ftco-section bg-light">
-      <div class="container">
-        <div class="row justify-content-center pb-5 mb-3">
-          <div class="col-md-7 heading-section text-center">
+      <section className="ftco-section bg-light">
+      <div className="container">
+        <div className="row justify-content-center pb-5 mb-3">
+          <div className="col-md-7 heading-section text-center">
             <h2>Affordable Packages</h2>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="block-7">
+        <div className="row">
+          <div className="col-md-4">
+            <div className="block-7">
               <div
-                class="img"
+                className="img"
                 style={{backgroundImage: 'url(images/pricing-1.jpg)'}}
               ></div>
-              <div class="text-center p-4">
-                <span class="excerpt d-block">Basic Cut</span>
-                <span class="price"
-                  ><sup>$</sup> <span class="number">35</span>
+              <div className="text-center p-4">
+                <span className="excerpt d-block">Basic Cut</span>
+                <span className="price"
+                  ><sup>$</sup> <span className="number">35</span>
                   <sub>/visit</sub></span>
 
-                <ul class="pricing-text mb-5">
+                <ul className="pricing-text mb-5">
                   <li>
-                    <span class="fa fa-check mr-2"></span> Shampoo & Condition
+                    <span className="fa fa-check mr-2"></span> Shampoo & Condition
                   </li>
-                  <li><span class="fa fa-check mr-2"></span> Haircut</li>
+                  <li><span className="fa fa-check mr-2"></span> Haircut</li>
                   <li>
-                    <span class="fa fa-check mr-2"></span> Style Consultation
+                    <span className="fa fa-check mr-2"></span> Style Consultation
                   </li>
-                  <li><span class="fa fa-check mr-2"></span> Blow Dry</li>
+                  <li><span className="fa fa-check mr-2"></span> Blow Dry</li>
                 </ul>
 
-                <Link to="/book" class="btn btn-primary d-block px-2 py-3"
+                <Link to="/book" className="btn btn-primary d-block px-2 py-3"
                   >Book Now</Link>
               </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="block-7">
+          <div className="col-md-4">
+            <div className="block-7">
               <div
-                class="img"
+                className="img"
                 style={{backgroundImage: 'url(images/pricing-1.jpg)'}}
               ></div>
-              <div class="text-center p-4">
-                <span class="excerpt d-block">Basic Cut</span>
-                <span class="price"
-                  ><sup>$</sup> <span class="number">35</span>
+              <div className="text-center p-4">
+                <span className="excerpt d-block">Basic Cut</span>
+                <span className="price"
+                  ><sup>$</sup> <span className="number">35</span>
                   <sub>/visit</sub></span>
 
-                <ul class="pricing-text mb-5">
+                <ul className="pricing-text mb-5">
                   <li>
-                    <span class="fa fa-check mr-2"></span> Shampoo & Condition
+                    <span className="fa fa-check mr-2"></span> Shampoo & Condition
                   </li>
-                  <li><span class="fa fa-check mr-2"></span> Haircut</li>
+                  <li><span className="fa fa-check mr-2"></span> Haircut</li>
                   <li>
-                    <span class="fa fa-check mr-2"></span> Style Consultation
+                    <span className="fa fa-check mr-2"></span> Style Consultation
                   </li>
-                  <li><span class="fa fa-check mr-2"></span> Blow Dry</li>
+                  <li><span className="fa fa-check mr-2"></span> Blow Dry</li>
                 </ul>
 
-                <Link to="/book" class="btn btn-primary d-block px-2 py-3"
+                <Link to="/book" className="btn btn-primary d-block px-2 py-3"
                   >Book Now</Link>
               </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="block-7">
+          <div className="col-md-4">
+            <div className="block-7">
               <div
-                class="img"
+                className="img"
                 style={{backgroundImage: 'url(images/pricing-1.jpg)'}}
               ></div>
-              <div class="text-center p-4">
-                <span class="excerpt d-block">Basic Cut</span>
-                <span class="price"
-                  ><sup>$</sup> <span class="number">35</span>
+              <div className="text-center p-4">
+                <span className="excerpt d-block">Basic Cut</span>
+                <span className="price"
+                  ><sup>$</sup> <span className="number">35</span>
                   <sub>/visit</sub></span>
 
-                <ul class="pricing-text mb-5">
+                <ul className="pricing-text mb-5">
                   <li>
-                    <span class="fa fa-check mr-2"></span> Shampoo & Condition
+                    <span className="fa fa-check mr-2"></span> Shampoo & Condition
                   </li>
-                  <li><span class="fa fa-check mr-2"></span> Haircut</li>
+                  <li><span className="fa fa-check mr-2"></span> Haircut</li>
                   <li>
-                    <span class="fa fa-check mr-2"></span> Style Consultation
+                    <span className="fa fa-check mr-2"></span> Style Consultation
                   </li>
-                  <li><span class="fa fa-check mr-2"></span> Blow Dry</li>
+                  <li><span className="fa fa-check mr-2"></span> Blow Dry</li>
                 </ul>
 
-                <Link to="/book" class="btn btn-primary d-block px-2 py-3"
+                <Link to="/book" className="btn btn-primary d-block px-2 py-3"
                   >Book Now</Link>
               </div>
             </div>
