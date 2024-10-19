@@ -1,13 +1,11 @@
 package com.swp391.hairsalon.service;
 
-import com.swp391.hairsalon.pojo.SalonService;
+import com.swp391.hairsalon.pojo.Salon;
 
 import java.util.List;
 
 public interface ISalonService {
-    List<SalonService> getServiceByPrice(double minPrice, double maxPrice);
-    List<SalonService> getServiceByName(String serviceName);
-    List<SalonService> getAllServices();
-    SalonService addService(SalonService service);
-    SalonService updateCombo(Long serviceId, SalonService service);
+    public Salon createSalon(Salon salon);
+    public List<Salon> getAllSalons();
+    public Salon getSalonById(int id);
 }
