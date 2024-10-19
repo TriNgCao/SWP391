@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import UserIconDropdown from "./Dropdown";
-import { FaGoogle, FaLock } from "react-icons/fa";
+import CustomerLoginModal from "./CustomerLoginModal";
+import LoginButton from "./LoginButton";
+
 export default function Navbar() {
+
+
   return (
     <div>
       <nav
@@ -12,7 +16,7 @@ export default function Navbar() {
           <Link
             className="navbar-brand"
             to="/"
-            style={{ marginRight: "70px", marginLeft: "-30px" }}
+            style={{ marginRight: "10px", marginLeft: "-80px" }}
           >
             <span>
               <img style={{ width: "15%" }} src="images/logo.png" alt="" />
@@ -36,7 +40,7 @@ export default function Navbar() {
             className="collapse navbar-collapse justify-content-center"
             id="ftco-nav"
           >
-            <ul className="navbar-nav ml-auto">
+            <ul className="navbar-nav ml-auto" style={{marginRight: '110px'}}>
               <li className="nav-item">
                 <Link to="/" className="nav-link">
                   Home
@@ -74,18 +78,10 @@ export default function Navbar() {
             </ul>
           </div>
 
-          <UserIconDropdown />
-          <button
-            className="login-button"
-            type="button"
-            data-bs-toggle="modal"
-            data-bs-target="#loginSelectionModal"
-          >
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <FaLock style={{ marginRight: "8px" }} />
-              <span style={{ fontSize: "16px", fontWeight: "bold" }}>Login</span>
-            </div>
-          </button>
+          <div>
+        <UserIconDropdown/>
+        <LoginButton/>
+    </div>
         </div>
       </nav>
 
@@ -158,139 +154,13 @@ export default function Navbar() {
 
       {/* <!-- Login for Customer Modal --> */}
       <div
-        className="modal fade"
-        id="customerLoginModal"
-        tabIndex="-1"
-        aria-labelledby="customerLoginModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div
-            className="modal-content"
-            style={{
-              borderRadius: "15px",
-              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            <div
-              className="modal-header"
-              style={{
-                backgroundColor: "#e0dede",
-                borderRadius: "15px 15px 0 0",
-              }}
-            >
-              <h5
-                className="modal-title text-center w-100"
-                id="loginModalLabel"
-              >
-                <img
-                  src="images/logo.png"
-                  alt="salon icon"
-                  style={{ width: "50px", marginRight: "10px" }}
-                />
-                Sign In to Leopard Salon
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div
-              className="modal-body"
-              style={{ backgroundColor: "#f7f7f7", padding: "30px" }}
-            >
-              <p
-                className="text-center"
-                style={{ fontStyle: "italic", fontSize: "16px" }}
-              >
-                Welcome to Leopard Salon. Sign in and enjoy booking our
-                exclusive services today!
-              </p>
-              <form>
-                <div className="mb-3">
-                  <label htmlFor="username" className="form-label">
-                    Phone Number
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="username"
-                    placeholder="Enter phone number"
-                    style={{ borderRadius: "10px", padding: "10px" }}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    id="password"
-                    placeholder="Enter your password"
-                    style={{ borderRadius: "10px", padding: "10px" }}
-                  />
-                </div>
-                <div className="form-check mb-3">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id="rememberMe"
-                  />
-                  <label className="form-check-label" htmlFor="rememberMe">
-                    Remember me
-                  </label>
-                </div>
-                <div className="d-flex justify-content-between">
-                  <Link to="#" className="text-decoration-none">
-                    Forgot Password?
-                  </Link>
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-primary w-100 mt-3"
-                  style={{
-                    borderRadius: "10px",
-                    backgroundColor: "#6dbe45",
-                    borderColor: "#6dbe45",
-                  }}
-                >
-                  Log In
-                </button>
-              </form>
-              <div className="text-center mt-3">
-                <p>or sign in with</p>
-                <div className="d-flex justify-content-center">
-                  <Link
-                    to="#"
-                    className="btn btn-danger mx-4 d-flex justify-content-center align-items-center"
-                    style={{
-                      borderRadius: "50%",
-                      width: "50px",
-                      height: "50px",
-                    }}
-                  >
-                    <FaGoogle />
-                  </Link>
-                </div>
-              </div>
-              <div className="text-center mt-3">
-                Don't Have Account Yet?
-                <Link
-                  to="#"
-                  className="text-decoration-none"
-                  data-bs-toggle="modal"
-                  data-bs-target="#registerCustomerModal"
-                  data-bs-dismiss="modal"
-                >
-                  Register Now
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
+      className="modal fade"
+      id="customerLoginModal"
+      tabIndex="-1"
+      aria-labelledby="customerLoginModalLabel"
+      aria-hidden="true"
+    >
+      <CustomerLoginModal/>
       </div>
 
       {/* <!-- Register for Customer Modal --> */}

@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
 import { RiVipDiamondLine } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "./AuthContext";
 
 const UserIconDropdown = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { hasToken, setHasToken } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleMouseEnter = () => {
     setIsDropdownOpen(true);
@@ -15,14 +18,24 @@ const UserIconDropdown = () => {
     setIsDropdownOpen(false);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setHasToken(false);
+    setIsDropdownOpen(false); // Đảm bảo dropdown được đóng khi logout
+    navigate("/");
+  };
+
+  if (!hasToken) {
+    return null; // Không render gì nếu không có token
+  }
+
   return (
     <li
       className="nav-item dropdown d-flex align-items-center"
       style={{ marginLeft: "50px", position: "relative" }}
       onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave} 
+      onMouseLeave={handleMouseLeave}
     >
-      {/* User Icon */}
       <Link to="#" className="nav-link" id="userDropdown">
         <img
           src="images/user.png"
@@ -45,15 +58,15 @@ const UserIconDropdown = () => {
             display: "block",
           }}
         >
-          <Link className="dropdown-item" to="profile.html">
-          <FaRegUserCircle/> View Profile
+          <Link className="dropdown-item" to="/profile">
+            <FaRegUserCircle /> View Profile
           </Link>
-          <Link className="dropdown-item" to="#">
-          <RiVipDiamondLine /> Loyal Point
+          <Link className="dropdown-item" to="/loyalty">
+            <RiVipDiamondLine /> Loyal Point
           </Link>
-          <Link className="dropdown-item" to="#">
-          <HiOutlineLogout /> Logout
-          </Link>
+          <button className="dropdown-item" onClick={handleLogout}>
+            <HiOutlineLogout /> Logout
+          </button>
         </div>
       )}
     </li>

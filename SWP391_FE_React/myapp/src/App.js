@@ -8,11 +8,13 @@ import AboutUs from "./components/Customer/AboutUs";
 import Contact from "./components/Customer/Contact";
 import Services from "./components/Customer/Services";
 import Booking from "./components/Customer/Booking";
+import { AuthProvider } from "./components/Customer/AuthContext";
 
 
 function App() {
   return (
     <div>
+    <AuthProvider>
       <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -22,6 +24,7 @@ function App() {
           <Route path="/booking" element={<Booking />} />
         </Routes>
         <Footer />
+        </AuthProvider>
     </div>
   );
 }
