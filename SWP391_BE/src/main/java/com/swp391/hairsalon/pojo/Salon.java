@@ -19,19 +19,26 @@ public class Salon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
     @Setter
+    @Column(name = "salon_id")
     private int salonId;
+
     @Getter
     @Setter
+    @Column(name = "salon_name")
     private String salonName;
+
     @Getter
     @Setter
+    @Column(name = "salon_address")
     private String salonAddress;
+
     @Getter
     @Setter
+    @Column(name = "status")
     private boolean salonStatus;
 
 
-    @OneToOne(mappedBy = "salon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "salon", cascade = CascadeType.ALL)
     private Manager manager;
 
     @OneToMany(mappedBy = "salon", cascade = CascadeType.ALL, orphanRemoval = true)

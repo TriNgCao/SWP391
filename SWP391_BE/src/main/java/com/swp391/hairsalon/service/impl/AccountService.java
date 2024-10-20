@@ -1,8 +1,11 @@
-package com.swp391.hairsalon.service;
+package com.swp391.hairsalon.service.impl;
 
-import com.swp391.hairsalon.dto.EmployeeInfo;
+import com.swp391.hairsalon.dto.EmployeeInfoDTO;
 import com.swp391.hairsalon.pojo.*;
 import com.swp391.hairsalon.repository.*;
+import com.swp391.hairsalon.service.definitions.IAccountService;
+import com.swp391.hairsalon.service.definitions.ISalonService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -79,7 +82,7 @@ public class AccountService implements IAccountService {
 
 
     @Override
-    public List<EmployeeInfo> getAllEmployees() {
+    public List<EmployeeInfoDTO> getAllEmployees() {
 
         return iAccountRepository.getAllEmployees();
     }
