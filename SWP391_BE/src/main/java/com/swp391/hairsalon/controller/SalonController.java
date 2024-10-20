@@ -1,7 +1,8 @@
 package com.swp391.hairsalon.controller;
 
 import com.swp391.hairsalon.pojo.Salon;
-import com.swp391.hairsalon.service.ISalonService;
+import com.swp391.hairsalon.service.definitions.ISalonService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,9 @@
-package com.swp391.hairsalon.service;
+package com.swp391.hairsalon.service.impl;
 
 import com.swp391.hairsalon.pojo.SalonService;
 import com.swp391.hairsalon.repository.ISalonServiceRepository;
+import com.swp391.hairsalon.service.definitions.ISalonServiceService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,5 +48,10 @@ public class SalonServiceService implements ISalonServiceService {
             return salonServiceRepository.save(updatedService);
         }
         return null; // Or throw an exception if service not found
+    }
+
+    @Override
+    public SalonService getServiceById(Long serviceId) {
+        return salonServiceRepository.getReferenceById(serviceId);
     }
 }
