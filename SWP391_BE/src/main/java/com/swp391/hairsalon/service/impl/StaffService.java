@@ -1,7 +1,9 @@
-package com.swp391.hairsalon.service;
+package com.swp391.hairsalon.service.impl;
 
 import com.swp391.hairsalon.pojo.Staff;
 import com.swp391.hairsalon.repository.IStaffRepository;
+import com.swp391.hairsalon.service.definitions.IStaffService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

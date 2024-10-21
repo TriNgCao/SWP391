@@ -1,3 +1,4 @@
+package com.swp391.hairsalon.service.definitions;
 //package com.swp391.hairsalon.service;
 //
 //import com.swp391.hairsalon.pojo.Manager;
