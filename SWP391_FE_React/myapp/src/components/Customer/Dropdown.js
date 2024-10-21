@@ -26,7 +26,7 @@ const UserIconDropdown = () => {
   };
 
   if (!hasToken) {
-    return null; // Không render gì nếu không có token
+    return null;
   }
 
   return (
