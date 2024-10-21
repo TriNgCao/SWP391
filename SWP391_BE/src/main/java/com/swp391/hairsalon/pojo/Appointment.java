@@ -29,19 +29,19 @@ public class Appointment {
     @Column(name = "appointment_id")
     private int id;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "cus_id")
     private Customer customer;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
     @JoinColumn(name = "stylist_id") // Khóa ngoại liên kết với Stylist
     private Stylist stylist;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "branch_id")
     private Salon branch;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "appointment_service", // Tên bảng trung gian
             joinColumns = @JoinColumn(name = "appointment_id"), // Khóa ngoại cho Appointment
             inverseJoinColumns = @JoinColumn(name = "service_id") // Khóa ngoại cho SalonService
@@ -142,6 +142,7 @@ public class Appointment {
 
     public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
+        this.endTime = calculateEndTime();
     }
 
     public LocalTime getEndTime() {
