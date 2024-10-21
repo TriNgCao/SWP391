@@ -34,7 +34,7 @@ public class Customer {
     private Account account;
 
     
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore 
     private List<Appointment> appointments;
 }
