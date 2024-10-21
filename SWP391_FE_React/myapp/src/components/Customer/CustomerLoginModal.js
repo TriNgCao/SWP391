@@ -10,10 +10,23 @@ const CustomerLoginModal = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Hàm kiểm tra email hợp lệ
+  const validateEmail = (email) => {
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(email);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // Kiểm tra email hợp lệ trước khi gửi
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address.');
+      setLoading(false);
+      return; // Không cho phép submit nếu email không hợp lệ
+    }
 
     try {
       const response = await axios.post('https://reqres.in/api/login', {
@@ -23,8 +36,8 @@ const CustomerLoginModal = () => {
 
       // Lưu token vào localStorage
       localStorage.setItem('token', response.data.token);
-      window.dispatchEvent(new Event("storage"));
-      
+      window.dispatchEvent(new Event('storage'));
+
       // Đóng modal
       const closeButton = document.querySelector('#customerLoginModal .btn-close');
       if (closeButton) {
@@ -35,10 +48,9 @@ const CustomerLoginModal = () => {
 
       // Điều hướng về trang chủ hoặc trang mong muốn
       navigate('/');
-      
     } catch (error) {
       // Xử lý lỗi khi đăng nhập thất bại
-      setError('Login failed. Please check your credentials.');
+      setError('Email or Password Incorrect.');
       setLoading(false);
     }
   };
@@ -82,8 +94,7 @@ const CustomerLoginModal = () => {
             className="text-center"
             style={{ fontStyle: 'italic', fontSize: '16px' }}
           >
-            Welcome to Leopard Salon. Sign in and enjoy booking our exclusive
-            services today!
+            Welcome to Leopard Salon. Sign in and enjoy booking our exclusive services today!
           </p>
           <form onSubmit={handleLogin}>
             <div className="mb-3">
@@ -92,7 +103,7 @@ const CustomerLoginModal = () => {
               </label>
               <input
                 type="text"
-                className="form-control"
+                className={`form-control ${!validateEmail(email) && email ? 'is-invalid' : ''}`} // Add class for invalid email
                 id="email"
                 placeholder="Enter your email"
                 style={{ borderRadius: '10px', padding: '10px' }}
@@ -140,7 +151,7 @@ const CustomerLoginModal = () => {
                 backgroundColor: '#6dbe45',
                 borderColor: '#6dbe45',
               }}
-              disabled={loading}
+              disabled={loading} // Không cần disable nút khi email sai, chỉ kiểm tra khi submit
             >
               {loading ? 'Logging in...' : 'Log In'}
             </button>
@@ -170,7 +181,7 @@ const CustomerLoginModal = () => {
               data-bs-target="#registerCustomerModal"
               data-bs-dismiss="modal"
             >
-              Register Now
+              &nbsp; <b>Register Now</b>
             </Link>
           </div>
         </div>
