@@ -1,4 +1,4 @@
-package com.swp391.hairsalon.service;
+package com.swp391.hairsalon.service.definitions;
 
 import com.swp391.hairsalon.pojo.SalonService;
 
@@ -10,4 +10,5 @@ public interface ISalonServiceService {
     List<SalonService> getAllServices();
     SalonService addService(SalonService service);
     SalonService updateCombo(Long serviceId, SalonService service);
+    SalonService getServiceById(Long serviceId);
 }

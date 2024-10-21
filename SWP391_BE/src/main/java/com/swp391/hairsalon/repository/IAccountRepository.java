@@ -1,6 +1,6 @@
 package com.swp391.hairsalon.repository;
 
-import com.swp391.hairsalon.dto.EmployeeInfo;
+import com.swp391.hairsalon.dto.EmployeeInfoDTO;
 import com.swp391.hairsalon.pojo.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,7 +19,7 @@ public interface IAccountRepository extends JpaRepository<Account, String> {
 //            "LEFT JOIN Stylist s2 ON a.account_id = s2.account_id")
     @Query("select a.name, a.role,  COALESCE(s1.salary, s2.salary) AS salary, a.active from Account a left join Staff s1 on a.id = s1.account.id " +
                                    "left join Stylist s2 on a.id = s2.account.id")
-    List<EmployeeInfo> getAllEmployees();
+    List<EmployeeInfoDTO> getAllEmployees();
 
     public List<Account> findByRole(int role);
 

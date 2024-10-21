@@ -1,8 +1,9 @@
 package com.swp391.hairsalon.security;
 
 import com.swp391.hairsalon.login.MyUserDetails;
-import com.swp391.hairsalon.service.IAccountService;
 import com.swp391.hairsalon.login.MyUserDetailsService;
+import com.swp391.hairsalon.service.definitions.IAccountService;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
