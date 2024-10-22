@@ -1,9 +1,10 @@
 package com.swp391.hairsalon.controller;
 
-import com.swp391.hairsalon.dto.EmployeeInfo;
+import com.swp391.hairsalon.dto.EmployeeInfoDTO;
 import com.swp391.hairsalon.pojo.Account;
 import com.swp391.hairsalon.pojo.Manager;
-import com.swp391.hairsalon.service.IAccountService;
+import com.swp391.hairsalon.service.definitions.IAccountService;
+
 //import com.swp391.hairsalon.service.IManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class AccountController {
     }
 
     @GetMapping("/fetchAllEmployees")
-    public ResponseEntity<List<EmployeeInfo>> getAllEmployees() {
+    public ResponseEntity<List<EmployeeInfoDTO>> getAllEmployees() {
         return ResponseEntity.ok(iAccountService.getAllEmployees());
     }
 

@@ -14,11 +14,11 @@ public class Manager {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int managerId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne()
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne()
     @JoinColumn(name = "salonId")
     private Salon salon;
 }

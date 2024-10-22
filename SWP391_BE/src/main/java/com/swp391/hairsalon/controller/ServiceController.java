@@ -1,7 +1,8 @@
 package com.swp391.hairsalon.controller;
 
 import com.swp391.hairsalon.pojo.SalonService;
-import com.swp391.hairsalon.service.SalonServiceService;
+import com.swp391.hairsalon.service.impl.SalonServiceService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

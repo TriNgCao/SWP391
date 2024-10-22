@@ -6,48 +6,68 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.util.List;
+
 
 @Entity
 @NoArgsConstructor
-@Getter
-@Setter
+
 public class Account {
 
     @Id
     @Column (name = "account_id")
+    @Getter
+    @Setter
     private String id;
 
+    @Getter
+    @Setter
     @Column (name = "name", nullable = true)
     private String name;
 
+    @Getter
+    @Setter
     @Column (name = "password", nullable = true)
     private String password;
 
+    @Getter
+    @Setter
     @Column (name = "email", nullable = true)
     private String email;
 
+    @Getter
+    @Setter
     @Column (name = "phone_number", nullable = true)
     private String phone;
 
+    @Getter
+    @Setter
     @Column (name = "role")
     private int role;
 
+    @Getter
+    @Setter
     @Column (name = "status")
     private boolean active;
 
+    @Getter
+    @Setter
     @Column (name = "register_date", nullable = true)
     private Date registerDate;
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Notification> notifications;
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Customer customer;
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Manager manager;
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Staff staff;
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Stylist stylist;
 }

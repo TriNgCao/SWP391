@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class EmployeeInfo {
+public class EmployeeInfoDTO {
     private String name;
     private int role;
     private int salary;

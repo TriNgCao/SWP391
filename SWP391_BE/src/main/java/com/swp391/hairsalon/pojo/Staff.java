@@ -17,7 +17,7 @@ public class Staff {
     private int satffId;
     private int salary;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne()
     @JoinColumn(name = "account_id")
     private Account account;
 

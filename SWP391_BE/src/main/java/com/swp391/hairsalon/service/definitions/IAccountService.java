@@ -1,13 +1,13 @@
-package com.swp391.hairsalon.service;
+package com.swp391.hairsalon.service.definitions;
 
-import com.swp391.hairsalon.dto.EmployeeInfo;
+import com.swp391.hairsalon.dto.EmployeeInfoDTO;
 import com.swp391.hairsalon.pojo.Account;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IAccountService {
-    public List<EmployeeInfo> getAllEmployees();
+    public List<EmployeeInfoDTO> getAllEmployees();
     public List<Account> getAllCustomer();
     public Account getAccountById(String id);
     public Account addAccount(Account account);
