@@ -9,11 +9,13 @@ import Contact from "./components/Customer/Contact";
 import Services from "./components/Customer/Services";
 import Booking from "./components/Customer/Booking";
 import { AuthProvider } from "./components/Customer/AuthContext";
+import { ToastContainer } from "react-toastify";
 
 
 function App() {
   return (
     <div>
+    <ToastContainer />
     <AuthProvider>
       <Navbar />
         <Routes>

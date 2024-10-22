@@ -10,6 +10,7 @@ const LoginButton = () => {
   }
 
   return (
+    <div>
     <button
       className="login-button"
       type="button"
@@ -21,6 +22,7 @@ const LoginButton = () => {
         <span style={{ fontSize: "16px", fontWeight: "bold" }}>Login</span>
       </div>
     </button>
+    </div>
   );
 };
 

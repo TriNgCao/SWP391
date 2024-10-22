@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import UserIconDropdown from "./Dropdown";
 import CustomerLoginModal from "./CustomerLoginModal";
 import LoginButton from "./LoginButton";
+import CustomerRegisterModal from "./CustomerRegisterModal";
 
 export default function Navbar() {
 
@@ -153,15 +154,15 @@ export default function Navbar() {
       </div>
 
       {/* <!-- Login for Customer Modal --> */}
-      <div
-      className="modal fade"
-      id="customerLoginModal"
-      tabIndex="-1"
-      aria-labelledby="customerLoginModalLabel"
-      aria-hidden="true"
-    >
-      <CustomerLoginModal/>
-      </div>
+        <div
+        className="modal fade"
+        id="customerLoginModal"
+        tabIndex="-1"
+        aria-labelledby="customerLoginModalLabel"
+        aria-hidden="true"
+      >
+        <CustomerLoginModal/>
+        </div>
 
       {/* <!-- Register for Customer Modal --> */}
       <div
@@ -171,125 +172,7 @@ export default function Navbar() {
         aria-labelledby="registerCustomerModalLabel"
         aria-hidden="true"
       >
-        <div className="modal-dialog modal-dialog-centered">
-          <div
-            className="modal-content"
-            style={{
-              borderRadius: "15px",
-              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            <div
-              className="modal-header"
-              style={{
-                backgroundColor: "#e0dede",
-                borderRadius: "15px 15px 0 0",
-              }}
-            >
-              <h5
-                className="modal-title text-center w-100"
-                id="registerModalLabel"
-              >
-                <img
-                  src="images/logo.png"
-                  alt="salon icon"
-                  style={{ width: "50px", marginRight: "10px" }}
-                />
-                Register to Leopard Salon
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div
-              className="modal-body"
-              style={{ backgroundColor: "#f7f7f7", padding: "30px" }}
-            >
-              <p
-                className="text-center"
-                style={{ fontStyle: "italic", fontSize: "16px" }}
-              >
-                Welcome to Leopard Salon. Register to use our awesome service!
-              </p>
-              <form>
-                <div className="mb-3">
-                  <label htmlFor="customerName" className="form-label">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="customerName"
-                    placeholder="Enter your full name"
-                    style={{ borderRadius: "10px", padding: "10px" }}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="customerEmail" className="form-label">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="customerEmail"
-                    placeholder="Enter your email"
-                    style={{ borderRadius: "10px", padding: "10px" }}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="customerPhone" className="form-label">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    className="form-control"
-                    id="customerPhone"
-                    placeholder="Enter your phone number"
-                    style={{ borderRadius: "10px", padding: "10px" }}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="customerPassword" className="form-label">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    id="customerPassword"
-                    placeholder="Enter your password"
-                    style={{ borderRadius: "10px", padding: "10px" }}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="confirmPassword" className="form-label">
-                    Confirm Password
-                  </label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    id="confirmPassword"
-                    placeholder="Confirm your password"
-                    style={{ borderRadius: "10px", padding: "10px" }}
-                  />
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-primary w-100"
-                  style={{
-                    borderRadius: "10px",
-                    backgroundColor: "#6dbe45",
-                    borderColor: "#6dbe45",
-                  }}
-                >
-                  Register
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
+        <CustomerRegisterModal/>
       </div>
 
       {/* <!-- Login for Internal Modal --> */}
