@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
+import BreadcrumbsHeader from "../../components/Dashboard/breadcum";
 
 const AdminLayout = () => {
   return (
@@ -8,6 +9,7 @@ const AdminLayout = () => {
       <div style={managerLayoutStyle}>
         <AdminSidebar />
         <div style={managerContentStyle}>
+          <BreadcrumbsHeader />
           <Outlet />
         </div>
       </div>
