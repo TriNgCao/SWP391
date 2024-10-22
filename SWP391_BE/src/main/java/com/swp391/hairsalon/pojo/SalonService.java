@@ -3,29 +3,42 @@ package com.swp391.hairsalon.pojo;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 @Table(name = "SalonService")
 public class SalonService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id")
-    private int serviceId;
+    @Getter
+    @Setter
+    @Column(name = "service_id")
+    private Long serviceId;
 
-    @Column(name = "Name")
+    @Getter
+    @Setter
+    @Column(name = "service_name")
     private String serviceName;
 
-    @Column(name = "Description")
+    @Getter
+    @Setter
+    @Column(name = "description")
     private String serviceDescription;
 
-    @Column(name = "Price")
+    @Getter
+    @Setter
+    @Column(name = "price")
     private double servicePrice;
 
-    @Column(name = "Duration")
+    @Getter
+    @Setter
+    @Column(name = "max_time")
     private int maxTime;
+
+    
+    @ManyToMany(mappedBy = "services")
+    private List<Appointment> appointments;
 }
