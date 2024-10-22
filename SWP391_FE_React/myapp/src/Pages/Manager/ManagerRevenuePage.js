@@ -25,6 +25,7 @@ import {
   LineElement,
   Title,
 } from "chart.js";
+import ManagerTransaction from "./ManagerTransaction";
 
 // Register necessary elements for Chart.js
 ChartJS.register(
@@ -233,6 +234,7 @@ const ManageRevenuePage = () => {
           Download Reports
         </Button>
       </Box>
+      <ManagerTransaction />
     </Box>
   );
 };

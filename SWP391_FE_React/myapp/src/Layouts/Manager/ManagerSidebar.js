@@ -35,11 +35,11 @@ const ManagerSidebar = () => {
             <PaidIcon /> Manage Payroll
           </Link>
         </li>
-        <li style={listItemStyle}>
+        {/* <li style={listItemStyle}>
           <Link to="manager-transaction" style={linkStyle}>
             <AccountBalanceIcon /> Manage Transaction
           </Link>
-        </li>
+        </li> */}
         <li style={listItemStyle}>
           <Link to="manager-appointments" style={linkStyle}>
             <SupervisorAccountIcon /> Manage Appointmnets
