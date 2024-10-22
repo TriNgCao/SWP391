@@ -1,5 +1,104 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+
 export default function Services() {
+  const [services, setServices] = useState([]);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await new Promise((resolve) =>
+          setTimeout(() => {
+            resolve({
+              data: [
+                {
+                  id: 1,
+                  title: "Haircut Basic",
+                  description:
+                    "A simple yet stylish haircut to keep you looking fresh.",
+                  price: "$37",
+                  image: "images/image_1.jpg",
+                  category: "Hair Cutting",
+                },
+                {
+                  id: 2,
+                  title: "Hair Color Vivid",
+                  description:
+                    "Bold hair color to express yourself.",
+                  price: "$50",
+                  image: "images/image_2.jpg",
+                  category: "Hair Coloring",
+                },
+                {
+                  id: 3,
+                  title: "Deep Conditioning",
+                  description:
+                    "Nourishing treatment for healthy hair.",
+                  price: "$40",
+                  image: "images/image_3.jpg",
+                  category: "Hair Treatment",
+                },
+              ],
+            });
+          }, 1000)
+        );
+        setServices(response.data);
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
+  const hairCuttingServices = services.filter(
+    (service) => service.category === "Hair Cutting"
+  );
+  const hairColoringServices = services.filter(
+    (service) => service.category === "Hair Coloring"
+  );
+  const hairTreatmentServices = services.filter(
+    (service) => service.category === "Hair Treatment"
+  );
+
+  const renderServices = (services) =>
+    services.map((service) => (
+      <div className="col-md-4 mb-4" key={service.id}>
+        <div
+          className="card text-center"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            minHeight: "350px",
+          }}
+        >
+          <img
+            src={service.image}
+            className="card-img-top"
+            alt={service.title}
+            style={{ objectFit: "cover", height: "150px" }}
+          />
+          <div className="card-body">
+            <h5 className="card-title">{service.title}</h5>
+            <p className="card-text" style={{ flexGrow: 1 }}>
+              {service.description}
+            </p>
+            <p
+              className="card-price"
+              style={{
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+                color: "#d9534f",
+              }}
+            >
+              Price: {service.price}
+            </p>
+            <button className="btn btn-primary">Book Now</button>
+          </div>
+        </div>
+      </div>
+    ));
+
   return (
     <div>
       <section className="ftco-section bg-light">
@@ -116,10 +215,7 @@ export default function Services() {
             aria-labelledby="cuttingWomenModalLabel"
             aria-hidden="true"
           >
-            <div
-              className="modal-dialog"
-              style={{ maxWidth: "70vw" }}
-            >
+            <div className="modal-dialog" style={{ maxWidth: "70vw" }}>
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title" id="cuttingWomenModalLabel">
@@ -135,45 +231,7 @@ export default function Services() {
                 <div className="modal-body">
                   <div className="container">
                     <div className="row">
-                      {/* Service 1 */}
-                      <div className="col-md-4 mb-4">
-                        <div
-                          className="card text-center"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: "350px",
-                          }}
-                        >
-                          <img
-                            src="images/image_1.jpg"
-                            className="card-img-top"
-                            alt="Service 1"
-                            style={{ objectFit: "cover", height: "150px" }}
-                          />
-                          <div className="card-body">
-                            <h5 className="card-title">Haircut Basic</h5>
-                            <p className="card-text" style={{ flexGrow: 1 }}>
-                              A simple yet stylish haircut to keep you looking
-                              fresh.
-                            </p>
-                            <p
-                              className="card-price"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1.2rem",
-                                color: "#d9534f",
-                              }}
-                            >
-                              Price: $30
-                            </p>
-                            <button className="btn btn-primary">
-                              Book Now
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                      {renderServices(hairCuttingServices)}
                     </div>
                   </div>
                 </div>
@@ -198,10 +256,7 @@ export default function Services() {
             aria-labelledby="coloringModalLabel"
             aria-hidden="true"
           >
-            <div
-              className="modal-dialog"
-              style={{ maxWidth: "70vw" }}
-            >
+            <div className="modal-dialog" style={{ maxWidth: "70vw" }}>
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title" id="coloringModalLabel">
@@ -216,47 +271,7 @@ export default function Services() {
                 </div>
                 <div className="modal-body">
                   <div className="container">
-                    <div className="row">
-                      {/* Service 1 */}
-                      <div className="col-md-4 mb-4">
-                        <div
-                          className="card text-center"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: "350px",
-                          }}
-                        >
-                          <img
-                            src="images/image_1.jpg"
-                            className="card-img-top"
-                            alt="Service 1"
-                            style={{ objectFit: "cover", height: "150px" }}
-                          />
-                          <div className="card-body">
-                            <h5 className="card-title">Haircut Basic</h5>
-                            <p className="card-text" style={{ flexGrow: 1 }}>
-                              A simple yet stylish haircut to keep you looking
-                              fresh.
-                            </p>
-                            <p
-                              className="card-price"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1.2rem",
-                                color: "#d9534f",
-                              }}
-                            >
-                              Price: $30
-                            </p>
-                            <button className="btn btn-primary">
-                              Book Now
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <div className="row">{renderServices(hairColoringServices)}</div>
                   </div>
                 </div>
                 <div className="modal-footer">
@@ -280,10 +295,7 @@ export default function Services() {
             aria-labelledby="treatmentModalLabel"
             aria-hidden="true"
           >
-            <div
-              className="modal-dialog"
-              style={{ maxWidth: "70vw" }}
-            >
+            <div className="modal-dialog" style={{ maxWidth: "70vw" }}>
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title" id="treatmentModalLabel">
@@ -298,47 +310,7 @@ export default function Services() {
                 </div>
                 <div className="modal-body">
                   <div className="container">
-                    <div className="row">
-                      {/* Service 1 */}
-                      <div className="col-md-4 mb-4">
-                        <div
-                          className="card text-center"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: "350px",
-                          }}
-                        >
-                          <img
-                            src="images/image_1.jpg"
-                            className="card-img-top"
-                            alt="Service 1"
-                            style={{ objectFit: "cover", height: "150px" }}
-                          />
-                          <div className="card-body">
-                            <h5 className="card-title">Haircut Basic</h5>
-                            <p className="card-text" style={{ flexGrow: 1 }}>
-                              A simple yet stylish haircut to keep you looking
-                              fresh.
-                            </p>
-                            <p
-                              className="card-price"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1.2rem",
-                                color: "#d9534f",
-                              }}
-                            >
-                              Price: $30
-                            </p>
-                            <button className="btn btn-primary">
-                              Book Now
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <div className="row">{renderServices(hairTreatmentServices)}</div>
                   </div>
                 </div>
                 <div className="modal-footer">
