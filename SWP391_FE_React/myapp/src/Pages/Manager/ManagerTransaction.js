@@ -88,7 +88,7 @@ const ManagerTransaction = () => {
       </Typography>
 
       {/* Filter Section */}
-      <Grid container spacing={2} sx={{ mb: 2 }}>
+      {/* <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid item xs={12} sm={3}>
           <FormControl fullWidth>
             <InputLabel>Status</InputLabel>
@@ -146,7 +146,7 @@ const ManagerTransaction = () => {
             </Select>
           </FormControl>
         </Grid>
-      </Grid>
+      </Grid> */}
 
       {/* Add Income and Expense Buttons */}
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
