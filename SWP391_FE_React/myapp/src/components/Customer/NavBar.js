@@ -38,7 +38,7 @@ export default function Navbar() {
           >
             <ul className="navbar-nav ml-auto">
               <li className="nav-item">
-                <Link to="/" className="nav-link">
+                <Link to="/home" className="nav-link">
                   Home
                 </Link>
               </li>
@@ -83,7 +83,9 @@ export default function Navbar() {
           >
             <div style={{ display: "flex", alignItems: "center" }}>
               <FaLock style={{ marginRight: "8px" }} />
-              <span style={{ fontSize: "16px", fontWeight: "bold" }}>Login</span>
+              <span style={{ fontSize: "16px", fontWeight: "bold" }}>
+                Login
+              </span>
             </div>
           </button>
         </div>
