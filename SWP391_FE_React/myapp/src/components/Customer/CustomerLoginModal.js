@@ -10,7 +10,6 @@ const CustomerLoginModal = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Hàm kiểm tra email hợp lệ
   const validateEmail = (email) => {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailPattern.test(email);
@@ -21,11 +20,10 @@ const CustomerLoginModal = () => {
     setLoading(true);
     setError('');
 
-    // Kiểm tra email hợp lệ trước khi gửi
     if (!validateEmail(email)) {
       setError('Please enter a valid email address.');
       setLoading(false);
-      return; // Không cho phép submit nếu email không hợp lệ
+      return;
     }
 
     try {
@@ -34,22 +32,19 @@ const CustomerLoginModal = () => {
         password: password,
       });
 
-      // Lưu token vào localStorage
-      localStorage.setItem('token', response.data.token);
+
+      localStorage.setItem('token', response.data.token); //save token to local storage
       window.dispatchEvent(new Event('storage'));
 
-      // Đóng modal
       const closeButton = document.querySelector('#customerLoginModal .btn-close');
       if (closeButton) {
-        closeButton.click(); // Kích hoạt nút đóng modal
+        closeButton.click();
       }
 
       setLoading(false);
 
-      // Điều hướng về trang chủ hoặc trang mong muốn
       navigate('/');
     } catch (error) {
-      // Xử lý lỗi khi đăng nhập thất bại
       setError('Email or Password Incorrect.');
       setLoading(false);
     }
@@ -103,7 +98,7 @@ const CustomerLoginModal = () => {
               </label>
               <input
                 type="text"
-                className={`form-control ${!validateEmail(email) && email ? 'is-invalid' : ''}`} // Add class for invalid email
+                className={`form-control ${!validateEmail(email) && email ? 'is-invalid' : ''}`}
                 id="email"
                 placeholder="Enter your email"
                 style={{ borderRadius: '10px', padding: '10px' }}
@@ -151,7 +146,7 @@ const CustomerLoginModal = () => {
                 backgroundColor: '#6dbe45',
                 borderColor: '#6dbe45',
               }}
-              disabled={loading} // Không cần disable nút khi email sai, chỉ kiểm tra khi submit
+              disabled={loading}
             >
               {loading ? 'Logging in...' : 'Log In'}
             </button>
