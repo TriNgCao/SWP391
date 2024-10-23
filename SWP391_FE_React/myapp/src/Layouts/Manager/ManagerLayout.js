@@ -8,6 +8,7 @@ const ManagerLayout = () => {
   return (
     <div style={mainWrapperStyle}>
       <div style={managerLayoutStyle}>
+        <Header />
         <ManagerSidebar />
         <div style={managerContentStyle}>
           <BreadcrumbsHeader />
