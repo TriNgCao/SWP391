@@ -211,7 +211,7 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./components/Customer/Home";
 import AboutUs from "./components/Customer/AboutUs";
 import Contact from "./components/Customer/Contact";
-import Stylist from "./components/Customer/Stylist";
+
 import Services from "./components/Customer/Services";
 import Booking from "./components/Customer/Booking";
 import { AuthProvider } from "./components/Customer/AuthContext";
@@ -235,6 +235,10 @@ import StaffSalary from "./Pages/Staff/StaffSalary";
 import AdminSalon from "./Pages/Admin/AdminSalon";
 import Navbar from "./components/Customer/NavBar";
 import Footer from "./components/Customer/Footer";
+import StylistLayout from "./Layouts/Stylist/StylistLayout";
+import StylistProfilePage from "./Pages/Stylist/StaffProfilePage";
+import StylistSalary from "./Pages/Stylist/StylistSalary";
+import StylistSchedule from "./Pages/Stylist/StylistSchedule";
 
 function App() {
   return (
@@ -293,7 +297,7 @@ function App() {
               </>
             }
           />
-          <Route
+          {/* <Route
             path="/stylist"
             element={
               <>
@@ -301,7 +305,7 @@ function App() {
                 <Stylist />
               </>
             }
-          />
+          /> */}
 
           {/* DASHBOARD MANAGER */}
           <Route path="/manager" element={<ManagerLayout />}>
@@ -332,6 +336,11 @@ function App() {
             <Route path="staff-profile" element={<StaffProfilePage />} />
             <Route path="staff-appointments" element={<StaffAppointments />} />
             <Route path="staff-salary" element={<StaffSalary />} />
+          </Route>
+          <Route path="/stylist" element={<StylistLayout />}>
+            <Route path="stylist-profile" element={<StylistProfilePage />} />
+            <Route path="stylist-salary" element={<StylistSalary />} />
+            <Route path="stylist-schedule" element={<StylistSchedule />} />
           </Route>
         </Routes>
       </AuthProvider>
