@@ -2,13 +2,11 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import BreadcrumbsHeader from "../../components/Dashboard/breadcum";
-import Header from "../../components/Dashboard/Header";
 
 const AdminLayout = () => {
   return (
     <div style={mainWrapperStyle}>
       <div style={managerLayoutStyle}>
-        {/* <Header /> */}
         <AdminSidebar />
         <div style={managerContentStyle}>
           <BreadcrumbsHeader />
