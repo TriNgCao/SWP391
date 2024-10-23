@@ -19,7 +19,7 @@ const UserIconDropdown = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     setHasToken(false);
     setIsDropdownOpen(false); // Đảm bảo dropdown được đóng khi logout
     navigate("/");

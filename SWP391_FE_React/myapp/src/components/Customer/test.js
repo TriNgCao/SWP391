@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { FaChevronRight, FaSearch } from "react-icons/fa";
-import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 const Booking = () => {
   const containerStyle = {
     backgroundColor: "white",
@@ -55,9 +53,6 @@ const Booking = () => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [services, setServices] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchSalonTerm, setSearchSalonTerm] = useState("");
-  const [searchStylistTerm, setSearchStylistTerm] = useState("");
-
 
   const filteredServices = services.filter(
     (service) =>
@@ -65,46 +60,26 @@ const Booking = () => {
       service.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredSalons = salons.filter((salon) =>
-    salon.name.toLowerCase().includes(searchSalonTerm.toLowerCase())
-  );
-
-  const filteredStylists = stylists.filter((stylist) =>
-    stylist.name.toLowerCase().includes(searchStylistTerm.toLowerCase())
-  );
-
-  const stylistBookedSlots = [
-    {
-      salonId: 1, 
-      salonName: "Salon A",
-      stylistId: 1,
-      stylistName: "Stylist A",
-      date: "23/10/2024",
-      startTime: "19:00",
-      duration: "3",
+  // Dữ liệu đặt giờ dựa trên salon, stylist và ngày
+  const stylistBookedSlots = {
+    "Salon A": {
+      "Stylist A": {
+        "23/10/2024": ["21h00", "22h00", "23h00"],
+        "20/10/2024": [],
+        "21/10/2024": ["23h00"],
+      },
     },
-    {
-      salonId: 1, 
-      salonName: "Salon A",
-      stylistId: 2,
-      stylistName: "Stylist B",
-      date: "23/10/2024",
-      startTime: "21:00",
-      duration: "1",
+    "Salon B": {
+      "Stylist B": {
+        "19/10/2024": [],
+        "20/10/2024": ["21h00", "23h00"],
+        "21/10/2024": ["22h00"],
+      },
     },
-    {
-      salonId: 1,
-      salonName: "Salon A",
-      stylistId: 0,
-      stylistName: "Let's us choose for you",
-      date: "23/10/2024",
-      startTime: "21:00",
-      duration: "2",
-    },
-  ];
-
+  };
   useEffect(() => {
     const fetchSalons = async () => {
+      // Simulated API data for salons
       const salonData = [
         {
           id: 1,
@@ -125,8 +100,8 @@ const Booking = () => {
     };
 
     const fetchStylists = async () => {
+      // Simulated API data for stylists
       const stylistData = [
-        { img: "images/logo.png", id: 0, name: "Let's us choose for you" },
         { img: "images/image_1.jpg", id: 1, name: "Stylist A" },
         { img: "images/image_2.jpg", id: 2, name: "Stylist B" },
       ];
@@ -191,6 +166,7 @@ const Booking = () => {
       }
     };
 
+    // Gọi các hàm fetch dữ liệu
     fetchSalons();
     fetchStylists();
     fetchServices();
@@ -204,9 +180,7 @@ const Booking = () => {
   };
 
   const handleStylistSelect = (stylistName) => {
-    setSelectedStylist((prevStylist) =>
-      prevStylist === stylistName ? null : stylistName
-    );
+    setSelectedStylist(stylistName);
     setSelectedSlot(null);
   };
 
@@ -222,7 +196,7 @@ const Booking = () => {
   const generateTimeSlots = () => {
     const slots = [];
     for (let hour = 8; hour <= 22; hour++) {
-      const time = `${hour < 10 ? `0${hour}` : hour}:00`;
+      const time = hour < 10 ? `0${hour}h00` : `${hour}h00`;
       slots.push(time);
     }
     return slots;
@@ -230,46 +204,11 @@ const Booking = () => {
 
   const timeSlots = generateTimeSlots();
 
-  const getDisabledSlots = (startTime, duration) => {
-    const startHour = parseInt(startTime.split(":")[0]);
-    const durationHours = parseInt(duration.split("")[0]);
-    const disabledSlots = [];
-
-    for (let i = 0; i < durationHours; i++) {
-      const hour = startHour + i;
-      disabledSlots.push(`${hour}:00`);
-    }
-
-    return disabledSlots;
-  };
-
-  const calculateDisabledSlots = () => {
-    const bookedSlots = stylistBookedSlots.filter(
-      (slotData) =>
-        slotData.salonName === selectedSalon &&
-        slotData.stylistName === selectedStylist &&
-        slotData.date === selectedDate
-    );
-
-    const allDisabledSlots = new Set();
-
-    bookedSlots.forEach((slotData) => {
-      const disabledSlots = getDisabledSlots(
-        slotData.startTime,
-        slotData.duration
-      );
-      disabledSlots.forEach((disabledSlot) =>
-        allDisabledSlots.add(disabledSlot)
-      );
-    });
-
-    return allDisabledSlots;
-  };
-
-  const disabledSlotsSet = calculateDisabledSlots();
-
   const handleSlotClick = (slot) => {
-    if (!disabledSlotsSet.has(slot)) {
+    const bookedSlots =
+      stylistBookedSlots[selectedSalon]?.[selectedStylist]?.[selectedDate] ||
+      [];
+    if (!bookedSlots.includes(slot)) {
       setSelectedSlot(slot);
     }
   };
@@ -307,64 +246,21 @@ const Booking = () => {
     }
     return days;
   };
-
   const calculateTotal = () => {
     const total = selectedServices.reduce((sum, serviceTitle) => {
       const service = services.find((s) => s.title === serviceTitle);
+
+      // Parse the price by removing the dollar sign and converting it to a number
       const price = service ? parseFloat(service.price.replace("$", "")) : 0;
+
       return sum + price;
     }, 0);
+
+    // Format the total price with commas and append "VND"
     return `${total.toLocaleString()}`;
   };
 
-  const isBookingDisabled = !selectedSalon || !selectedStylist || !selectedDate || !selectedSlot || selectedServices.length === 0;
-  // Handle booking request
-  const handleBooking = async () => {
-    const bookingData = {
-      salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
-      stylistId: stylists.find((stylist) => stylist.name === selectedStylist)?.id,
-      servicesId: selectedServices.map((serviceTitle) =>
-        services.find((service) => service.title === serviceTitle)?.id
-      ),
-      date: selectedDate,
-      startTime: selectedSlot,
-    };
-
-    // Simulate API call
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const isSuccess = Math.random() > 0.5;
-        if (isSuccess) {
-          resolve({ status: 200, message: "Booking Successfully!", data: bookingData });
-        } else {
-          reject({ status: 400, message: "Send booking fail!" });
-        }
-      }, 1500);
-    });
-  };
-
-  const onBookingClick = async () => {
-    const bookingData = {
-      salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
-      stylistId: stylists.find((stylist) => stylist.name === selectedStylist)?.id,
-      servicesId: selectedServices.map((serviceTitle) =>
-        services.find((service) => service.title === serviceTitle)?.id
-      ),
-      date: selectedDate,
-      startTime: selectedSlot,
-    };
-  
-    console.log("Booking Data:", JSON.stringify(bookingData, null, 2));
-  
-    try {
-      const response = await handleBooking();
-      if (response.status === 200) {
-        toast.success(response.message);
-      }
-    } catch (error) {
-      toast.error(error.message || "Send booking fail!");
-    }
-  };
+  const availableDates = getNextThreeDays();
 
   return (
     <div style={containerStyle}>
@@ -424,85 +320,77 @@ const Booking = () => {
       </div>
 
       {/* Step 4: Choose Date */}
-      <div style={stepContentStyle}>
+      <div>
         <div style={stepHeaderStyle}>
-          <span style={stepNumberStyle}>Bước 3:</span> Chọn Ngày
+          <span style={stepNumberStyle}>4.</span> Choose Date
         </div>
-        <select
-          style={inputStyle}
-          onChange={(e) => setSelectedDate(e.target.value)}
-        >
-          <option value="">Chọn Ngày</option>
-          {getNextThreeDays().map((date, index) => (
-            <option key={index} value={date}>
-              {date}
+        <div style={stepContentStyle}>
+          <select
+            style={inputStyle}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            value={selectedDate || ""}
+            disabled={!selectedStylist || !selectedSalon}
+          >
+            <option value="" disabled>
+              Choose Date
             </option>
-          ))}
-        </select>
+            {availableDates.map((date) => (
+              <option key={date} value={date}>
+                {date}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Step 5: Choose Time */}
       <div>
-      <div style={stepHeaderStyle}>
-        <span style={stepNumberStyle}>5.</span> Choose Time
-      </div>
-      <div style={stepContentStyle}>
-        <div
-          style={{
-            marginLeft: '-25px',
-            display: "flex",
-            gap: "10px",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          {timeSlots.map((slot) => {
-            const isDisabled =
-              !selectedStylist ||
-              !selectedDate ||
-              disabledSlotsSet.has(slot);// check disabled
+        <div style={stepHeaderStyle}>
+          <span style={stepNumberStyle}>5.</span> Choose Time
+        </div>
+        <div style={stepContentStyle}>
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          >
+            {timeSlots.map((slot) => {
+              const bookedSlots =
+                stylistBookedSlots[selectedSalon]?.[selectedStylist]?.[
+                  selectedDate
+                ] || [];
+              const isDisabled =
+                !selectedStylist || !selectedDate || bookedSlots.includes(slot);
 
-            return (
-              <button
-                key={slot}
-                style={{
-                  backgroundColor: isDisabled
-                    ? "#2c3e50" // black
-                    : selectedSlot === slot
-                    ? "#3498db" // blue
-                    : "#ecf0f1", // green
-                  color: isDisabled ? "white" : "#2C3E50",
-                  padding: "10px",
-                  borderRadius: "5px",
-                  cursor: isDisabled ? "not-allowed" : "pointer",// change mouse
-                  width: "60px",
-                  position: "relative",
-                  transition: "background-color 0.3s, color 0.3s",
-                }}
-                disabled={isDisabled}
-                onClick={() => !isDisabled && handleSlotClick(slot)} 
-              >
-                {slot}
-                {isDisabled && (
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: "0",
-                      right: "0",
-                      fontSize: "14px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                  </span>
-                )}
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={slot}
+                  style={{
+                    backgroundColor: isDisabled
+                      ? "#95a5a6"
+                      : selectedSlot === slot
+                      ? "#3498db"
+                      : "#ecf0f1",
+                    color: isDisabled ? "white" : "#2C3E50",
+                    border: "none",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    cursor: isDisabled ? "not-allowed" : "pointer",
+                    width: "60px",
+                  }}
+                  onClick={() => handleSlotClick(slot)}
+                  disabled={isDisabled}
+                >
+                  {slot}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
-
-
       {/* Total money */}
       <div
         style={{
@@ -519,14 +407,7 @@ const Booking = () => {
         Total: ${calculateTotal()}
       </div>
 
-      {/* Booking Button */}
-      <button
-        style={{ ...buttonStyle, backgroundColor: isBookingDisabled ? "#ccc" : "#2980B9" }}
-        disabled={isBookingDisabled}
-        onClick={onBookingClick}
-      >
-        Booking
-      </button>
+      <button style={buttonStyle}>Booking</button>
 
       {/* Modal for Choosing Salon */}
       <div
@@ -550,140 +431,82 @@ const Booking = () => {
               ></button>
             </div>
             <div className="modal-body">
-              {/* Search */}
-              <div className="mb-3 d-flex justify-content-end">
-                <div className="input-group" style={{ maxWidth: "300px" }}>
-                  <span className="input-group-text" id="search-icon">
-                    <FaSearch />
-                  </span>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search for a salon..."
-                    value={searchSalonTerm}
-                    onChange={(e) => setSearchSalonTerm(e.target.value)}
-                    style={{ width: "200px" }}
-                  />
-                </div>
-              </div>
-
               <div className="container">
-                {searchSalonTerm && filteredSalons.length === 0 && (
-                  <div className="alert alert-warning text-center" role="alert">
-                    No salons found matching your search.
-                  </div>
-                )}
-
                 <div className="row">
-                  {filteredSalons.length > 0
-                    ? filteredSalons.map((salon) => (
-                        <div className="col-md-4 mb-4" key={salon.id}>
-                          <div
-                            className="card text-center"
-                            style={{ minHeight: "350px" }}
+                  {salons.map((salon) => (
+                    <div className="col-md-4 mb-4" key={salon.id}>
+                      <div
+                        className="card text-center"
+                        style={{ minHeight: "350px" }}
+                      >
+                        <img
+                          src={salon.img}
+                          alt={salon.name}
+                          className="card-img-top"
+                          style={{ height: "150px", objectFit: "cover" }}
+                        />
+                        <div className="card-body">
+                          <h5
+                            className="card-title"
+                            style={{ fontSize: "1.5rem" }}
                           >
-                            <img
-                              src={salon.img}
-                              alt={salon.name}
-                              className="card-img-top"
-                              style={{ height: "150px", objectFit: "cover" }}
-                            />
-                            <div className="card-body">
-                              <h5 className="card-title" style={{ fontSize: "1.5rem" }}>
-                                {salon.name}
-                              </h5>
-                              <p className="card-text" style={{ fontSize: "1.2rem" }}>
-                                {salon.address}
-                              </p>
-                              <div>
-                                <span
-                                  style={{
-                                    display: "inline-block",
-                                    width: "10px",
-                                    height: "10px",
-                                    borderRadius: "50%",
-                                    backgroundColor: salon.status === "active" ? "green" : "red",
-                                    marginRight: "8px",
-                                  }}
-                                ></span>
-                                <span>
-                                  {salon.status === "active" ? "Active" : "Inactive"}
-                                </span>
-                              </div>
-                              <button
-                                className="btn"
-                                style={{
-                                  backgroundColor: salon.status === "inactive" ? "#d3d3d3" : "#4caf50",
-                                  color: "#fff",
-                                  cursor: salon.status === "inactive" ? "not-allowed" : "pointer",
-                                }}
-                                onClick={() => handleSalonSelect(salon.name)}
-                                data-bs-dismiss="modal"
-                                disabled={salon.status === "inactive"}
-                              >
-                                Select
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    : salons.map((salon) => (
-                        <div className="col-md-4 mb-4" key={salon.id}>
-                          <div
-                            className="card text-center"
-                            style={{ minHeight: "350px" }}
+                            {salon.name}
+                          </h5>
+                          <p
+                            className="card-text"
+                            style={{ fontSize: "1.2rem" }}
                           >
-                            <img
-                              src={salon.img}
-                              alt={salon.name}
-                              className="card-img-top"
-                              style={{ height: "150px", objectFit: "cover" }}
-                            />
-                            <div className="card-body">
-                              <h5 className="card-title" style={{ fontSize: "1.5rem" }}>
-                                {salon.name}
-                              </h5>
-                              <p className="card-text" style={{ fontSize: "1.2rem" }}>
-                                {salon.address}
-                              </p>
-                              <div>
-                                <span
-                                  style={{
-                                    display: "inline-block",
-                                    width: "10px",
-                                    height: "10px",
-                                    borderRadius: "50%",
-                                    backgroundColor: salon.status === "active" ? "green" : "red",
-                                    marginRight: "8px",
-                                  }}
-                                ></span>
-                                <span>
-                                  {salon.status === "active" ? "Active" : "Inactive"}
-                                </span>
-                              </div>
-                              <button
-                                className="btn"
-                                style={{
-                                  backgroundColor: salon.status === "inactive" ? "#d3d3d3" : "#4caf50",
-                                  color: "#fff",
-                                  cursor: salon.status === "inactive" ? "not-allowed" : "pointer",
-                                }}
-                                onClick={() => handleSalonSelect(salon.name)}
-                                data-bs-dismiss="modal"
-                                disabled={salon.status === "inactive"}
-                              >
-                                Select
-                              </button>
-                            </div>
+                            {salon.address}
+                          </p>
+                          <div>
+                            <span
+                              style={{
+                                display: "inline-block",
+                                width: "10px",
+                                height: "10px",
+                                borderRadius: "50%",
+                                backgroundColor:
+                                  salon.status === "active" ? "green" : "red",
+                                marginRight: "8px",
+                              }}
+                            ></span>
+                            <span>
+                              {salon.status === "active"
+                                ? "Active"
+                                : "Inactive"}
+                            </span>
                           </div>
+                          <button
+                            className="btn"
+                            style={{
+                              backgroundColor:
+                                salon.status === "inactive"
+                                  ? "#d3d3d3"
+                                  : "#4caf50",
+                              color:
+                                salon.status === "inactive" ? "#fff" : "#fff",
+                              cursor:
+                                salon.status === "inactive"
+                                  ? "not-allowed"
+                                  : "pointer",
+                            }}
+                            onClick={() => handleSalonSelect(salon.name)}
+                            data-bs-dismiss="modal"
+                            disabled={salon.status === "inactive"}
+                          >
+                            Select
+                          </button>
                         </div>
-                      ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
       {/* Modal for Selecting Services */}
       <div
         className="modal fade"
@@ -706,7 +529,7 @@ const Booking = () => {
               ></button>
             </div>
             <div className="modal-body">
-              {/* Search*/}
+              {/* Input tìm kiếm */}
               <div className="mb-3 d-flex justify-content-end">
                 <div className="input-group" style={{ maxWidth: "300px" }}>
                   <span className="input-group-text" id="search-icon">
@@ -718,17 +541,20 @@ const Booking = () => {
                     placeholder="Search for a service..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ width: "200px" }}
+                    style={{ width: "200px" }} // Điều chỉnh độ rộng của ô tìm kiếm
                   />
                 </div>
               </div>
 
               <div className="container">
+                {/* Hiển thị thông báo lỗi nếu không tìm thấy dịch vụ nào khớp với từ khóa */}
                 {searchTerm && filteredServices.length === 0 && (
                   <div className="alert alert-warning text-center" role="alert">
                     No services found matching your search.
                   </div>
                 )}
+
+                {/* Nếu có kết quả tìm kiếm thì hiển thị kết quả tìm kiếm */}
                 {searchTerm && filteredServices.length > 0 ? (
                   <div className="row">
                     {filteredServices.map((service) => (
@@ -779,6 +605,7 @@ const Booking = () => {
                     ))}
                   </div>
                 ) : (
+                  /* Hiển thị các dịch vụ theo danh mục nếu không có kết quả tìm kiếm hoặc không có từ khóa */
                   [
                     "Hair Styling",
                     "Hair Coloring",
@@ -853,106 +680,61 @@ const Booking = () => {
         </div>
       </div>
 
-       {/* Modal for Choosing Stylist */}
-       <div className="modal fade" id="stylistModal" tabIndex="-1" aria-labelledby="stylistModalLabel" aria-hidden="true">
+      {/* Modal for Choosing Stylist */}
+      <div
+        className="modal fade"
+        id="stylistModal"
+        tabIndex="-1"
+        aria-labelledby="stylistModalLabel"
+        aria-hidden="true"
+      >
         <div className="modal-dialog" style={{ maxWidth: "70vw" }}>
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="stylistModalLabel">Choose a Stylist</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <h5 className="modal-title" id="stylistModalLabel">
+                Choose a Stylist
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
             <div className="modal-body">
-              {/* Search */}
-              <div className="mb-3 d-flex justify-content-end">
-                <div className="input-group" style={{ maxWidth: "300px" }}>
-                  <span className="input-group-text" id="search-icon">
-                    <FaSearch />
-                  </span>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search for a stylist..."
-                    value={searchStylistTerm}
-                    onChange={(e) => setSearchStylistTerm(e.target.value)}
-                    style={{ width: "200px" }}
-                  />
-                </div>
-              </div>
-
               <div className="container">
-                {searchStylistTerm && filteredStylists.length === 0 && (
-                  <div className="alert alert-warning text-center" role="alert">
-                    No stylists found matching your search.
-                  </div>
-                )}
-
                 <div className="row">
-                  {filteredStylists.length > 0
-                    ? filteredStylists.map((stylist) => (
-                        <div className="col-md-4 mb-4" key={stylist.id}>
-                          <div
-                            className="card text-center"
-                            style={{
-                              minHeight: "350px",
-                              backgroundColor: selectedStylist === stylist.name ? "#add5f0" : "#fff",
-                              border: selectedStylist === stylist.name ? "2px solid #007bff" : "none"
-                            }}
+                  {stylists.map((stylist) => (
+                    <div className="col-md-4 mb-4" key={stylist.id}>
+                      <div
+                        className="card text-center"
+                        style={{ minHeight: "350px" }}
+                      >
+                        <img
+                          src={stylist.img}
+                          className="card-img-top"
+                          alt={stylist.name}
+                          style={{ objectFit: "cover", height: "280px" }}
+                        />
+                        <div className="card-body">
+                          <h5 className="card-title">{stylist.name}</h5>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handleStylistSelect(stylist.name)}
+                            data-bs-dismiss="modal"
                           >
-                            <img
-                              src={stylist.img}
-                              className="card-img-top"
-                              alt={stylist.name}
-                              style={{ objectFit: "cover", height: "280px" }}
-                            />
-                            <div className="card-body">
-                              <h5 className="card-title">{stylist.name}</h5>
-                              <button
-                                className="btn btn-primary"
-                                onClick={() => handleStylistSelect(stylist.name)}
-                                data-bs-dismiss="modal"
-                              >
-                                {selectedStylist === stylist.name ? "Selected" : "Select"}
-                              </button>
-                            </div>
-                          </div>
+                            Select
+                          </button>
                         </div>
-                      ))
-                    : stylists.map((stylist) => (
-                        <div className="col-md-4 mb-4" key={stylist.id}>
-                          <div
-                            className="card text-center"
-                            style={{
-                              minHeight: "350px",
-                              backgroundColor: selectedStylist === stylist.name ? "#add5f0" : "#fff",
-                              border: selectedStylist === stylist.name ? "2px solid #007bff" : "none"
-                            }}
-                          >
-                            <img
-                              src={stylist.img}
-                              className="card-img-top"
-                              alt={stylist.name}
-                              style={{ objectFit: "cover", height: "280px" }}
-                            />
-                            <div className="card-body">
-                              <h5 className="card-title">{stylist.name}</h5>
-                              <button
-                                className="btn btn-primary"
-                                onClick={() => handleStylistSelect(stylist.name)}
-                                data-bs-dismiss="modal"
-                              >
-                                {selectedStylist === stylist.name ? "Selected" : "Select"}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   );
 };

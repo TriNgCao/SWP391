@@ -100,7 +100,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="ftco-section bg-light">
+      {/* <section className="ftco-section bg-light">
       <div className="container">
         <div className="row justify-content-center pb-5 mb-3">
           <div className="col-md-7 heading-section text-center">
@@ -194,7 +194,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </section>
+    </section> */}
     </div>
   );
 }

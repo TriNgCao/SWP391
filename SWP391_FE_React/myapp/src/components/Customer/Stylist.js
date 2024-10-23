@@ -1,10 +1,8 @@
 import React from "react";
-import Navbar from "./NavBar";
 
 export default function Stylist() {
   return (
     <div>
-      <Navbar />
       <section
         className="hero-wrap hero-wrap-2"
         style={{backgroundImage: 'url(images/bg_2.jpg)'}}

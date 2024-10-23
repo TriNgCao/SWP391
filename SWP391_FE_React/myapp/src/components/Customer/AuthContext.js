@@ -6,12 +6,12 @@
     const [hasToken, setHasToken] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         setHasToken(!!token); // Cập nhật trạng thái có token
 
         // Lắng nghe sự kiện "storage"
         const handleStorageChange = () => {
-        const updatedToken = localStorage.getItem("token");
+        const updatedToken = sessionStorage.getItem("token");
         setHasToken(!!updatedToken); // Cập nhật token
         };
 

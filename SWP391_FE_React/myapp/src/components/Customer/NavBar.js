@@ -329,7 +329,7 @@ export default function Navbar() {
           >
             <ul className="navbar-nav ml-auto" style={{ marginRight: "110px" }}>
               <li className="nav-item">
-                <Link to="/home" className="nav-link">
+                <Link to="/" className="nav-link">
                   Home
                 </Link>
               </li>
