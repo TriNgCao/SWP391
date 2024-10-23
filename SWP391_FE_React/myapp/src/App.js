@@ -224,7 +224,6 @@ import ManageRevenuePage from "./Pages/Manager/ManagerRevenuePage";
 import ManagerTransaction from "./Pages/Manager/ManagerTransaction";
 import ManagerServices from "./Pages/Manager/ManagerServices";
 import ManagerPersonnel from "./Pages/Manager/ManagerPersonnel";
-import Header from "./components/Dashboard/Header";
 import AdminLayout from "./Layouts/Admin/AdminLayout";
 import AdminProfilePage from "./Pages/Admin/AdminProfilePage";
 import AdminPersonnel from "./Pages/Admin/AdminPersonnel";
@@ -239,7 +238,7 @@ import Footer from "./components/Customer/Footer";
 function App() {
   return (
     <div>
-      <ToastContainer />
+      <ToastContainer autoClose={2000} />
       <AuthProvider>
         <Routes>
           {/* Customer routes */}
@@ -294,11 +293,12 @@ function App() {
             }
           />
           <Route
-            path="/stylist"
+            path="/blog"
             element={
               <>
-                <Header />
+                <Navbar />
                 <Stylist />
+                <Footer />
               </>
             }
           />

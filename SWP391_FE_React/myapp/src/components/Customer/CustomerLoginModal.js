@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { FaGoogle } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CustomerLoginModal = () => {
   const [email, setEmail] = useState('');
@@ -33,7 +35,7 @@ const CustomerLoginModal = () => {
       });
 
 
-      localStorage.setItem('token', response.data.token); //save token to local storage
+      sessionStorage.setItem('token', response.data.token); //save token to local storage
       window.dispatchEvent(new Event('storage'));
 
       const closeButton = document.querySelector('#customerLoginModal .btn-close');
@@ -42,7 +44,7 @@ const CustomerLoginModal = () => {
       }
 
       setLoading(false);
-
+      toast.success("Login Successfully!");
       navigate('/');
     } catch (error) {
       setError('Email or Password Incorrect.');
