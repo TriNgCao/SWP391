@@ -225,6 +225,7 @@ const ManageRevenuePage = () => {
         </Grid>
       </Grid>
 
+      <ManagerTransaction />
       <Box sx={{ mt: 4, textAlign: "center" }}>
         <Button
           variant="contained"
@@ -234,7 +235,6 @@ const ManageRevenuePage = () => {
           Download Reports
         </Button>
       </Box>
-      <ManagerTransaction />
     </Box>
   );
 };

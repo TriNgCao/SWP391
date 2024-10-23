@@ -30,7 +30,7 @@ const appointmentData = [
     stylistName: "Rahul Bhat",
     date: "2024-10-16",
     services: "Coloring",
-    status: "Pending",
+    status: "Process",
   },
   {
     appointmentId: 3,
@@ -62,7 +62,7 @@ const appointmentData = [
     stylistName: "Priya Sharma",
     date: "2024-10-20",
     services: "Hair Treatment",
-    status: "Pending",
+    status: "Process",
   },
   {
     appointmentId: 7,
@@ -78,7 +78,7 @@ const appointmentData = [
     stylistName: "Ravi Kumar",
     date: "2024-10-22",
     services: "Styling",
-    status: "Pending",
+    status: "Process",
   },
   {
     appointmentId: 9,
@@ -160,14 +160,28 @@ const StaffAppointments = () => {
                       <TableCell>{appointment.stylistName}</TableCell>
                       <TableCell>{appointment.date}</TableCell>
                       <TableCell>{appointment.services}</TableCell>
-                      <TableCell>{appointment.status}</TableCell>
+                      <TableCell>
+                        <span
+                          style={{
+                            color:
+                              appointment.status === "Complete"
+                                ? "#4caf50"
+                                : appointment.status === "Process"
+                                ? "#CC9900"
+                                : "#990000",
+                          }}
+                        >
+                          {appointment.status}
+                        </span>
+                      </TableCell>
+
                       <TableCell>
                         <Button
                           variant="contained"
                           size="small"
                           sx={{
                             marginRight: 1,
-                            backgroundColor: "#007BFF",
+                            backgroundColor: "#4caf50",
                             color: "#fff",
                           }}
                         >

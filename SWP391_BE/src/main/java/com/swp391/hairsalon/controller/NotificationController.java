@@ -9,13 +9,14 @@ import com.swp391.hairsalon.service.definitions.INotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/noti")
 public class NotificationController {
+    @Autowired
     private INotificationService iNotificationService;
 
     @GetMapping("/{id}")
