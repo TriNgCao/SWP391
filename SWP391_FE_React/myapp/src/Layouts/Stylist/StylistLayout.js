@@ -1,15 +1,14 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import AdminSidebar from "./AdminSidebar";
+import StaffSidebar from "./StylistSidebar";
 import BreadcrumbsHeader from "../../components/Dashboard/breadcum";
-import Header from "../../components/Dashboard/Header";
+import StylistSidebar from "./StylistSidebar";
 
-const AdminLayout = () => {
+const StylistLayout = () => {
   return (
     <div style={mainWrapperStyle}>
       <div style={managerLayoutStyle}>
-        {/* <Header /> */}
-        <AdminSidebar />
+        <StylistSidebar />
         <div style={managerContentStyle}>
           <BreadcrumbsHeader />
           <Outlet />
@@ -38,4 +37,4 @@ const managerContentStyle = {
   overflowY: "auto",
 };
 
-export default AdminLayout;
+export default StylistLayout;

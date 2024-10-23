@@ -32,7 +32,7 @@ const Booking = () => {
   };
 
   const buttonStyle = {
-    backgroundColor: "#2980B9",
+    backgroundColor: "#4caf50",
     color: "white",
     padding: "10px",
     border: "none",
@@ -188,7 +188,9 @@ const Booking = () => {
             data-bs-toggle="modal"
             data-bs-target="#servicesModal"
           >
-            <span>{selectedServices.join(", ") || "Not Choose Services Yet"}</span>
+            <span>
+              {selectedServices.join(", ") || "Not Choose Services Yet"}
+            </span>
             <FaChevronRight style={chevronStyle} />
           </div>
         </div>
@@ -224,7 +226,7 @@ const Booking = () => {
             disabled={!selectedStylist || !selectedSalon}
           >
             <option value="" disabled>
-            Choose Date
+              Choose Date
             </option>
             {availableDates.map((date) => (
               <option key={date} value={date}>

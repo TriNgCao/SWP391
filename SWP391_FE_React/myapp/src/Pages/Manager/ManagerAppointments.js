@@ -10,11 +10,9 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Button,
 } from "@mui/material";
 import axios from "axios";
 
-// Sample data for team members
 const appointmentData = [
   {
     appointmentId: 1,
