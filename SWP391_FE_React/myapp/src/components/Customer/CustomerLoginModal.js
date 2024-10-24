@@ -35,7 +35,9 @@ const CustomerLoginModal = () => {
       });
 
 
-      sessionStorage.setItem('token', response.data.token); //save token to local storage
+      sessionStorage.setItem('token', response.data.token);  //save token to session storage
+      sessionStorage.setItem('accountID', response.data.userID);
+      sessionStorage.setItem('accountRole', response.data.userRole);
       window.dispatchEvent(new Event('storage'));
 
       const closeButton = document.querySelector('#customerLoginModal .btn-close');
