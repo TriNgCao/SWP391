@@ -22,44 +22,34 @@ public class RevenueService implements IRevenueService {
 
     @Override
     public Revenue getRevenueData(List<Appointment> appointments) {
-        // Tính tổng doanh thu
         BigDecimal totalRevenue = calculateTotalRevenue(appointments);
-
-        // Tính tổng lợi nhuận
         BigDecimal totalProfit = calculateTotalProfit(appointments);
-
-        // Tính doanh thu hàng ngày
         List<DailyRevenue> dailyRevenues = calculateDailyRevenues(appointments);
-
-        // Trả về đối tượng Revenue với các giá trị đã tính toán
         return new Revenue(totalRevenue, totalProfit, dailyRevenues);
     }
 
     @Override
     public BigDecimal calculateTotalRevenue(List<Appointment> appointments) {
         return appointments.stream()
-                .map(this::calculateAppointmentPrice)  // Tính giá từng lịch hẹn
+                .map(this::calculateAppointmentPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
     public BigDecimal calculateTotalProfit(List<Appointment> appointments) {
         return appointments.stream()
-                .map(app -> calculateAppointmentPrice(app).subtract(calculateAppointmentCost(app)))  // Trừ chi phí từ giá
+                .map(app -> calculateAppointmentPrice(app).subtract(calculateAppointmentCost(app)))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
     public List<DailyRevenue> calculateDailyRevenues(List<Appointment> appointments) {
-        // Sử dụng phương thức getDate().toLocalDate() để chuyển đổi thành LocalDate trước khi nhóm theo ngày
         Map<LocalDate, List<Appointment>> appointmentsByDate = appointments.stream()
-                .collect(Collectors.groupingBy(app -> app.getDate().toLocalDate()));  // Chuyển Date sang LocalDate
-
-        // Tính toán doanh thu hàng ngày từ nhóm lịch hẹn
+                .collect(Collectors.groupingBy(app -> app.getDate().toLocalDate()));
         return appointmentsByDate.entrySet().stream()
                 .map(entry -> new DailyRevenue(
                         entry.getKey(),  // LocalDate làm ngày
-                        calculateDailyTotal(entry.getValue())  // Tính tổng doanh thu trong ngày
+                        calculateDailyTotal(entry.getValue())
                 ))
                 .collect(Collectors.toList());
     }
@@ -68,20 +58,19 @@ public class RevenueService implements IRevenueService {
     @Override
     public BigDecimal calculateDailyTotal(List<Appointment> appointments) {
         return appointments.stream()
-                .map(this::calculateAppointmentPrice)  // Tính giá từng lịch hẹn
+                .map(this::calculateAppointmentPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
     public BigDecimal calculateAppointmentPrice(Appointment appointment) {
         return appointment.getServices().stream()
-                .map(service -> BigDecimal.valueOf(service.getServicePrice()))  // Chuyển đổi từ double sang BigDecimal
-                .reduce(BigDecimal.ZERO, BigDecimal::add);  // Sử dụng BigDecimal.add() để cộng
+                .map(service -> BigDecimal.valueOf(service.getServicePrice()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
     public BigDecimal calculateAppointmentCost(Appointment appointment) {
-        // Chi phí là tổng lương của nhân viên và stylist, cộng thêm hoa hồng cho stylist
         BigDecimal staffSalary = BigDecimal.valueOf(appointment.getStylist().getSalary());
         BigDecimal stylistCommission = BigDecimal.valueOf(appointment.getStylist().getCommission());
 
