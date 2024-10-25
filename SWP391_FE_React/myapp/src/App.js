@@ -211,7 +211,6 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./components/Customer/Home";
 import AboutUs from "./components/Customer/AboutUs";
 import Contact from "./components/Customer/Contact";
-import Stylist from "./components/Customer/Stylist";
 import Services from "./components/Customer/Services";
 import Booking from "./components/Customer/Booking";
 import { AuthProvider } from "./components/Customer/AuthContext";
@@ -234,6 +233,9 @@ import StaffSalary from "./Pages/Staff/StaffSalary";
 import AdminSalon from "./Pages/Admin/AdminSalon";
 import Navbar from "./components/Customer/NavBar";
 import Footer from "./components/Customer/Footer";
+import BlogSection from "./components/Customer/Blog";
+import BlogPost from "./components/Customer/BlogDetail";
+import UserProfile from "./components/Customer/CustomerProfile";
 
 function App() {
   return (
@@ -293,11 +295,31 @@ function App() {
             }
           />
           <Route
+            path="/profile"
+            element={
+              <>
+                <Navbar />
+                <UserProfile/>
+                <Footer />
+              </>
+            }
+          />
+          <Route
             path="/blog"
             element={
               <>
                 <Navbar />
-                <Stylist />
+                <BlogSection />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/blogpost"
+            element={
+              <>
+                <Navbar />
+                <BlogPost />
                 <Footer />
               </>
             }

@@ -61,8 +61,8 @@ const UserIconDropdown = () => {
           <Link className="dropdown-item" to="/profile">
             <FaRegUserCircle /> View Profile
           </Link>
-          <Link className="dropdown-item" to="/loyalty">
-            <RiVipDiamondLine /> Loyal Point
+          <Link className="dropdown-item" to="/viewappointment">
+            <RiVipDiamondLine /> View Appointments
           </Link>
           <button className="dropdown-item" onClick={handleLogout}>
             <HiOutlineLogout /> Logout

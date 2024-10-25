@@ -1,90 +1,79 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
-import { FaGoogle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Link } from 'react-router-dom';
+import { FaGoogle } from 'react-icons/fa';
 
-const CustomerLoginModal = () => {
-  const [email, setEmail] = useState('');
+const InternalLoginModal = () => {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const validateEmail = (email) => {
-    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailPattern.test(email);
-  };
-
-  const handleLogin = async (e) => {
+  const handleInternalLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-  
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email address.');
-      setLoading(false);
-      return;
-    }
-  
+
     try {
       const response = await axios.post('https://reqres.in/api/login', {
-        email: email,
+        username: username,
         password: password,
       });
-  
+
       const { token, userID, userRole } = response.data;
-  
-      // Check if token, userID, and userRole are provided and userRole is '1'
-      if (token && userID && userRole === 1) {
+
+      // Check if token, userID, and userRole are present and accountRole is not 1
+      if (token && userID && userRole !== 1) {
         sessionStorage.setItem('token', token);
         sessionStorage.setItem('accountID', userID);
         sessionStorage.setItem('accountRole', userRole);
         window.dispatchEvent(new Event('storage'));
-  
-        const closeButton = document.querySelector('#customerLoginModal .btn-close');
+
+        const closeButton = document.querySelector('#internalLoginModal .btn-close');
         if (closeButton) {
           closeButton.click();
         }
-  
+
         setLoading(false);
         toast.success("Login Successfully!");
-        navigate('/');
       } else {
-        setError('Login failed. Please check your credentials and try again.');
+        setError('Access Denied: This login is for internal staff only.');
         setLoading(false);
       }
     } catch (error) {
-      setError('Email or Password Incorrect.');
+      setError('Username or Password Incorrect.');
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="modal-dialog modal-dialog-centered">
       <div
         className="modal-content"
         style={{
-          borderRadius: '15px',
-          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
+          borderRadius: "15px",
+          boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
         }}
       >
         <div
           className="modal-header"
           style={{
-            backgroundColor: '#e0dede',
-            borderRadius: '15px 15px 0 0',
+            backgroundColor: "#e0dede",
+            borderRadius: "15px 15px 0 0",
           }}
         >
-          <h5 className="modal-title text-center w-100" id="loginModalLabel">
+          <h5
+            className="modal-title text-center w-100"
+            id="internalLoginModalLabel"
+          >
             <img
               src="images/logo.png"
               alt="salon icon"
-              style={{ width: '50px', marginRight: '10px' }}
+              style={{ width: "50px", marginRight: "10px" }}
             />
-            Sign In to Leopard Salon
+            Internal Staff Login
           </h5>
           <button
             type="button"
@@ -95,40 +84,40 @@ const CustomerLoginModal = () => {
         </div>
         <div
           className="modal-body"
-          style={{ backgroundColor: '#f7f7f7', padding: '30px' }}
+          style={{ backgroundColor: "#f7f7f7", padding: "30px" }}
         >
           <p
             className="text-center"
-            style={{ fontStyle: 'italic', fontSize: '16px' }}
+            style={{ fontStyle: "italic", fontSize: "16px" }}
           >
-            Welcome to Leopard Salon. Sign in and enjoy booking our exclusive services today!
+            This Login Only For Internal Staff!!
           </p>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleInternalLogin}>
             <div className="mb-3">
-              <label htmlFor="email" className="form-label">
-                Email
+              <label htmlFor="internalUsername" className="form-label">
+                Username
               </label>
               <input
                 type="text"
-                className={`form-control ${!validateEmail(email) && email ? 'is-invalid' : ''}`}
-                id="email"
-                placeholder="Enter your email"
-                style={{ borderRadius: '10px', padding: '10px' }}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                className="form-control"
+                id="internalUsername"
+                placeholder="Enter your username"
+                style={{ borderRadius: "10px", padding: "10px" }}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="password" className="form-label">
+              <label htmlFor="internalPassword" className="form-label">
                 Password
               </label>
               <input
                 type="password"
                 className="form-control"
-                id="password"
+                id="internalPassword"
                 placeholder="Enter your password"
-                style={{ borderRadius: '10px', padding: '10px' }}
+                style={{ borderRadius: "10px", padding: "10px" }}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -152,16 +141,17 @@ const CustomerLoginModal = () => {
             </div>
             <button
               type="submit"
-              className="btn btn-primary w-100 mt-3"
+              className="btn btn-primary w-100"
               style={{
-                borderRadius: '10px',
-                backgroundColor: '#6dbe45',
-                borderColor: '#6dbe45',
+                borderRadius: "10px",
+                backgroundColor: "#6dbe45",
+                borderColor: "#6dbe45",
               }}
               disabled={loading}
             >
               {loading ? 'Logging in...' : 'Log In'}
             </button>
+            
           </form>
           <div className="text-center mt-3">
             <p>or sign in with</p>
@@ -179,22 +169,10 @@ const CustomerLoginModal = () => {
               </Link>
             </div>
           </div>
-          <div className="text-center mt-3">
-            Don't Have Account Yet?
-            <Link
-              to="#"
-              className="text-decoration-none"
-              data-bs-toggle="modal"
-              data-bs-target="#registerCustomerModal"
-              data-bs-dismiss="modal"
-            >
-              &nbsp; <b>Register Now</b>
-            </Link>
-          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default CustomerLoginModal;
+export default InternalLoginModal;
