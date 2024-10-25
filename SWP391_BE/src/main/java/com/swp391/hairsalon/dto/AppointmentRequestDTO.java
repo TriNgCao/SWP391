@@ -17,14 +17,14 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-public class AppointmentRequest {
+public class AppointmentRequestDTO {
     private int cusId;
     private int salonId;
     private int stylistId;
     private List<Long> serviceId;
     private Date date;
     private LocalTime startTime;
-    private String status;
+    private String status; 
     private String feedback;
     private int rating;
 }
