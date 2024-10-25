@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaChevronRight, FaSearch } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -61,7 +62,7 @@ const Booking = () => {
 
   const filteredServices = services.filter(
     (service) =>
-      service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.serviceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -133,59 +134,75 @@ const Booking = () => {
       setStylists(stylistData);
     };
 
+    // const fetchServices = async () => {
+    //   try {
+    //     const response = await new Promise((resolve) =>
+    //       setTimeout(() => {
+    //         resolve({
+    //           data: [
+    //             {
+    //               id: 1,
+    //               title: "Haircut Basic",
+    //               description:
+    //                 "A simple yet stylish haircut to keep you looking fresh.",
+    //               price: "$37",
+    //               image: "images/image_1.jpg",
+    //               category: "Hair Styling",
+    //             },
+    //             {
+    //               id: 2,
+    //               title: "Hair Color Vivid",
+    //               description: "Bold hair color to express yourself.",
+    //               price: "$50",
+    //               image: "images/image_2.jpg",
+    //               category: "Hair Coloring",
+    //             },
+    //             {
+    //               id: 3,
+    //               title: "Deep Conditioning",
+    //               description: "Nourishing treatment for healthy hair.",
+    //               price: "$40",
+    //               image: "images/image_3.jpg",
+    //               category: "Hair Treatment",
+    //             },
+    //             {
+    //               id: 4,
+    //               title: "Classic Hair Styling",
+    //               description: "Elegant hair styling for any occasion.",
+    //               price: "$60",
+    //               image: "images/image_4.jpg",
+    //               category: "Hair Styling",
+    //             },
+    //             {
+    //               id: 5,
+    //               title: "Luxury Spa Skin Treatment",
+    //               description:
+    //                 "Rejuvenating spa treatments to restore your skin's glow.",
+    //               price: "$70",
+    //               image: "images/image_5.jpg",
+    //               category: "Spa Skin",
+    //             },
+    //           ],
+    //         });
+    //       }, 1000)
+    //     );
+    //     setServices(response.data);
+    //   } catch (error) {
+    //     console.error("Error fetching services:", error);
+    //   }
+    // };
     const fetchServices = async () => {
       try {
-        const response = await new Promise((resolve) =>
-          setTimeout(() => {
-            resolve({
-              data: [
-                {
-                  id: 1,
-                  title: "Haircut Basic",
-                  description:
-                    "A simple yet stylish haircut to keep you looking fresh.",
-                  price: "$37",
-                  image: "images/image_1.jpg",
-                  category: "Hair Styling",
-                },
-                {
-                  id: 2,
-                  title: "Hair Color Vivid",
-                  description: "Bold hair color to express yourself.",
-                  price: "$50",
-                  image: "images/image_2.jpg",
-                  category: "Hair Coloring",
-                },
-                {
-                  id: 3,
-                  title: "Deep Conditioning",
-                  description: "Nourishing treatment for healthy hair.",
-                  price: "$40",
-                  image: "images/image_3.jpg",
-                  category: "Hair Treatment",
-                },
-                {
-                  id: 4,
-                  title: "Classic Hair Styling",
-                  description: "Elegant hair styling for any occasion.",
-                  price: "$60",
-                  image: "images/image_4.jpg",
-                  category: "Hair Styling",
-                },
-                {
-                  id: 5,
-                  title: "Luxury Spa Skin Treatment",
-                  description:
-                    "Rejuvenating spa treatments to restore your skin's glow.",
-                  price: "$70",
-                  image: "images/image_5.jpg",
-                  category: "Spa Skin",
-                },
-              ],
-            });
-          }, 1000)
-        );
-        setServices(response.data);
+        const response = await axios.get("URL_API_CỦA_BẠN");
+        
+        const updatedServices = response.data.map((service) => ({
+          ...service,
+          imageUrl: `http://localhost:8080/services/image/${encodeURIComponent(
+            service.imageName
+          )}`,
+        }));
+        
+        setServices(updatedServices);
       } catch (error) {
         console.error("Error fetching services:", error);
       }
@@ -324,7 +341,7 @@ const Booking = () => {
       salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
       stylistId: stylists.find((stylist) => stylist.name === selectedStylist)?.id,
       serviceId: selectedServices.map((serviceTitle) =>
-        services.find((service) => service.title === serviceTitle)?.id
+        services.find((service) => service.serviceName === serviceTitle)?.id
       ),
       date: selectedDate,
       startTime: selectedSlot,
@@ -348,7 +365,7 @@ const Booking = () => {
       salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
       stylistId: stylists.find((stylist) => stylist.name === selectedStylist)?.id,
       serviceId: selectedServices.map((serviceTitle) =>
-        services.find((service) => service.title === serviceTitle)?.id
+        services.find((service) => service.serviceName === serviceTitle)?.id
       ),
       date: selectedDate,
       startTime: selectedSlot,
@@ -732,28 +749,28 @@ const Booking = () => {
                 {searchTerm && filteredServices.length > 0 ? (
                   <div className="row">
                     {filteredServices.map((service) => (
-                      <div className="col-md-4 mb-4" key={service.id}>
+                      <div className="col-md-4 mb-4" key={service.serviceId}>
                         <div
                           className="card d-flex flex-column text-center"
                           style={{
                             minHeight: "350px",
                             backgroundColor: selectedServices.includes(
-                              service.title
+                              service.serviceName
                             )
                               ? "#add5f0"
                               : "#fff",
                           }}
                         >
                           <img
-                            src={service.image}
-                            alt={service.title}
+                            src={service.imageUrl}
+                            alt={service.serviceName}
                             className="card-img-top"
                             style={{ height: "150px", objectFit: "cover" }}
                           />
                           <div className="card-body d-flex flex-column">
-                            <h5 className="card-title">{service.title}</h5>
+                            <h5 className="card-title">{service.serviceName}</h5>
                             <p className="card-text flex-grow-1">
-                              {service.description}
+                              {service.serviceDescription}
                             </p>
                             <p
                               className="card-price"
@@ -763,13 +780,13 @@ const Booking = () => {
                                 color: "#d9534f",
                               }}
                             >
-                              Price: {service.price}
+                              Price: {service.servicePrice}
                             </p>
                             <button
                               className="btn btn-primary"
-                              onClick={() => handleServiceSelect(service.title)}
+                              onClick={() => handleServiceSelect(service.serviceName)}
                             >
-                              {selectedServices.includes(service.title)
+                              {selectedServices.includes(service.serviceName)
                                 ? "Selected"
                                 : "Select"}
                             </button>
@@ -791,7 +808,7 @@ const Booking = () => {
                         {services
                           .filter((service) => service.category === category)
                           .map((service) => (
-                            <div className="col-md-4 mb-4" key={service.id}>
+                            <div className="col-md-4 mb-4" key={service.serviceId}>
                               <div
                                 className="card d-flex flex-column text-center"
                                 style={{
@@ -804,8 +821,8 @@ const Booking = () => {
                                 }}
                               >
                                 <img
-                                  src={service.image}
-                                  alt={service.title}
+                                  src={service.imageUrl}
+                                  alt={service.serviceName}
                                   className="card-img-top"
                                   style={{
                                     height: "150px",
@@ -814,10 +831,10 @@ const Booking = () => {
                                 />
                                 <div className="card-body d-flex flex-column">
                                   <h5 className="card-title">
-                                    {service.title}
+                                    {service.serviceName}
                                   </h5>
                                   <p className="card-text flex-grow-1">
-                                    {service.description}
+                                    {service.serviceDescription}
                                   </p>
                                   <p
                                     className="card-price"
@@ -827,15 +844,15 @@ const Booking = () => {
                                       color: "#d9534f",
                                     }}
                                   >
-                                    Price: {service.price}
+                                    Price: {service.servicePrice}
                                   </p>
                                   <button
                                     className="btn btn-primary"
                                     onClick={() =>
-                                      handleServiceSelect(service.title)
+                                      handleServiceSelect(service.serviceName)
                                     }
                                   >
-                                    {selectedServices.includes(service.title)
+                                    {selectedServices.includes(service.serviceName)
                                       ? "Selected"
                                       : "Select"}
                                   </button>

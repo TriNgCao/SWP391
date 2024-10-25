@@ -106,7 +106,7 @@ export default function Services() {
     (service) => service.category === "Hair Treatment"
   );
   const spaSkinServices = services.filter(
-    (service) => service.category === "Spa Skin"
+    (service) => service.category === "Spa Skin Treatment"
   );
 
   const renderServices = (services) =>
