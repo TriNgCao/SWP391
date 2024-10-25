@@ -303,7 +303,7 @@ const Booking = () => {
       const day = date.getDate().toString().padStart(2, "0");
       const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const year = date.getFullYear();
-      days.push(`${day}/${month}/${year}`);
+      days.push(`${year}-${month}-${day}`);
     }
     return days;
   };
@@ -323,7 +323,7 @@ const Booking = () => {
     const bookingData = {
       salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
       stylistId: stylists.find((stylist) => stylist.name === selectedStylist)?.id,
-      servicesId: selectedServices.map((serviceTitle) =>
+      serviceId: selectedServices.map((serviceTitle) =>
         services.find((service) => service.title === serviceTitle)?.id
       ),
       date: selectedDate,
@@ -347,7 +347,7 @@ const Booking = () => {
     const bookingData = {
       salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
       stylistId: stylists.find((stylist) => stylist.name === selectedStylist)?.id,
-      servicesId: selectedServices.map((serviceTitle) =>
+      serviceId: selectedServices.map((serviceTitle) =>
         services.find((service) => service.title === serviceTitle)?.id
       ),
       date: selectedDate,
@@ -426,13 +426,13 @@ const Booking = () => {
       {/* Step 4: Choose Date */}
       <div style={stepContentStyle}>
         <div style={stepHeaderStyle}>
-          <span style={stepNumberStyle}>Bước 3:</span> Chọn Ngày
+          <span style={stepNumberStyle}>Step 3:</span> Choose Date
         </div>
         <select
           style={inputStyle}
           onChange={(e) => setSelectedDate(e.target.value)}
         >
-          <option value="">Chọn Ngày</option>
+          <option value="">Choose Date</option>
           {getNextThreeDays().map((date, index) => (
             <option key={index} value={date}>
               {date}
