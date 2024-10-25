@@ -287,23 +287,23 @@ function App() {
             }
           />
           <Route path="/booking" element={<CustomerPrivateRoute />}>
-  <Route 
-    path="" 
-    element={
-      <>
-        <Navbar />
-        <Booking />
-        <Footer />
-      </>
-    } 
-  />
-</Route>
+            <Route
+              path=""
+              element={
+                <>
+                  <Navbar />
+                  <Booking />
+                  <Footer />
+                </>
+              }
+            />
+          </Route>
           <Route
             path="/profile"
             element={
               <>
                 <Navbar />
-                <UserProfile/>
+                <UserProfile />
                 <Footer />
               </>
             }
@@ -313,7 +313,7 @@ function App() {
             element={
               <>
                 <Navbar />
-                <ViewAppointment/>
+                <ViewAppointment />
                 <Footer />
               </>
             }
