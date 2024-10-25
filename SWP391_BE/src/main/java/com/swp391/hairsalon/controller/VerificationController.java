@@ -30,12 +30,12 @@ public class VerificationController {
 
     @PostMapping("/send-code/{accountId}")
     public ResponseEntity<?> sendVerificationCode(@PathVariable String accountId) {
-        String code = CodeGenerator.generateCode(); // Giả định bạn có một lớp CodeGenerator để tạo mã
+        String code = CodeGenerator.generateCode(); 
         String email = iAccountService.getAccountById(accountId).getEmail();
         boolean emailSent = emailService.sendVerificationCode(email, code);
         
         if (emailSent) {
-            verificationService.saveCode(email, code); // Lưu mã sau khi gửi
+            verificationService.saveCode(email, code); 
             return ResponseEntity.ok(Map.of("message", "Code sended", "status", "success"));
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Cannot Send Email", "status", "failure"));
