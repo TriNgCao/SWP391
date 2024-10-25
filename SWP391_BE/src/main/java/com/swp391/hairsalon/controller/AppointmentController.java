@@ -7,14 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.swp391.hairsalon.dto.AppointmentRequest;
+import com.swp391.hairsalon.dto.AppointmentRequestDTO;
 import com.swp391.hairsalon.pojo.Appointment;
 import com.swp391.hairsalon.pojo.SalonService;
 import com.swp391.hairsalon.pojo.Staff;
@@ -76,7 +74,7 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addAppointment(@RequestBody AppointmentRequest appointmentRequest) {
+    public ResponseEntity<String> addAppointment(@RequestBody AppointmentRequestDTO appointmentRequest) {
         Appointment appointment = new Appointment();
         appointment.setCustomer(iCustomerService.getCustomerById(appointmentRequest.getCusId()));
         appointment.setBranch(iSalonService.getSalonById(appointmentRequest.getSalonId()));
@@ -95,12 +93,12 @@ public class AppointmentController {
         for (Staff staff : staffList) {
             iNotificationService.addNewNotification("Appointment Request Created", msgStaff, staff.getAccount());
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body("Add appointment successfully !");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Add appointment successfully!");
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateAppointment(@PathVariable int id,
-            @RequestBody AppointmentRequest appointmentRequest) {
+            @RequestBody AppointmentRequestDTO appointmentRequest) {
         Appointment existAppointment = appointmentService.getAppointmentById(id);
         if (existAppointment == null) {
             return ResponseEntity.notFound().build();
@@ -125,7 +123,7 @@ public class AppointmentController {
                         + ", will be ready to serve you. Please review your appointment details in the system. If you have any requests or changes, feel free to contact us. Thank you for choosing our service!";
                 iNotificationService.addNewNotification("Appointment Confirmation", msgCustomer,
                         existAppointment.getCustomer().getAccount());
-    
+
                 String msgStylist = "New Appointment Scheduled! You have an upcoming appointment at "
                         + existAppointment.getBranch().getSalonName() + " on "
                         + existAppointment.getDate() + " at "
@@ -135,7 +133,7 @@ public class AppointmentController {
                 iNotificationService.addNewNotification("New Appointment Scheduled", msgStylist,
                         existAppointment.getStylist().getAccount());
             }
-    
+
             if ("Cancel".equals(existAppointment.getStatus())) {
                 String msgCustomerCancel = "Your appointment at "
                         + existAppointment.getBranch().getSalonName() + " on "
@@ -144,9 +142,9 @@ public class AppointmentController {
                         + " has been cancelled. We apologize for any inconvenience this may cause. If you would like to reschedule, please visit our system or contact us directly. Thank you for your understanding.";
                 iNotificationService.addNewNotification("Appointment Cancellation", msgCustomerCancel,
                         existAppointment.getCustomer().getAccount());
-    
+
                 if ("Ready".equals(previousStatus)) {
-                    String msgStylistCancel = "The appointment with " 
+                    String msgStylistCancel = "The appointment with "
                             + existAppointment.getCustomer().getAccount().getName() + " at "
                             + existAppointment.getBranch().getSalonName() + " on "
                             + existAppointment.getDate() + " at "
@@ -157,13 +155,15 @@ public class AppointmentController {
                 }
             }
 
-            if ("Complete".equals(existAppointment.getStatus())) {
+            if ("Completed".equals(existAppointment.getStatus())) {
                 String msgCustomerComplete = "Thank you for visiting us! We hope you enjoyed your experience at "
                         + existAppointment.getBranch().getSalonName() + ". Your appointment on "
-                        + existAppointment.getDate() + " at " 
-                        + existAppointment.getStartTime() + " has been completed. If you have any feedback or would like to schedule your next appointment, please contact us or visit our system. We look forward to seeing you again!";
+                        + existAppointment.getDate() + " at "
+                        + existAppointment.getStartTime()
+                        + " has been completed. If you have any feedback or would like to schedule your next appointment, please contact us or visit our system. We look forward to seeing you again!";
                 iNotificationService.addNewNotification("Appointment Completed", msgCustomerComplete,
                         existAppointment.getCustomer().getAccount());
+                iCustomerService.updateCustomerLoyalPoint(getLoyalPoint(appointmentRequest), existAppointment.getCustomer().getCustomerId());
             }
             return ResponseEntity.ok(("Update appointment successfully!"));
         }
@@ -191,7 +191,7 @@ public class AppointmentController {
         return appointmentService.getAppointmentsByDate(sqlDate);
     }
 
-    private List<SalonService> getSalonServicesById(AppointmentRequest appointmentRequest) {
+    private List<SalonService> getSalonServicesById(AppointmentRequestDTO appointmentRequest) {
         List<SalonService> services = new ArrayList<>();
         for (Long serviceId : appointmentRequest.getServiceId()) {
             SalonService service = iSalonServiceService.getServiceById(serviceId);
@@ -200,5 +200,16 @@ public class AppointmentController {
             }
         }
         return services;
+    }
+
+    private int getLoyalPoint(AppointmentRequestDTO appointmentRequest){
+        int loyalPoint=0;
+        for (Long serviceId : appointmentRequest.getServiceId()) {
+            SalonService service = iSalonServiceService.getServiceById(serviceId);
+            if (service != null) {
+                loyalPoint = loyalPoint +  (int) Math.ceil(service.getServicePrice());
+            }
+        } 
+        return loyalPoint;
     }
 }
