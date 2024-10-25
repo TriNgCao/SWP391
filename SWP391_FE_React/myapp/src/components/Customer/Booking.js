@@ -71,7 +71,7 @@ const Booking = () => {
   );
 
   const filteredStylists = stylists.filter((stylist) =>
-    stylist.name.toLowerCase().includes(searchStylistTerm.toLowerCase())
+    stylist.stylistName.toLowerCase().includes(searchStylistTerm.toLowerCase())
   );
 
   const stylistBookedSlots = [
@@ -120,12 +120,17 @@ const Booking = () => {
     };
 
     const fetchStylists = async () => {
-      const stylistData = [
-        { img: "images/logo.png", id: 0, name: "Let's us choose for you" },
-        { img: "images/image_1.jpg", id: 1, name: "Stylist A" },
-        { img: "images/image_2.jpg", id: 2, name: "Stylist B" },
-      ];
-      setStylists(stylistData);
+      try {
+        const response = await axios.get("YOUR_API_URL_HERE");
+        if (response.status === 200) {
+          const stylistData = response.data; // Giả định rằng API trả về một mảng dữ liệu JSON
+          setStylists(stylistData);
+        } else {
+          console.error("Error fetching stylist data:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching stylist data:", error);
+      }
     };
 
     // const fetchServices = async () => {
@@ -333,7 +338,7 @@ const Booking = () => {
   const handleBooking = async () => {
     const bookingData = {
       salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
-      stylistId: stylists.find((stylist) => stylist.name === selectedStylist)?.id,
+      stylistId: stylists.find((stylist) => stylist.stylistName === selectedStylist)?.id,
       serviceId: selectedServices.map((serviceTitle) =>
         services.find((service) => service.serviceName === serviceTitle)?.id
       ),
@@ -357,7 +362,7 @@ const Booking = () => {
   const onBookingClick = async () => {
     const bookingData = {
       salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
-      stylistId: stylists.find((stylist) => stylist.name === selectedStylist)?.id,
+      stylistId: stylists.find((stylist) => stylist.stylistName === selectedStylist)?.id,
       serviceId: selectedServices.map((serviceTitle) =>
         services.find((service) => service.serviceName === serviceTitle)?.id
       ),
@@ -900,58 +905,58 @@ const Booking = () => {
                 <div className="row">
                   {filteredStylists.length > 0
                     ? filteredStylists.map((stylist) => (
-                        <div className="col-md-4 mb-4" key={stylist.id}>
+                        <div className="col-md-4 mb-4" key={stylist.stylistId}>
                           <div
                             className="card text-center"
                             style={{
                               minHeight: "350px",
-                              backgroundColor: selectedStylist === stylist.name ? "#add5f0" : "#fff",
-                              border: selectedStylist === stylist.name ? "2px solid #007bff" : "none"
+                              backgroundColor: selectedStylist === stylist.stylistName ? "#add5f0" : "#fff",
+                              border: selectedStylist === stylist.stylistName ? "2px solid #007bff" : "none"
                             }}
                           >
                             <img
-                              src={stylist.img}
+                              src={stylist.imageName}
                               className="card-img-top"
-                              alt={stylist.name}
+                              alt={stylist.stylistName}
                               style={{ objectFit: "cover", height: "280px" }}
                             />
                             <div className="card-body">
-                              <h5 className="card-title">{stylist.name}</h5>
+                              <h5 className="card-title">{stylist.stylistName}</h5>
                               <button
                                 className="btn btn-primary"
-                                onClick={() => handleStylistSelect(stylist.name)}
+                                onClick={() => handleStylistSelect(stylist.stylistName)}
                                 data-bs-dismiss="modal"
                               >
-                                {selectedStylist === stylist.name ? "Selected" : "Select"}
+                                {selectedStylist === stylist.stylistName ? "Selected" : "Select"}
                               </button>
                             </div>
                           </div>
                         </div>
                       ))
                     : stylists.map((stylist) => (
-                        <div className="col-md-4 mb-4" key={stylist.id}>
+                        <div className="col-md-4 mb-4" key={stylist.stylistId}>
                           <div
                             className="card text-center"
                             style={{
                               minHeight: "350px",
-                              backgroundColor: selectedStylist === stylist.name ? "#add5f0" : "#fff",
-                              border: selectedStylist === stylist.name ? "2px solid #007bff" : "none"
+                              backgroundColor: selectedStylist === stylist.stylistName ? "#add5f0" : "#fff",
+                              border: selectedStylist === stylist.stylistName ? "2px solid #007bff" : "none"
                             }}
                           >
                             <img
-                              src={stylist.img}
+                              src={stylist.imageName}
                               className="card-img-top"
-                              alt={stylist.name}
+                              alt={stylist.stylistName}
                               style={{ objectFit: "cover", height: "280px" }}
                             />
                             <div className="card-body">
-                              <h5 className="card-title">{stylist.name}</h5>
+                              <h5 className="card-title">{stylist.stylistName}</h5>
                               <button
                                 className="btn btn-primary"
-                                onClick={() => handleStylistSelect(stylist.name)}
+                                onClick={() => handleStylistSelect(stylist.stylistName)}
                                 data-bs-dismiss="modal"
                               >
-                                {selectedStylist === stylist.name ? "Selected" : "Select"}
+                                {selectedStylist === stylist.stylistName ? "Selected" : "Select"}
                               </button>
                             </div>
                           </div>
