@@ -800,7 +800,7 @@ const Booking = () => {
                     "Hair Styling",
                     "Hair Coloring",
                     "Hair Treatment",
-                    "Spa Skin",
+                    "Spa Skin Treatment",
                   ].map((category) => (
                     <div key={category}>
                       <h3>{category}</h3>
