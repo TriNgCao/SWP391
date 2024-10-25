@@ -39,8 +39,8 @@ const CustomerLoginModal = () => {
       // Check if token, userID, and userRole are provided and userRole is '1'
       if (token && userID && userRole === 1) {
         sessionStorage.setItem('token', token);
-        sessionStorage.setItem('accountID', userID);
-        sessionStorage.setItem('accountRole', userRole);
+        sessionStorage.setItem('userID', userID);
+        sessionStorage.setItem('userRole', userRole);
         window.dispatchEvent(new Event('storage'));
   
         const closeButton = document.querySelector('#customerLoginModal .btn-close');
