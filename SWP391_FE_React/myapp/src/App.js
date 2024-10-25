@@ -211,7 +211,6 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./components/Customer/Home";
 import AboutUs from "./components/Customer/AboutUs";
 import Contact from "./components/Customer/Contact";
-import Stylist from "./components/Customer/Stylist";
 import Services from "./components/Customer/Services";
 import Booking from "./components/Customer/Booking";
 import { AuthProvider } from "./components/Customer/AuthContext";
@@ -234,6 +233,11 @@ import StaffSalary from "./Pages/Staff/StaffSalary";
 import AdminSalon from "./Pages/Admin/AdminSalon";
 import Navbar from "./components/Customer/NavBar";
 import Footer from "./components/Customer/Footer";
+import BlogSection from "./components/Customer/Blog";
+import BlogPost from "./components/Customer/BlogDetail";
+import UserProfile from "./components/Customer/CustomerProfile";
+import ViewAppointment from "./components/Customer/ViewAppointment";
+import CustomerPrivateRoute from "./components/PrivateRoute/CustomerPrivateRoute";
 
 function App() {
   return (
@@ -282,12 +286,34 @@ function App() {
               </>
             }
           />
+          <Route path="/booking" element={<CustomerPrivateRoute />}>
+            <Route
+              path=""
+              element={
+                <>
+                  <Navbar />
+                  <Booking />
+                  <Footer />
+                </>
+              }
+            />
+          </Route>
           <Route
-            path="/booking"
+            path="/profile"
             element={
               <>
                 <Navbar />
-                <Booking />
+                <UserProfile />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/viewappointment"
+            element={
+              <>
+                <Navbar />
+                <ViewAppointment />
                 <Footer />
               </>
             }
@@ -297,7 +323,17 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Stylist />
+                <BlogSection />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/blogpost"
+            element={
+              <>
+                <Navbar />
+                <BlogPost />
                 <Footer />
               </>
             }

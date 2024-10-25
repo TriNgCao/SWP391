@@ -291,6 +291,7 @@ import UserIconDropdown from "./Dropdown";
 import CustomerLoginModal from "./CustomerLoginModal";
 import LoginButton from "./LoginButton";
 import CustomerRegisterModal from "./CustomerRegisterModal";
+import InternalLoginModal from "./InternalLoginModal";
 
 export default function Navbar() {
   return (
@@ -469,89 +470,7 @@ export default function Navbar() {
         aria-labelledby="internalLoginModalLabel"
         aria-hidden="true"
       >
-        <div className="modal-dialog modal-dialog-centered">
-          <div
-            className="modal-content"
-            style={{
-              borderRadius: "15px",
-              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            <div
-              className="modal-header"
-              style={{
-                backgroundColor: "#e0dede",
-                borderRadius: "15px 15px 0 0",
-              }}
-            >
-              <h5
-                className="modal-title text-center w-100"
-                id="internalLoginModalLabel"
-              >
-                <img
-                  src="images/logo.png"
-                  alt="salon icon"
-                  style={{ width: "50px", marginRight: "10px" }}
-                />
-                Internal Staff Login
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div
-              className="modal-body"
-              style={{ backgroundColor: "#f7f7f7", padding: "30px" }}
-            >
-              <p
-                className="text-center"
-                style={{ fontStyle: "italic", fontSize: "16px" }}
-              >
-                This Login Only For Internal Staff!!
-              </p>
-              <form>
-                <div className="mb-3">
-                  <label htmlFor="internalUsername" className="form-label">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="internalUsername"
-                    placeholder="Enter your username"
-                    style={{ borderRadius: "10px", padding: "10px" }}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="internalPassword" className="form-label">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    id="internalPassword"
-                    placeholder="Enter your password"
-                    style={{ borderRadius: "10px", padding: "10px" }}
-                  />
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-primary w-100"
-                  style={{
-                    borderRadius: "10px",
-                    backgroundColor: "#6dbe45",
-                    borderColor: "#6dbe45",
-                  }}
-                >
-                  Log In
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
+      <InternalLoginModal/>
       </div>
     </div>
   );

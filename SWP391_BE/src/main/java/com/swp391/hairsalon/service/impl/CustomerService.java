@@ -7,6 +7,8 @@ import com.swp391.hairsalon.pojo.Customer;
 import com.swp391.hairsalon.repository.ICustomerRepository;
 import com.swp391.hairsalon.service.definitions.ICustomerService;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class CustomerService implements ICustomerService {
     @Autowired
@@ -16,6 +18,14 @@ public class CustomerService implements ICustomerService {
     public Customer getCustomerById(int id) {
         // TODO Auto-generated method stub
         return iCustomerRepository.getReferenceById(id);
+    }
+
+    @Override
+    @Transactional
+    public void updateCustomerLoyalPoint(int bonusPoint, int cusId) {
+        Customer customer = iCustomerRepository.getReferenceById(cusId);
+        customer.setLoyaltyPoints(customer.getLoyaltyPoints()+bonusPoint);
+        iCustomerRepository.save(customer);
     }
 
 }
