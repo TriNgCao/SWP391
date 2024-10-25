@@ -54,14 +54,14 @@ export default function Services() {
   //                 time: "1 Hours",
   //               },
   //               {
-  //                 id: 5,
-  //                 title: "Luxury Spa Skin Treatment",
-  //                 description:
+  //                 serviceId: 5,
+  //                 serviceName: "Luxury Spa Skin Treatment",
+  //                 serviceDescription:
   //                   "Rejuvenating spa treatments to restore your skin's glow.",
-  //                 price: "$70",
-  //                 image: "images/image_5.jpg",
   //                 category: "Spa Skin",
-  //                 time: "1 Hours",
+  //                 servicePrice: "$70",
+  //                 maxTime: "1 Hours",
+  //                 imageName: "url"
   //               },
   //             ],
   //           });
@@ -103,7 +103,7 @@ export default function Services() {
 
   const renderServices = (services) =>
     services.map((service) => (
-      <div className="col-md-4 mb-4" key={service.id}>
+      <div className="col-md-4 mb-4" key={service.serviceId}>
         <div
           className="card text-center"
           style={{
@@ -114,18 +114,18 @@ export default function Services() {
           }}
         >
           <img
-            src={service.image}
+            src={service.imageName}
             className="card-img-top"
-            alt={service.title}
+            alt={service.serviceName}
             style={{ objectFit: "cover", height: "150px" }}
           />
           <div className="card-body d-flex flex-column">
-            <h5 className="card-title">{service.title}</h5>
+            <h5 className="card-title">{service.serviceName}</h5>
             <p className="card-text" style={{ flexGrow: 1 }}>
-              {service.description}
+              {service.serviceDescription}
             </p>
             <p className="card-text" style={{ flexGrow: 1 }}>
-              Duration: {service.time}
+              Duration: {service.maxTime}
             </p>
             <p
               className="card-price"
@@ -135,7 +135,7 @@ export default function Services() {
                 color: "#d9534f",
               }}
             >
-              Price: {service.price}
+              Price: {service.servicePrice}
             </p>
             <button className="btn btn-primary mt-auto">Book Now</button>
           </div>
