@@ -6,20 +6,30 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaGoogle } from 'react-icons/fa';
 
 const InternalLoginModal = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const validateEmail = (email) => {
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(email);
+  };
 
   const handleInternalLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await axios.post('https://reqres.in/api/login', {
-        username: username,
+        email: email,
         password: password,
       });
 
@@ -33,8 +43,8 @@ const InternalLoginModal = () => {
 
       if (token && userID && userRole) {
         sessionStorage.setItem('token', token);
-        sessionStorage.setItem('accountID', userID);
-        sessionStorage.setItem('accountRole', userRole);
+        sessionStorage.setItem('userID', userID);
+        sessionStorage.setItem('userRole', userRole);
         window.dispatchEvent(new Event('storage'));
 
         const closeButton = document.querySelector('#internalLoginModal .btn-close');
@@ -126,8 +136,8 @@ const InternalLoginModal = () => {
                 id="internalUsername"
                 placeholder="Enter your username"
                 style={{ borderRadius: "10px", padding: "10px" }}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
