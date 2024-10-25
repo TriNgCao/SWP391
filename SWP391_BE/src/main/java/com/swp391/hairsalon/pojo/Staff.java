@@ -14,7 +14,7 @@ import lombok.Setter;
 public class Staff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int satffId;
+    private int staffId;
     private int salary;
 
     @OneToOne()
