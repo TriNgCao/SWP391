@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Link } from 'react-router-dom';
 import { FaGoogle } from 'react-icons/fa';
 
 const InternalLoginModal = () => {
@@ -10,6 +10,7 @@ const InternalLoginModal = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleInternalLogin = async (e) => {
     e.preventDefault();
@@ -24,8 +25,13 @@ const InternalLoginModal = () => {
 
       const { token, userID, userRole } = response.data;
 
-      // Check if token, userID, and userRole are present and accountRole is not 1
-      if (token && userID && userRole !== 1) {
+      if (userRole === 1) {
+        setError('Your account does not have internal login permissions. Please select customer login.');
+        setLoading(false);
+        return;
+      }
+
+      if (token && userID && userRole) {
         sessionStorage.setItem('token', token);
         sessionStorage.setItem('accountID', userID);
         sessionStorage.setItem('accountRole', userRole);
@@ -38,6 +44,23 @@ const InternalLoginModal = () => {
 
         setLoading(false);
         toast.success("Login Successfully!");
+
+        switch (userRole) {
+          case 2:
+            navigate('/stylist');
+            break;
+          case 3:
+            navigate('/staff');
+            break;
+          case 4:
+            navigate('/manager');
+            break;
+          case 5:
+            navigate('/admin');
+            break;
+          default:
+            setError('Access Denied: Invalid role for internal login.');
+        }
       } else {
         setError('Access Denied: This login is for internal staff only.');
         setLoading(false);
