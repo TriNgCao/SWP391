@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
@@ -8,70 +9,82 @@ export default function Services() {
   const [searchTreatmentTerm, setSearchTreatmentTerm] = useState("");
   const [searchSpaSkinTerm, setSearchSpaSkinTerm] = useState("");
 
+  // useEffect(() => {
+  //   const fetchServices = async () => {
+  //     try {
+  //       const response = await new Promise((resolve) =>
+  //         setTimeout(() => {
+  //           resolve({
+  //             data: [
+  //               {
+  //                 id: 1,
+  //                 title: "Haircut Basic",
+  //                 description:
+  //                   "A simple yet stylish haircut to keep you looking fresh.",
+  //                 price: "$37",
+  //                 image: "images/image_1.jpg",
+  //                 category: "Hair Styling",
+  //                 time: "1 Hours",
+  //               },
+  //               {
+  //                 id: 2,
+  //                 title: "Hair Color Vivid",
+  //                 description: "Bold hair color to express yourself.",
+  //                 price: "$50",
+  //                 image: "images/image_2.jpg",
+  //                 category: "Hair Coloring",
+  //                 time: "1 Hours",
+  //               },
+  //               {
+  //                 id: 3,
+  //                 title: "Deep Conditioning",
+  //                 description: "Nourishing treatment for healthy hair.",
+  //                 price: "$40",
+  //                 image: "images/image_3.jpg",
+  //                 category: "Hair Treatment",
+  //                 time: "2 Hours",
+  //               },
+  //               {
+  //                 id: 4,
+  //                 title: "Classic Hair Styling",
+  //                 description: "Elegant hair styling for any occasion.",
+  //                 price: "$60",
+  //                 image: "images/image_4.jpg",
+  //                 category: "Hair Styling",
+  //                 time: "1 Hours",
+  //               },
+  //               {
+  //                 id: 5,
+  //                 title: "Luxury Spa Skin Treatment",
+  //                 description:
+  //                   "Rejuvenating spa treatments to restore your skin's glow.",
+  //                 price: "$70",
+  //                 image: "images/image_5.jpg",
+  //                 category: "Spa Skin",
+  //                 time: "1 Hours",
+  //               },
+  //             ],
+  //           });
+  //         }, 1000)
+  //       );
+  //       setServices(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching services:", error);
+  //     }
+  //   };
+
+  //   fetchServices();
+  // }, []);
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await new Promise((resolve) =>
-          setTimeout(() => {
-            resolve({
-              data: [
-                {
-                  id: 1,
-                  title: "Haircut Basic",
-                  description:
-                    "A simple yet stylish haircut to keep you looking fresh.",
-                  price: "$37",
-                  image: "images/image_1.jpg",
-                  category: "Hair Styling",
-                  time: "1 Hours",
-                },
-                {
-                  id: 2,
-                  title: "Hair Color Vivid",
-                  description: "Bold hair color to express yourself.",
-                  price: "$50",
-                  image: "images/image_2.jpg",
-                  category: "Hair Coloring",
-                  time: "1 Hours",
-                },
-                {
-                  id: 3,
-                  title: "Deep Conditioning",
-                  description: "Nourishing treatment for healthy hair.",
-                  price: "$40",
-                  image: "images/image_3.jpg",
-                  category: "Hair Treatment",
-                  time: "2 Hours",
-                },
-                {
-                  id: 4,
-                  title: "Classic Hair Styling",
-                  description: "Elegant hair styling for any occasion.",
-                  price: "$60",
-                  image: "images/image_4.jpg",
-                  category: "Hair Styling",
-                  time: "1 Hours",
-                },
-                {
-                  id: 5,
-                  title: "Luxury Spa Skin Treatment",
-                  description:
-                    "Rejuvenating spa treatments to restore your skin's glow.",
-                  price: "$70",
-                  image: "images/image_5.jpg",
-                  category: "Spa Skin",
-                  time: "1 Hours",
-                },
-              ],
-            });
-          }, 1000)
-        );
+        const response = await axios.get("URL_API_CỦA_BẠN");
         setServices(response.data);
       } catch (error) {
         console.error("Error fetching services:", error);
       }
     };
-
+  
     fetchServices();
   }, []);
 
