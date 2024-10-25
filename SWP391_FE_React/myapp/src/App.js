@@ -236,6 +236,8 @@ import Footer from "./components/Customer/Footer";
 import BlogSection from "./components/Customer/Blog";
 import BlogPost from "./components/Customer/BlogDetail";
 import UserProfile from "./components/Customer/CustomerProfile";
+import ViewAppointment from "./components/Customer/ViewAppointment";
+import CustomerPrivateRoute from "./components/PrivateRoute/CustomerPrivateRoute";
 
 function App() {
   return (
@@ -284,22 +286,34 @@ function App() {
               </>
             }
           />
-          <Route
-            path="/booking"
-            element={
-              <>
-                <Navbar />
-                <Booking />
-                <Footer />
-              </>
-            }
-          />
+          <Route path="/booking" element={<CustomerPrivateRoute />}>
+  <Route 
+    path="" 
+    element={
+      <>
+        <Navbar />
+        <Booking />
+        <Footer />
+      </>
+    } 
+  />
+</Route>
           <Route
             path="/profile"
             element={
               <>
                 <Navbar />
                 <UserProfile/>
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/viewappointment"
+            element={
+              <>
+                <Navbar />
+                <ViewAppointment/>
                 <Footer />
               </>
             }
