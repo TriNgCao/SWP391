@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
     email: "",
     phone: "",
     subject: "",
@@ -13,10 +13,10 @@ const Contact = () => {
   const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { fullName, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [fullName]: value,
     });
   };
 
@@ -25,11 +25,11 @@ const Contact = () => {
   };
 
   useEffect(() => {
-    const { name, email, subject, message } = formData;
+    const { fullName, email, subject, message } = formData;
     if (
       subject.trim() !== "" &&
       isValidEmail(email) &&
-      name.trim() !== "" &&
+      fullName.trim() !== "" &&
       message.trim() !== ""
     ) {
       setIsSubmitEnabled(true);
@@ -52,7 +52,7 @@ const Contact = () => {
     }
 
     setFormData({
-      name: "",
+      fullName: "",
       email: "",
       phone: "",
       subject: "",
@@ -94,7 +94,7 @@ const Contact = () => {
                               name="name"
                               id="name"
                               placeholder="Name"
-                              value={formData.name}
+                              value={formData.fullName}
                               onChange={handleChange}
                               required
                             />
