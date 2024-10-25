@@ -62,17 +62,18 @@ const CustomerRegisterModal = () => {
 
       try {
         const response = await axios.post('api/register', {
-          fullName: fullName,
+          name: fullName,
           email: email,
-          phoneNumber: phoneNumber,
+          phone: phoneNumber,
           password: password,
         });
 
-        if (response.data.errorCode === 200) {
+        if (response.status === 200) {
           const { token, userID, userRole } = response.data;
           sessionStorage.setItem('token', token);
           sessionStorage.setItem('userID', userID);
           sessionStorage.setItem('userRole', userRole);
+          window.dispatchEvent(new Event('storage'));
 
           setIsLoading(false);
           toast.success("Register successfully! Redirecting to home...");
@@ -142,7 +143,7 @@ const CustomerRegisterModal = () => {
         </div>
         <div
           className="modal-body"
-          style={{ backgroundColor: "#f7f7f7", padding: "30px" }}
+          style={{ backgroundColor: "#f7f7f7", padding: "30px",maxHeight: "85vh", overflowY: "auto", }}
         >
           <p
             className="text-center"
