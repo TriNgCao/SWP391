@@ -79,12 +79,20 @@ export default function Services() {
     const fetchServices = async () => {
       try {
         const response = await axios.get("URL_API_CỦA_BẠN");
-        setServices(response.data);
+        
+        const updatedServices = response.data.map((service) => ({
+          ...service,
+          imageUrl: `http://localhost:8080/services/image/${encodeURIComponent(
+            service.imageName
+          )}`,
+        }));
+        
+        setServices(updatedServices);
       } catch (error) {
         console.error("Error fetching services:", error);
       }
     };
-  
+
     fetchServices();
   }, []);
 
@@ -110,11 +118,11 @@ export default function Services() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            height: "100%", // Set card height to 100% for equal height
+            height: "100%", 
           }}
         >
           <img
-            src={service.imageName}
+            src={service.imageUrl}
             className="card-img-top"
             alt={service.serviceName}
             style={{ objectFit: "cover", height: "150px" }}
@@ -144,19 +152,19 @@ export default function Services() {
     ));
 
   const filteredStylingServices = hairStylingServices.filter((service) =>
-    service.title.toLowerCase().includes(searchStylingTerm.toLowerCase())
+    service.serviceName.toLowerCase().includes(searchStylingTerm.toLowerCase())
   );
 
   const filteredColoringServices = hairColoringServices.filter((service) =>
-    service.title.toLowerCase().includes(searchColoringTerm.toLowerCase())
+    service.serviceName.toLowerCase().includes(searchColoringTerm.toLowerCase())
   );
 
   const filteredTreatmentServices = hairTreatmentServices.filter((service) =>
-    service.title.toLowerCase().includes(searchTreatmentTerm.toLowerCase())
+    service.serviceName.toLowerCase().includes(searchTreatmentTerm.toLowerCase())
   );
 
   const filteredSpaSkinServices = spaSkinServices.filter((service) =>
-    service.title.toLowerCase().includes(searchSpaSkinTerm.toLowerCase())
+    service.serviceName.toLowerCase().includes(searchSpaSkinTerm.toLowerCase())
   );
 
   return (
