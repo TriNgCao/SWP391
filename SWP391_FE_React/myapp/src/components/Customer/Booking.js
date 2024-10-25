@@ -106,23 +106,17 @@ const Booking = () => {
 
   useEffect(() => {
     const fetchSalons = async () => {
-      const salonData = [
-        {
-          id: 1,
-          name: "Salon A",
-          address: "123 Main St",
-          status: "active",
-          img: "images/image_1.jpg",
-        },
-        {
-          id: 2,
-          name: "Salon B",
-          address: "456 Elm St",
-          status: "inactive",
-          img: "images/image_2.jpg",
-        },
-      ];
-      setSalons(salonData);
+      try {
+        const response = await axios.get("YOUR_API_URL_HERE");
+        if (response.status === 200) {
+          const salonData = response.data; // Đảm bảo API trả về một mảng dữ liệu JSON
+          setSalons(salonData);
+        } else {
+          console.error("Error fetching salon data:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching salon data:", error);
+      }
     };
 
     const fetchStylists = async () => {
@@ -619,24 +613,24 @@ const Booking = () => {
                                     width: "10px",
                                     height: "10px",
                                     borderRadius: "50%",
-                                    backgroundColor: salon.status === "active" ? "green" : "red",
+                                    backgroundColor: salon.active === "active" ? "green" : "red",
                                     marginRight: "8px",
                                   }}
                                 ></span>
                                 <span>
-                                  {salon.status === "active" ? "Active" : "Inactive"}
+                                  {salon.active === "active" ? "Active" : "Inactive"}
                                 </span>
                               </div>
                               <button
                                 className="btn"
                                 style={{
-                                  backgroundColor: salon.status === "inactive" ? "#d3d3d3" : "#4caf50",
+                                  backgroundColor: salon.active === "inactive" ? "#d3d3d3" : "#4caf50",
                                   color: "#fff",
-                                  cursor: salon.status === "inactive" ? "not-allowed" : "pointer",
+                                  cursor: salon.active === "inactive" ? "not-allowed" : "pointer",
                                 }}
                                 onClick={() => handleSalonSelect(salon.name)}
                                 data-bs-dismiss="modal"
-                                disabled={salon.status === "inactive"}
+                                disabled={salon.active === "inactive"}
                               >
                                 Select
                               </button>
@@ -651,7 +645,7 @@ const Booking = () => {
                             style={{ minHeight: "350px" }}
                           >
                             <img
-                              src={salon.img}
+                              src={salon.imageName}
                               alt={salon.name}
                               className="card-img-top"
                               style={{ height: "150px", objectFit: "cover" }}
@@ -670,24 +664,24 @@ const Booking = () => {
                                     width: "10px",
                                     height: "10px",
                                     borderRadius: "50%",
-                                    backgroundColor: salon.status === "active" ? "green" : "red",
+                                    backgroundColor: salon.active === "active" ? "green" : "red",
                                     marginRight: "8px",
                                   }}
                                 ></span>
                                 <span>
-                                  {salon.status === "active" ? "Active" : "Inactive"}
+                                  {salon.active === "active" ? "Active" : "Inactive"}
                                 </span>
                               </div>
                               <button
                                 className="btn"
                                 style={{
-                                  backgroundColor: salon.status === "inactive" ? "#d3d3d3" : "#4caf50",
+                                  backgroundColor: salon.active === "inactive" ? "#d3d3d3" : "#4caf50",
                                   color: "#fff",
-                                  cursor: salon.status === "inactive" ? "not-allowed" : "pointer",
+                                  cursor: salon.active === "inactive" ? "not-allowed" : "pointer",
                                 }}
                                 onClick={() => handleSalonSelect(salon.name)}
                                 data-bs-dismiss="modal"
-                                disabled={salon.status === "inactive"}
+                                disabled={salon.active === "inactive"}
                               >
                                 Select
                               </button>
