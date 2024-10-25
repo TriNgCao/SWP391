@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaGoogle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
@@ -14,6 +14,8 @@ const CustomerRegisterModal = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const navigate = useNavigate(); // Hook for navigation
+
   const validateEmail = (email) => {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailPattern.test(email);
@@ -25,12 +27,12 @@ const CustomerRegisterModal = () => {
   };
 
   const validateFullName = (fullName) => {
-    const fullNamePattern = /^[a-zA-Z\s]+$/;// no special
+    const fullNamePattern = /^[a-zA-Z\s]+$/;
     return fullNamePattern.test(fullName);
   };
 
   const validatePassword = (password) => {
-    return password.length >= 6 && !/\s/.test(password); //at least 6, no space
+    return password.length >= 6 && !/\s/.test(password);
   };
 
   const resetForm = () => {
@@ -51,9 +53,7 @@ const CustomerRegisterModal = () => {
     } else if (!validatePhoneNumber(phoneNumber)) {
       setError("Please enter valid phone number.");
     } else if (!validatePassword(password)) {
-      setError(
-        "Password must be at least 6 characters and cannot contain spaces."
-      );
+      setError("Password must be at least 6 characters and cannot contain spaces.");
     } else if (password !== confirmPassword) {
       setError("Password and confirm password do not match.");
     } else {
@@ -68,20 +68,22 @@ const CustomerRegisterModal = () => {
           password: password,
         });
 
-        if (response.data.message === "Registration successful") {
+        if (response.data.errorCode === 200) {
+          const { token, userID, userRole } = response.data;
+          sessionStorage.setItem('token', token);
+          sessionStorage.setItem('userID', userID);
+          sessionStorage.setItem('userRole', userRole);
+
           setIsLoading(false);
-          toast.success("Register successfully! Please log in.");
+          toast.success("Register successfully! Redirecting to home...");
 
           const closeButton = document.querySelector('#registerCustomerModal .btn-close');
           if (closeButton) {
             closeButton.click();
           }
 
-          const loginLink = document.querySelector('a[data-bs-target="#customerLoginModal"]');
-          if (loginLink) {
-            loginLink.click();
-          }
-        } else if (response.data.errorCode === 400) {
+          navigate("/");
+        } else if (response.data.errorCode === 409) {
           setIsLoading(false);
           toast.error(response.data.message);
         }
