@@ -76,7 +76,7 @@ const CustomerRegisterModal = () => {
           window.dispatchEvent(new Event('storage'));
 
           setIsLoading(false);
-          toast.success("Register successfully! Redirecting to home...");
+          toast.success("Register successfully! Welcome to Leopard salon!");
 
           const closeButton = document.querySelector('#registerCustomerModal .btn-close');
           if (closeButton) {
