@@ -74,7 +74,7 @@ const UserProfile = () => {
       if (JSON.stringify(user) !== JSON.stringify(initialUser)) {
         try {
           const userId = sessionStorage.getItem("userID");
-          const response = await axios.post(`http://localhost:8080/profile/customer/update/${userId}`, {
+          const response = await axios.put(`http://localhost:8080/user/update/${userId}`, {
             name: user.fullName,
             email: user.email,
             phone: user.phone,

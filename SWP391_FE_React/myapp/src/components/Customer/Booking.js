@@ -50,6 +50,7 @@ const Booking = () => {
   const [selectedSalon, setSelectedSalon] = useState(null);
   const [selectedSalonId, setSelectedSalonId] = useState(null);
   const [selectedStylist, setSelectedStylist] = useState(null);
+  const [selectedStylistId, setSelectedStylistId] = useState(null);
   const [salons, setSalons] = useState([]);
   const [stylists, setStylists] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -139,13 +140,12 @@ const Booking = () => {
 
 
   useEffect(() => {
-    if (selectedSalon && selectedStylist && selectedDate) {
+    if (selectedStylistId && selectedDate) {
       const fetchStylistBookedSlots = async () => {
         try {
           const response = await axios.get(`YOUR_API_URL_HERE`, {
             params: {
-              salonId: selectedSalon,
-              stylistId: selectedStylist,
+              stylistId: selectedStylistId,
               date: selectedDate,
             },
           });
@@ -158,20 +158,30 @@ const Booking = () => {
       };
       fetchStylistBookedSlots();
     }
-  }, [selectedSalon, selectedStylist, selectedDate]);
+  }, [selectedStylistId, selectedDate]);
 
   const handleSalonSelect = (salonName, salonId) => {
     setSelectedSalon(salonName);
     setSelectedSalonId(salonId)
     console.log(salonId);
     setSelectedStylist(null);
+    setSelectedStylistId(null);
     setSelectedDate(null);
     setSelectedSlot(null);
   };
 
-  const handleStylistSelect = (stylistName) => {
+  // const handleStylistSelect = (stylistName) => {
+  //   setSelectedStylist((prevStylist) =>
+  //     prevStylist === stylistName ? null : stylistName
+  //   );
+  //   setSelectedSlot(null);
+  // };
+  const handleStylistSelect = (stylistName, stylistId) => {
     setSelectedStylist((prevStylist) =>
       prevStylist === stylistName ? null : stylistName
+    );
+    setSelectedStylistId((prevStylistId) =>
+      prevStylistId === stylistId ? null : stylistId
     );
     setSelectedSlot(null);
   };
@@ -196,41 +206,84 @@ const Booking = () => {
 
   const timeSlots = generateTimeSlots();
 
-  const getDisabledSlots = (startTime, duration) => {
-    const startHour = parseInt(startTime.split(":")[0]);
-    const durationHours = parseInt(duration.split("")[0]);
-    const disabledSlots = [];
+  // const getDisabledSlots = (bookedTime, duration) => {
+  //   const bookedHour = parseInt(bookedTime.split(":")[0]);
+  //   const durationHours = parseInt(duration.split("")[0]);
+  //   const disabledSlots = [];
 
-    for (let i = 0; i < durationHours; i++) {
-      const hour = startHour + i;
+  //   for (let i = 0; i < durationHours; i++) {
+  //     const hour = bookedHour + i;
+  //     disabledSlots.push(`${hour}:00`);
+  //   }
+
+  //   return disabledSlots;
+  // };
+
+  // const calculateDisabledSlots = () => {
+  //   const bookedSlots = stylistBookedSlots.filter(
+  //     (slotData) =>
+  //       slotData.stylistName === selectedStylist &&
+  //       slotData.date === selectedDate
+  //   );
+
+  //   const allDisabledSlots = new Set();
+
+  //   bookedSlots.forEach((slotData) => {
+  //     const disabledSlots = getDisabledSlots(
+  //       slotData.startTime,
+  //       slotData.duration
+  //     );
+  //     disabledSlots.forEach((disabledSlot) =>
+  //       allDisabledSlots.add(disabledSlot)
+  //     );
+  //   });
+
+  //   return allDisabledSlots;
+  // };
+
+  const getDisabledSlots = (bookedTime, duration, startTime, endTime) => {
+    const disabledSlots = [];
+  
+    // Disable all hours outside working hours
+    for (let hour = 0; hour < startTime; hour++) {
       disabledSlots.push(`${hour}:00`);
     }
-
+    for (let hour = endTime + 1; hour <= 23; hour++) {
+      disabledSlots.push(`${hour}:00`);
+    }
+  
+    // Disable booked slots based on bookedTime and duration
+    for (let i = 0; i < duration; i++) {
+      const hour = bookedTime + i;
+      if (hour >= startTime && hour <= endTime) {
+        disabledSlots.push(`${hour}:00`);
+      }
+    }
+  
     return disabledSlots;
   };
-
+  
   const calculateDisabledSlots = () => {
     const bookedSlots = stylistBookedSlots.filter(
       (slotData) =>
-        slotData.salonId === selectedSalon &&
-        slotData.stylistName === selectedStylist &&
-        slotData.date === selectedDate
+        slotData.stylistId === selectedStylistId && slotData.date === selectedDate
     );
-
+  
     const allDisabledSlots = new Set();
-
+  
     bookedSlots.forEach((slotData) => {
       const disabledSlots = getDisabledSlots(
+        slotData.bookedTime,
+        slotData.duration,
         slotData.startTime,
-        slotData.duration
+        slotData.endTime
       );
-      disabledSlots.forEach((disabledSlot) =>
-        allDisabledSlots.add(disabledSlot)
-      );
+      disabledSlots.forEach((disabledSlot) => allDisabledSlots.add(disabledSlot));
     });
-
+  
     return allDisabledSlots;
   };
+  
 
   const disabledSlotsSet = calculateDisabledSlots();
 
@@ -885,7 +938,7 @@ const Booking = () => {
                             <h5 className="card-title">{stylist.stylistName}</h5>
                             <button
                               className="btn btn-primary"
-                              onClick={() => handleStylistSelect(stylist.stylistName)}
+                              onClick={() => handleStylistSelect(stylist.stylistName, stylist.stylistId)}
                               data-bs-dismiss="modal"
                             >
                               {selectedStylist === stylist.stylistName ? "Selected" : "Select"}
@@ -914,7 +967,7 @@ const Booking = () => {
                             <h5 className="card-title">{stylist.stylistName}</h5>
                             <button
                               className="btn btn-primary"
-                              onClick={() => handleStylistSelect(stylist.stylistName)}
+                              onClick={() => handleStylistSelect(stylist.stylistName, stylist.stylistId)}
                               data-bs-dismiss="modal"
                             >
                               {selectedStylist === stylist.stylistName ? "Selected" : "Select"}
