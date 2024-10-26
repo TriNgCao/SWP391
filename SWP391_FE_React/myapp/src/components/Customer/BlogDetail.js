@@ -21,17 +21,23 @@ const BlogPost = () => {
   const blogId = location.state?.blogId; // Lấy blogId từ navigate
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchBlogDetail = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/blog/${blogId}`);
         setPostData(response.data);
+        const updatedPostData = {
+          ...response.data,
+          imageUrl: `http://localhost:8080/api/blog/image/${encodeURIComponent(response.data.imageName)}`,
+        };
+        
+        setPostData(updatedPostData);
       } catch (error) {
         console.error("Error fetching blog data:", error);
       }
     };
 
     if (blogId) {
-      fetchData();
+      fetchBlogDetail();
     }
   }, [blogId]);
 
