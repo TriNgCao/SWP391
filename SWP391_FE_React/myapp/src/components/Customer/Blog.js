@@ -10,11 +10,11 @@ const BlogSection = () => {
     // Hàm giả lập API với Axios
     async function fetchBlogs() {
       try {
-        const response = await axios.get("URL_API_CỦA_BẠN");
+        const response = await axios.get("http://localhost:8080/api/blog");
 
         const updatedBlogs = response.data.map((blog) => ({
           ...blog,
-          imageUrl: `http://localhost:8080/blogs/image/${encodeURIComponent(
+          imageUrl: `http://localhost:8080/api/blog/image/${encodeURIComponent(
             blog.imageName
           )}`,
         }));
