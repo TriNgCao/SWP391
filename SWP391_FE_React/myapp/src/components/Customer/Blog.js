@@ -10,10 +10,18 @@ const BlogSection = () => {
     // Hàm giả lập API với Axios
     async function fetchBlogs() {
       try {
-        const response = await axios.get('URL_API_CUA_BAN');
-        setBlogs(response.data);
+        const response = await axios.get("URL_API_CỦA_BẠN");
+        
+        const updatedBlogs = response.data.map((blog) => ({
+          ...blog,
+          imageUrl: `http://localhost:8080/blogs/image/${encodeURIComponent(
+            blog.imageName
+          )}`,
+        }));
+    
+        setBlogs(updatedBlogs);
       } catch (error) {
-        console.error('Error fetching blog data:', error);
+        console.error("Error fetching blog data:", error);
       }
     }
 
