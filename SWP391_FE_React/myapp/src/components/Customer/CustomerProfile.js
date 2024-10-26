@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const validatePhoneNumber = (phoneNumber) => {
   const phonePattern = /^(03|05|07|08|09)\d{8}$/;
@@ -13,16 +14,41 @@ const validateFullName = (fullName) => {
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({
-    fullName: "John Doe",
-    email: "john.doe@example.com",
-    phone: "0912345678",
-    loyalPoints: 1200,
+    fullName: "",
+    email: "",
+    phone: "",
+    loyaltyPoints: 0,
   });
 
   const [errors, setErrors] = useState({
     fullName: "",
     phone: "",
   });
+
+  // Fetch user data from API when component mounts
+  useEffect(() => {
+    const userId = sessionStorage.getItem("userId"); // Get userId from sessionStorage
+    if (userId) {
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get(`YOUR_API_URL/${userId}`);
+          if (response.status === 200) {
+            const { name, email, phone, loyaltyPoints } = response.data;
+            setUser({
+              fullName: name,
+              email: email,
+              phone: phone,
+              loyaltyPoints: loyaltyPoints,
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+
+      fetchUserData();
+    }
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -138,7 +164,7 @@ const UserProfile = () => {
         <input
           type="text"
           name="loyalPoints"
-          value={user.loyalPoints}
+          value={user.loyaltyPoints}
           disabled
           style={{
             width: "100%",
