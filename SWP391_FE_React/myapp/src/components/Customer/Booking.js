@@ -58,12 +58,20 @@ const Booking = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchSalonTerm, setSearchSalonTerm] = useState("");
   const [searchStylistTerm, setSearchStylistTerm] = useState("");
+  const [stylistBookedSlots, setStylistBookedSlots] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
 
+  // const filteredServices = services.filter(
+  //   (service) =>
+  //     service.serviceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     service.category.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
   const filteredServices = services.filter(
     (service) =>
-      service.serviceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      service.category.toLowerCase().includes(searchTerm.toLowerCase())
+      (!selectedCategory || service.category === selectedCategory) &&
+      (service.serviceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       service.category.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const filteredSalons = salons.filter((salon) =>
@@ -74,42 +82,45 @@ const Booking = () => {
     stylist.stylistName.toLowerCase().includes(searchStylistTerm.toLowerCase())
   );
 
-  const stylistBookedSlots = [
-    {
-      salonId: 1, 
-      salonName: "Salon A",
-      stylistId: 1,
-      stylistName: "Stylist A",
-      date: "23/10/2024",
-      startTime: "19:00",
-      duration: "3",
-    },
-    {
-      salonId: 1, 
-      salonName: "Salon A",
-      stylistId: 2,
-      stylistName: "Stylist B",
-      date: "23/10/2024",
-      startTime: "21:00",
-      duration: "1",
-    },
-    {
-      salonId: 1,
-      salonName: "Salon A",
-      stylistId: 0,
-      stylistName: "Let's us choose for you",
-      date: "23/10/2024",
-      startTime: "21:00",
-      duration: "2",
-    },
-  ];
+  // const stylistBookedSlots = [
+  //   {
+  //     salonId: 1, 
+  //     salonName: "Salon A",
+  //     stylistId: 1,
+  //     stylistName: "Stylist A",
+  //     date: "23/10/2024",
+  //     startTime: "19:00",
+  //     duration: "3",
+  //   },
+  //   {
+  //     salonId: 1, 
+  //     salonName: "Salon A",
+  //     stylistId: 2,
+  //     stylistName: "Stylist B",
+  //     date: "23/10/2024",
+  //     startTime: "21:00",
+  //     duration: "1",
+  //   },
+  //   {
+  //     salonId: 1,
+  //     salonName: "Salon A",
+  //     stylistId: 0,
+  //     stylistName: "Let's us choose for you",
+  //     date: "23/10/2024",
+  //     startTime: "21:00",
+  //     duration: "2",
+  //   },
+  // ];
 
   useEffect(() => {
     const fetchSalons = async () => {
       try {
         const response = await axios.get("YOUR_API_URL_HERE");
         if (response.status === 200) {
-          const salonData = response.data; // Đảm bảo API trả về một mảng dữ liệu JSON
+          const salonData = response.data.map((salon) => ({
+            ...salon,
+            imageUrl: `http://localhost:8080/salons/image/${encodeURIComponent(salon.imageName)}`,
+          }));
           setSalons(salonData);
         } else {
           console.error("Error fetching salon data:", response.statusText);
@@ -118,12 +129,31 @@ const Booking = () => {
         console.error("Error fetching salon data:", error);
       }
     };
-
-    const fetchStylists = async () => {
+    
+    // const fetchStylists = async () => {
+    //   try {
+    //     const response = await axios.get("YOUR_API_URL_HERE");
+    //     if (response.status === 200) {
+    //       const stylistData = response.data.map((stylist) => ({
+    //         ...stylist,
+    //         imageUrl: `http://localhost:8080/stylists/image/${encodeURIComponent(stylist.imageName)}`,
+    //       }));
+    //       setStylists(stylistData);
+    //     } else {
+    //       console.error("Error fetching stylist data:", response.statusText);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching stylist data:", error);
+    //   }
+    // };
+    const fetchStylists = async (salonId) => {
       try {
-        const response = await axios.get("YOUR_API_URL_HERE");
+        const response = await axios.get(`YOUR_API_URL_HERE/salons/stylist/${salonId}`);
         if (response.status === 200) {
-          const stylistData = response.data; // Giả định rằng API trả về một mảng dữ liệu JSON
+          const stylistData = response.data.map((stylist) => ({
+            ...stylist,
+            imageUrl: `http://localhost:8080/stylists/image/${encodeURIComponent(stylist.imageName)}`,
+          }));
           setStylists(stylistData);
         } else {
           console.error("Error fetching stylist data:", response.statusText);
@@ -132,6 +162,8 @@ const Booking = () => {
         console.error("Error fetching stylist data:", error);
       }
     };
+    
+    
     const fetchServices = async () => {
       try {
         const response = await axios.get("URL_API_CỦA_BẠN");
@@ -154,6 +186,41 @@ const Booking = () => {
     fetchServices();
   }, []);
 
+  useEffect(() => {
+    if (selectedSalon && selectedStylist && selectedDate) {
+      const fetchStylistBookedSlots = async () => {
+        try {
+          const response = await axios.get(`YOUR_API_URL_HERE`, {
+            params: {
+              salonId: selectedSalon,
+              stylistId: selectedStylist,
+              date: selectedDate,
+            },
+          });
+          if (response.status === 200) {
+            setStylistBookedSlots(response.data);
+          }
+        } catch (error) {
+          console.error("Error fetching booked slots:", error);
+        }
+      };
+      fetchStylistBookedSlots();
+    }
+  }, [selectedSalon, selectedStylist, selectedDate]);
+
+  // const handleSalonSelect = (salonName) => {
+  //   setSelectedSalon(salonName);
+  //   setSelectedStylist(null);
+  //   setSelectedDate(null);
+  //   setSelectedSlot(null);
+  // };
+
+  // const handleStylistSelect = (stylistName) => {
+  //   setSelectedStylist((prevStylist) =>
+  //     prevStylist === stylistName ? null : stylistName
+  //   );
+  //   setSelectedSlot(null);
+  // };
   const handleSalonSelect = (salonName) => {
     setSelectedSalon(salonName);
     setSelectedStylist(null);
@@ -276,8 +343,33 @@ const Booking = () => {
   };
 
   const isBookingDisabled = !selectedSalon || !selectedStylist || !selectedDate || !selectedSlot || selectedServices.length === 0;
-  // Handle booking request
-  const handleBooking = async () => {
+  // // Handle booking request
+  // const handleBooking = async () => {
+  //   const bookingData = {
+  //     salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
+  //     stylistId: stylists.find((stylist) => stylist.stylistName === selectedStylist)?.id,
+  //     serviceId: selectedServices.map((serviceTitle) =>
+  //       services.find((service) => service.serviceName === serviceTitle)?.id
+  //     ),
+  //     date: selectedDate,
+  //     startTime: selectedSlot,
+  //   };
+
+  //   // Simulate API call
+  //   return new Promise((resolve, reject) => {
+  //     setTimeout(() => {
+  //       const isSuccess = Math.random() > 0.5;
+  //       if (isSuccess) {
+  //         resolve({ status: 200, message: "Booking Successfully!", data: bookingData });
+  //       } else {
+  //         reject({ status: 400, message: "Send booking fail!" });
+  //       }
+  //     }, 1500);
+  //   });
+  // };
+  // Hàm handleBooking sau khi sửa lại
+const handleBooking = async () => {
+  try {
     const bookingData = {
       salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
       stylistId: stylists.find((stylist) => stylist.stylistName === selectedStylist)?.id,
@@ -288,18 +380,19 @@ const Booking = () => {
       startTime: selectedSlot,
     };
 
-    // Simulate API call
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const isSuccess = Math.random() > 0.5;
-        if (isSuccess) {
-          resolve({ status: 200, message: "Booking Successfully!", data: bookingData });
-        } else {
-          reject({ status: 400, message: "Send booking fail!" });
-        }
-      }, 1500);
-    });
-  };
+    const response = await axios.post("YOUR_API_BOOKING_URL", bookingData);
+
+    if (response.status === 200) {
+      return { status: 200, message: "Booking Successfully!", data: bookingData };
+    } else {
+      return { status: response.status, message: "Booking failed. Please try again." };
+    }
+  } catch (error) {
+    console.error("Error in booking:", error);
+    return { status: 400, message: "Booking failed due to a network error or invalid data." };
+  }
+};
+
 
   const onBookingClick = async () => {
     const bookingData = {
@@ -311,9 +404,9 @@ const Booking = () => {
       date: selectedDate,
       startTime: selectedSlot,
     };
-  
+
     console.log("Booking Data:", JSON.stringify(bookingData, null, 2));
-  
+
     try {
       const response = await handleBooking();
       if (response.status === 200) {
@@ -664,8 +757,26 @@ const Booking = () => {
               ></button>
             </div>
             <div className="modal-body">
-              {/* Search*/}
+
               <div className="mb-3 d-flex justify-content-end">
+                {/* Search by Category */}
+  <div className="input-group me-3" style={{ maxWidth: "200px" }}>
+    <label className="input-group-text" htmlFor="categorySelect">
+      Category
+    </label>
+    <select
+      className="form-select"
+      id="categorySelect"
+      value={selectedCategory}
+      onChange={(e) => setSelectedCategory(e.target.value)}
+    >
+      <option value="">All</option>
+      <option value="Hair Styling">Hair Styling</option>
+      <option value="Hair Coloring">Hair Coloring</option>
+      <option value="Hair Treatment">Hair Treatment</option>
+      <option value="Spa Skin Treatment">Spa Skin Treatment</option>
+    </select>
+  </div>
                 <div className="input-group" style={{ maxWidth: "300px" }}>
                   <span className="input-group-text" id="search-icon">
                     <FaSearch />
