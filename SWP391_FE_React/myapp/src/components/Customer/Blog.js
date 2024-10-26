@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,66 +8,14 @@ const BlogSection = () => {
 
   useEffect(() => {
     // Hàm giả lập API với Axios
-    const fetchBlogs = async () => {
+    async function fetchBlogs() {
       try {
-        const response = await new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({
-              data: [
-                {
-                  blogId: 1,
-                  accountId: '1',
-                  managerName: 'Cong Tuong',
-                  imageName: 'images/image_1.jpg',
-                  title: 'Even the all-powerful Pointing has no control about the blind texts',
-                  createDate: '2024-10-24',
-                  status: true,
-                },
-                {
-                    blogId: 1,
-                    accountId: '1',
-                    managerName: 'Cong Tuong',
-                    imageName: 'images/image_1.jpg',
-                    title: 'Even the all-powerful Pointing has no control about the blind texts',
-                    createDate: '2024-10-24',
-                    status: true,
-                  },
-                  {
-                    blogId: 1,
-                    accountId: '1',
-                    managerName: 'Cong Tuong',
-                    imageName: 'images/image_1.jpg',
-                    title: 'Even the all-powerful Pointing has no control about the blind texts',
-                    createDate: '2024-10-24',
-                    status: true,
-                  },
-                  {
-                    blogId: 1,
-                    accountId: '1',
-                    managerName: 'Cong Tuong',
-                    imageName: 'images/image_1.jpg',
-                    title: 'Even the all-powerful Pointing has no control about the blind texts',
-                    createDate: '2024-10-24',
-                    status: true,
-                  },
-                {
-                  blogId: 2,
-                  accountId: '1',
-                  managerName: 'Cong Tuong',
-                  imageName: 'images/image_6.jpg',
-                  title: 'Another Interesting Title for a Blog Post',
-                  createDate: '2024-10-23',
-                  status: false,
-                },
-              ],
-            });
-          }, 1000);
-        });
+        const response = await axios.get('URL_API_CUA_BAN');
         setBlogs(response.data);
       } catch (error) {
         console.error('Error fetching blog data:', error);
       }
-    };
+    }
 
     fetchBlogs();
   }, []);

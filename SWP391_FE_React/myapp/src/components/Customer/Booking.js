@@ -132,64 +132,6 @@ const Booking = () => {
         console.error("Error fetching stylist data:", error);
       }
     };
-
-    // const fetchServices = async () => {
-    //   try {
-    //     const response = await new Promise((resolve) =>
-    //       setTimeout(() => {
-    //         resolve({
-    //           data: [
-    //             {
-    //               id: 1,
-    //               title: "Haircut Basic",
-    //               description:
-    //                 "A simple yet stylish haircut to keep you looking fresh.",
-    //               price: "$37",
-    //               image: "images/image_1.jpg",
-    //               category: "Hair Styling",
-    //             },
-    //             {
-    //               id: 2,
-    //               title: "Hair Color Vivid",
-    //               description: "Bold hair color to express yourself.",
-    //               price: "$50",
-    //               image: "images/image_2.jpg",
-    //               category: "Hair Coloring",
-    //             },
-    //             {
-    //               id: 3,
-    //               title: "Deep Conditioning",
-    //               description: "Nourishing treatment for healthy hair.",
-    //               price: "$40",
-    //               image: "images/image_3.jpg",
-    //               category: "Hair Treatment",
-    //             },
-    //             {
-    //               id: 4,
-    //               title: "Classic Hair Styling",
-    //               description: "Elegant hair styling for any occasion.",
-    //               price: "$60",
-    //               image: "images/image_4.jpg",
-    //               category: "Hair Styling",
-    //             },
-    //             {
-    //               id: 5,
-    //               title: "Luxury Spa Skin Treatment",
-    //               description:
-    //                 "Rejuvenating spa treatments to restore your skin's glow.",
-    //               price: "$70",
-    //               image: "images/image_5.jpg",
-    //               category: "Spa Skin",
-    //             },
-    //           ],
-    //         });
-    //       }, 1000)
-    //     );
-    //     setServices(response.data);
-    //   } catch (error) {
-    //     console.error("Error fetching services:", error);
-    //   }
-    // };
     const fetchServices = async () => {
       try {
         const response = await axios.get("URL_API_CỦA_BẠN");
