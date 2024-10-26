@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const validatePhoneNumber = (phoneNumber) => {
   const phonePattern = /^(03|05|07|08|09)\d{8}$/;
@@ -19,27 +21,28 @@ const UserProfile = () => {
     phone: "",
     loyaltyPoints: 0,
   });
-
+  const [initialUser, setInitialUser] = useState(null);
   const [errors, setErrors] = useState({
     fullName: "",
     phone: "",
   });
 
-  // Fetch user data from API when component mounts
   useEffect(() => {
-    const userId = sessionStorage.getItem("userId"); // Get userId from sessionStorage
+    const userId = sessionStorage.getItem("userID");
     if (userId) {
       const fetchUserData = async () => {
         try {
-          const response = await axios.get(`YOUR_API_URL/${userId}`);
+          const response = await axios.get(`http://localhost:8080/profile/customer/${userId}`);
           if (response.status === 200) {
             const { name, email, phone, loyaltyPoints } = response.data;
-            setUser({
+            const userData = {
               fullName: name,
               email: email,
               phone: phone,
               loyaltyPoints: loyaltyPoints,
-            });
+            };
+            setUser(userData);
+            setInitialUser(userData);
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -66,11 +69,26 @@ const UserProfile = () => {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: errorMsg }));
   };
 
-  const toggleEditMode = () => {
+  const toggleEditMode = async () => {
     if (isEditing) {
-      if (!errors.fullName && !errors.phone) {
-        setIsEditing(false);
+      if (JSON.stringify(user) !== JSON.stringify(initialUser)) {
+        try {
+          const userId = sessionStorage.getItem("userID");
+          const response = await axios.post(`http://localhost:8080/profile/customer/update/${userId}`, {
+            name: user.fullName,
+            email: user.email,
+            phone: user.phone,
+          });
+          if (response.status === 200) {
+            toast.success("Profile updated successfully!");
+            setInitialUser(user);
+          }
+        } catch (error) {
+          console.error("Error updating user data:", error);
+          toast.error("Failed to update profile!");
+        }
       }
+      setIsEditing(false);
     } else {
       setIsEditing(true);
     }
