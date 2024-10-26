@@ -11,6 +11,7 @@ const BlogSection = () => {
     async function fetchBlogs() {
       try {
         const response = await axios.get('URL_API_CUA_BAN');
+        const response = await axios.get('http://localhost:8080/api/blog');
         setBlogs(response.data);
       } catch (error) {
         console.error('Error fetching blog data:', error);
