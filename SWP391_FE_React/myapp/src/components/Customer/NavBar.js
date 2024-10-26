@@ -292,6 +292,7 @@ import CustomerLoginModal from "./CustomerLoginModal";
 import LoginButton from "./LoginButton";
 import CustomerRegisterModal from "./CustomerRegisterModal";
 import InternalLoginModal from "./InternalLoginModal";
+import ForgotPasswordModal from "./ForgotPasswordModal";
 
 export default function Navbar() {
   return (
@@ -461,6 +462,17 @@ export default function Navbar() {
       >
         <CustomerRegisterModal />
       </div>
+
+       {/* <!-- Customer Forgot Password Modal --> */}
+      <div
+        className="modal fade"
+        id="forgotPasswordModal"
+        tabIndex="-1"
+        aria-labelledby="forgotPasswordModalLabel"
+        aria-hidden="true"
+      >
+      <ForgotPasswordModal/>
+      </div>       
 
       {/* <!-- Login for Internal Modal --> */}
       <div
