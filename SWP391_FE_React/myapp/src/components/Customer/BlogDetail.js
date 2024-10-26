@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { Link, useLocation } from "react-router-dom";
 
 const BlogPost = () => {
   const [postData, setPostData] = useState({});
@@ -14,26 +15,25 @@ const BlogPost = () => {
   ]);
   const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState(0);
-  const [liked, setLiked] = useState(false); // Track like status
+  const [liked, setLiked] = useState(false);
+
+  const location = useLocation();
+  const blogId = location.state?.blogId; // Lấy blogId từ navigate
 
   useEffect(() => {
     const fetchData = async () => {
-      const mockData = {
-        blogId: 1,
-        managerName: "Cong Tuong",
-        imageName: "images/image_1.jpg",
-        title: "Title of post",
-        content:
-          "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis, eius mollitia suscipit, quisquam doloremque distinctio perferendis.",
-        createDate: "2024-10-23",
-        status: false,
-      };
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setPostData(mockData);
+      try {
+        const response = await axios.get(`URL_API_CỦA_BẠN/${blogId}`);
+        setPostData(response.data);
+      } catch (error) {
+        console.error("Error fetching blog data:", error);
+      }
     };
 
-    fetchData();
-  }, []);
+    if (blogId) {
+      fetchData();
+    }
+  }, [blogId]);
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
