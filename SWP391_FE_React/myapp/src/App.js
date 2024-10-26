@@ -286,7 +286,8 @@ function App() {
               </>
             }
           />
-          <Route path="/booking" element={<CustomerPrivateRoute />}>
+           {/* element={<CustomerPrivateRoute />} */}
+          <Route path="/booking">
             <Route
               path=""
               element={
