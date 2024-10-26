@@ -71,7 +71,7 @@ const BlogPost = () => {
           Posted on: {postData.createDate} | Posted by: {postData.managerName}
         </p>
         <p>
-          <img src={postData.imageName} alt="Blog" style={styles.image} />
+          <img src={postData.imageUrl} alt="Blog" style={styles.image} />
         </p>
         <p style={styles.content}>{postData.content}</p>
         <div style={styles.likeCommentCounts}>
