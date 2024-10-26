@@ -4,66 +4,145 @@ import { Link, useLocation } from "react-router-dom";
 
 const BlogPost = () => {
   const [postData, setPostData] = useState({});
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      date: "April 7, 2020 at 10:05pm",
-      comment:
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem.",
-    },
-  ]);
+  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
+
+  // Retrieve user data from sessionStorage
+  const accountId = sessionStorage.getItem("userId");
+  const token = sessionStorage.getItem("token");
+  const userRole = sessionStorage.getItem("userRole");
+  const isLoggedIn = token && accountId && userRole;
 
   const location = useLocation();
-  const blogId = location.state?.blogId; // Lấy blogId từ navigate
+  const blogId = location.state?.blogId;
 
   useEffect(() => {
     const fetchBlogDetail = async () => {
       try {
+        // API to fetch blog details by blogId
+        // GET http://localhost:8080/api/blog/{blogId}
         const response = await axios.get(`http://localhost:8080/api/blog/${blogId}`);
-        setPostData(response.data);
-        const updatedPostData = {
+        setPostData({
           ...response.data,
           imageUrl: `http://localhost:8080/api/blog/image/${encodeURIComponent(response.data.imageName)}`,
-        };
-        
-        setPostData(updatedPostData);
+        });
       } catch (error) {
         console.error("Error fetching blog data:", error);
       }
     };
 
+    const fetchComments = async () => {
+      try {
+        // API to fetch comments for a specific blog post by blogId
+        // GET http://localhost:8080/api/cmt/{blogId}
+        const response = await axios.get(`http://localhost:8080/api/cmt/${blogId}`);
+        setComments(response.data);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    const fetchCommentCount = async () => {
+      try {
+        // API to fetch the total count of comments for a specific blog post
+        // GET http://localhost:8080/api/cmt/count/{blogId}
+        const response = await axios.get(`http://localhost:8080/api/cmt/count/${blogId}`);
+        setCommentCount(response.data);
+      } catch (error) {
+        console.error("Error fetching comment count:", error);
+      }
+    };
+
+    const fetchLikeCount = async () => {
+      try {
+        // API to fetch the total like count for a specific blog post
+        // GET http://localhost:8080/api/like/{blogId}
+        const response = await axios.get(`http://localhost:8080/api/like/${blogId}`);
+        setLikes(response.data);
+      } catch (error) {
+        console.error("Error fetching like count:", error);
+      }
+    };
+
+    const checkIfLiked = async () => {
+      try {
+        // API to check if the current user has already liked this blog post
+        // GET http://localhost:8080/api/like with parameters { blogId, accountId }
+        const response = await axios.get("http://localhost:8080/api/like", {
+          params: { blogId, accountId }
+        });
+        setLiked(response.data !== null);
+      } catch (error) {
+        console.error("Error checking like status:", error);
+      }
+    };
+
     if (blogId) {
       fetchBlogDetail();
+      fetchComments();
+      fetchCommentCount();
+      fetchLikeCount();
+      if (isLoggedIn) checkIfLiked();
     }
-  }, [blogId]);
+  }, [blogId, accountId, isLoggedIn]);
 
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (newComment.trim() === "") return;
 
-    const newCommentData = {
-      id: comments.length + 1,
-      name: "Anonymous",
-      date: new Date().toLocaleString(),
-      comment: newComment,
-    };
-
-    setComments([...comments, newCommentData]);
-    setNewComment("");
+    try {
+      // API to submit a new comment
+      // POST http://localhost:8080/api/cmt with payload { blogId, accountId, content }
+      const response = await axios.post("http://localhost:8080/api/cmt", {
+        blogId,
+        accountId,
+        content: newComment,
+      });
+      if (response.status === 200) {
+        setComments([
+          ...comments,
+          { commentId: comments.length + 1, accountName: "You", createDate: new Date().toLocaleString(), content: newComment },
+        ]);
+        setNewComment("");
+        setCommentCount(commentCount + 1);
+      }
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+    }
   };
 
-  const handleLike = () => {
-    setLikes((prevLikes) => (liked ? prevLikes - 1 : prevLikes + 1));
-    setLiked(!liked);
+  const handleLikeToggle = async () => {
+    try {
+      if (liked) {
+        // API to check for existing like and delete it if the user clicks 'unlike'
+        // GET http://localhost:8080/api/like with parameters { blogId, accountId }
+        const response = await axios.get("http://localhost:8080/api/like", { params: { blogId, accountId } });
+        if (response.data) {
+          // API to delete like by likeId if it exists
+          // DELETE http://localhost:8080/api/like/{likeId}
+          await axios.delete(`http://localhost:8080/api/like/${response.data.likeId}`);
+          setLikes(likes - 1);
+          setLiked(false);
+        }
+      } else {
+        // API to add a like when the user clicks 'like'
+        // POST http://localhost:8080/api/like with payload { blogId, accountId }
+        await axios.post("http://localhost:8080/api/like", { blogId, accountId });
+        setLikes(likes + 1);
+        setLiked(true);
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
   };
 
   return (
     <section style={styles.section}>
       <div style={styles.container}>
+        {/* Post Content */}
         <div style={styles.postHeader}>
           <h2 style={styles.title}>{postData.title}</h2>
         </div>
@@ -74,46 +153,45 @@ const BlogPost = () => {
           <img src={postData.imageUrl} alt="Blog" style={styles.image} />
         </p>
         <p style={styles.content}>{postData.content}</p>
+
+        {/* Like and Comment Counts */}
         <div style={styles.likeCommentCounts}>
-          <span onClick={handleLike} style={styles.likeCount}>
-            <i
-              className={`fa ${liked ? "fa-thumbs-up" : "fa-thumbs-o-up"}`}
-              aria-hidden="true"
-            ></i>{" "}
-            {likes}
-          </span>
+          {isLoggedIn && (
+            <span onClick={handleLikeToggle} style={styles.likeCount}>
+              <i className={`fa ${liked ? "fa-thumbs-up" : "fa-thumbs-o-up"}`} aria-hidden="true"></i> {likes}
+            </span>
+          )}
           <span style={styles.commentCount}>
-            <i className="fa fa-commenting-o" aria-hidden="true"></i>{" "}
-            {comments.length} Comments
+            <i className="fa fa-commenting-o" aria-hidden="true"></i> {commentCount} Comments
           </span>
         </div>
+
+        {/* Comments Section */}
         <div style={styles.commentsSection}>
           <h3>Comments</h3>
-          <form onSubmit={handleCommentSubmit} style={styles.commentForm}>
-            <textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Add a comment..."
-              style={styles.textarea}
-            ></textarea>
-            <button type="submit" style={styles.button}>
-              Submit Comment
-            </button>
-          </form>
+          {isLoggedIn && (
+            <form onSubmit={handleCommentSubmit} style={styles.commentForm}>
+              <textarea
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Add a comment..."
+                style={styles.textarea}
+              ></textarea>
+              <button type="submit" style={styles.button}>
+                Submit Comment
+              </button>
+            </form>
+          )}
           <ul style={styles.commentList}>
             {comments.map((comment) => (
-              <li key={comment.id} style={styles.comment}>
+              <li key={comment.commentId} style={styles.comment}>
                 <div style={styles.vcard}>
-                  <img
-                    src="images/person_1.jpg"
-                    alt="Person"
-                    style={styles.commentImage}
-                  />
+                  <img src="images/person_1.jpg" alt="Person" style={styles.commentImage} />
                 </div>
                 <div style={styles.commentBody}>
-                  <h4>{comment.name}</h4>
-                  <div style={styles.meta}>{comment.date}</div>
-                  <p>{comment.comment}</p>
+                  <h4>{comment.accountName}</h4>
+                  <div style={styles.meta}>{comment.createDate}</div>
+                  <p>{comment.content}</p>
                   <p>
                     <Link to="#" style={styles.reply}>
                       Reply
