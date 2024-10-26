@@ -23,7 +23,7 @@ const BlogPost = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`URL_API_CỦA_BẠN/${blogId}`);
+        const response = await axios.get(`http://localhost:8080/api/blog/${blogId}`);
         setPostData(response.data);
       } catch (error) {
         console.error("Error fetching blog data:", error);
