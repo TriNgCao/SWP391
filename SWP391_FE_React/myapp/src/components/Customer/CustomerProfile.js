@@ -1,10 +1,5 @@
 import React, { useState } from "react";
 
-const validateEmail = (email) => {
-  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailPattern.test(email);
-};
-
 const validatePhoneNumber = (phoneNumber) => {
   const phonePattern = /^(03|05|07|08|09)\d{8}$/;
   return phonePattern.test(phoneNumber);
@@ -26,7 +21,6 @@ const UserProfile = () => {
 
   const [errors, setErrors] = useState({
     fullName: "",
-    email: "",
     phone: "",
   });
 
@@ -37,12 +31,9 @@ const UserProfile = () => {
       [name]: value,
     }));
 
-    // Validate inputs
     let errorMsg = "";
     if (name === "fullName" && !validateFullName(value)) {
       errorMsg = "Full name can only contain letters and spaces.";
-    } else if (name === "email" && !validateEmail(value)) {
-      errorMsg = "Please enter a valid email address.";
     } else if (name === "phone" && !validatePhoneNumber(value)) {
       errorMsg = "Please enter a valid phone number.";
     }
@@ -51,7 +42,7 @@ const UserProfile = () => {
 
   const toggleEditMode = () => {
     if (isEditing) {
-      if (!errors.fullName && !errors.email && !errors.phone) {
+      if (!errors.fullName && !errors.phone) {
         setIsEditing(false);
       }
     } else {
@@ -105,20 +96,19 @@ const UserProfile = () => {
           type="email"
           name="email"
           value={user.email}
-          onChange={handleInputChange}
-          disabled={!isEditing}
+          disabled
           style={{
             width: "100%",
             padding: "12px",
             fontSize: "16px",
             margin: "8px 0",
             borderRadius: "8px",
-            border: errors.email ? "2px solid red" : "2px solid #ccc",
-            backgroundColor: isEditing ? "#fff" : "#e9ecef",
+            border: "2px solid #ccc",
+            backgroundColor: "#f1f3f5",
+            color: "#777",
             outline: "none"
           }}
         />
-        {errors.email && <span style={{ color: "red", fontSize: "14px" }}>{errors.email}</span>}
       </div>
 
       <div style={{ marginBottom: "20px" }}>
