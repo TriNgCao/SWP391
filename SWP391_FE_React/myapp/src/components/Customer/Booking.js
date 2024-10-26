@@ -141,6 +141,10 @@ const Booking = () => {
 
   useEffect(() => {
     if (selectedStylistId && selectedDate) {
+      console.log("Fetching booked slots with:");
+      console.log("Stylist ID:", selectedStylistId);
+      console.log("Selected Date:", selectedDate);
+
       const fetchStylistBookedSlots = async () => {
         try {
           const response = await axios.get(`YOUR_API_URL_HERE`, {
@@ -150,6 +154,7 @@ const Booking = () => {
             },
           });
           if (response.status === 200) {
+            console.log("Booked Slots Response:", response.data);
             setStylistBookedSlots(response.data);
           }
         } catch (error) {
