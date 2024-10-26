@@ -49,7 +49,7 @@ const BlogSection = () => {
                     <div
                       className="block-20 rounded"
                       style={{
-                        backgroundImage: `url(${blog.imageName})`,
+                        backgroundImage: `url(${blog.imageUrl})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                       }}
