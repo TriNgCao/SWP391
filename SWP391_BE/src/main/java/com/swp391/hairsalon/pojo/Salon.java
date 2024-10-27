@@ -25,11 +25,14 @@ public class Salon {
 
     private String salonAddress;
 
+
+    @Column(name = "status")
     private boolean salonStatus;
 
     private String imageName;
 
-    @OneToOne(mappedBy = "salon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @OneToOne(mappedBy = "salon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "salon", cascade = CascadeType.ALL)
     private Manager manager;
 
     @OneToMany(mappedBy = "salon", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -37,5 +40,8 @@ public class Salon {
 
     @OneToMany(mappedBy = "salon", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Stylist> stylists = new ArrayList<Stylist>();
+
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Appointment> appointments = new ArrayList<>();
 
 }

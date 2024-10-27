@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.util.List;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,19 +18,24 @@ import java.util.Set;
 public class Stylist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int stylistId;
+
     private int salary;
+
     private double commission;
     private String imageName;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne()
     @JoinColumn(name = "account_id")
+
     private Account account;
 
     @ManyToOne
     @JoinColumn(name = "salonId")
+
     private Salon salon;
 
-//    @ManyToMany(mappedBy = "stylists")
-//    private Set<Schedule> dates = new HashSet<>();
+    @OneToMany(mappedBy = "stylist", cascade = CascadeType.ALL)
+    private List<Appointment> appointments;
 }

@@ -4,9 +4,11 @@ import com.swp391.hairsalon.dto.SalonDto;
 import com.swp391.hairsalon.dto.SalonInfoDto;
 import com.swp391.hairsalon.pojo.Account;
 import com.swp391.hairsalon.pojo.Salon;
+import com.swp391.hairsalon.service.definitions.ISalonService;
+
 import com.swp391.hairsalon.pojo.SalonService;
-import com.swp391.hairsalon.service.IFileService;
-import com.swp391.hairsalon.service.ISalonService;
+import com.swp391.hairsalon.service.definitions.IFileService;
+//import com.swp391.hairsalon.service.ISalonService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

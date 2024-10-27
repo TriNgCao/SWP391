@@ -16,6 +16,6 @@ public interface IStaffRepository extends JpaRepository<Staff, Integer> {
     @Query("Select s.satffId, a.name, s.salary from Staff s join Account a where s.account.id = a.id and s.satffId = :id")
     Object[] getStaffByStaffId(@Param("id") int staffId);
 
-
+    Staff getStaffByAccount_Id(String account_Id);
 
 }

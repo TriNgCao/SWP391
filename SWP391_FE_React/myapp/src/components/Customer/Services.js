@@ -1,17 +1,184 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { FaSearch } from "react-icons/fa";
+
 export default function Services() {
+  const [services, setServices] = useState([]);
+  const [searchStylingTerm, setSearchStylingTerm] = useState("");
+  const [searchColoringTerm, setSearchColoringTerm] = useState("");
+  const [searchTreatmentTerm, setSearchTreatmentTerm] = useState("");
+  const [searchSpaSkinTerm, setSearchSpaSkinTerm] = useState("");
+
+  // useEffect(() => {
+  //   const fetchServices = async () => {
+  //     try {
+  //       const response = await new Promise((resolve) =>
+  //         setTimeout(() => {
+  //           resolve({
+  //             data: [
+  //               {
+  //                 id: 1,
+  //                 title: "Haircut Basic",
+  //                 description:
+  //                   "A simple yet stylish haircut to keep you looking fresh.",
+  //                 price: "$37",
+  //                 image: "images/image_1.jpg",
+  //                 category: "Hair Styling",
+  //                 time: "1 Hours",
+  //               },
+  //               {
+  //                 id: 2,
+  //                 title: "Hair Color Vivid",
+  //                 description: "Bold hair color to express yourself.",
+  //                 price: "$50",
+  //                 image: "images/image_2.jpg",
+  //                 category: "Hair Coloring",
+  //                 time: "1 Hours",
+  //               },
+  //               {
+  //                 id: 3,
+  //                 title: "Deep Conditioning",
+  //                 description: "Nourishing treatment for healthy hair.",
+  //                 price: "$40",
+  //                 image: "images/image_3.jpg",
+  //                 category: "Hair Treatment",
+  //                 time: "2 Hours",
+  //               },
+  //               {
+  //                 id: 4,
+  //                 title: "Classic Hair Styling",
+  //                 description: "Elegant hair styling for any occasion.",
+  //                 price: "$60",
+  //                 image: "images/image_4.jpg",
+  //                 category: "Hair Styling",
+  //                 time: "1 Hours",
+  //               },
+  //               {
+  //                 serviceId: 5,
+  //                 serviceName: "Luxury Spa Skin Treatment",
+  //                 serviceDescription:
+  //                   "Rejuvenating spa treatments to restore your skin's glow.",
+  //                 category: "Spa Skin",
+  //                 servicePrice: "$70",
+  //                 maxTime: "1 Hours",
+  //                 imageName: "url"
+  //               },
+  //             ],
+  //           });
+  //         }, 1000)
+  //       );
+  //       setServices(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching services:", error);
+  //     }
+  //   };
+
+  //   fetchServices();
+  // }, []);
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await axios.get("URL_API_CỦA_BẠN");
+        
+        const updatedServices = response.data.map((service) => ({
+          ...service,
+          imageUrl: `http://localhost:8080/services/image/${encodeURIComponent(
+            service.imageName
+          )}`,
+        }));
+        
+        setServices(updatedServices);
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
+  const hairStylingServices = services.filter(
+    (service) => service.category === "Hair Styling"
+  );
+  const hairColoringServices = services.filter(
+    (service) => service.category === "Hair Coloring"
+  );
+  const hairTreatmentServices = services.filter(
+    (service) => service.category === "Hair Treatment"
+  );
+  const spaSkinServices = services.filter(
+    (service) => service.category === "Spa Skin Treatment"
+  );
+
+  const renderServices = (services) =>
+    services.map((service) => (
+      <div className="col-md-4 mb-4" key={service.serviceId}>
+        <div
+          className="card text-center"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            height: "100%", 
+          }}
+        >
+          <img
+            src={service.imageUrl}
+            className="card-img-top"
+            alt={service.serviceName}
+            style={{ objectFit: "cover", height: "150px" }}
+          />
+          <div className="card-body d-flex flex-column">
+            <h5 className="card-title">{service.serviceName}</h5>
+            <p className="card-text" style={{ flexGrow: 1 }}>
+              {service.serviceDescription}
+            </p>
+            <p className="card-text" style={{ flexGrow: 1 }}>
+              Duration: {service.maxTime}
+            </p>
+            <p
+              className="card-price"
+              style={{
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+                color: "#d9534f",
+              }}
+            >
+              Price: {service.servicePrice}
+            </p>
+            <button className="btn btn-primary mt-auto">Book Now</button>
+          </div>
+        </div>
+      </div>
+    ));
+
+  const filteredStylingServices = hairStylingServices.filter((service) =>
+    service.serviceName.toLowerCase().includes(searchStylingTerm.toLowerCase())
+  );
+
+  const filteredColoringServices = hairColoringServices.filter((service) =>
+    service.serviceName.toLowerCase().includes(searchColoringTerm.toLowerCase())
+  );
+
+  const filteredTreatmentServices = hairTreatmentServices.filter((service) =>
+    service.serviceName.toLowerCase().includes(searchTreatmentTerm.toLowerCase())
+  );
+
+  const filteredSpaSkinServices = spaSkinServices.filter((service) =>
+    service.serviceName.toLowerCase().includes(searchSpaSkinTerm.toLowerCase())
+  );
+
   return (
     <div>
       <section className="ftco-section bg-light">
         <div className="container">
           <div className="row mb-5 pb-5">
-            {/* Hair Cutting Service */}
+            {/* Hair Styling Service */}
             <div className="col-md-4 d-flex align-self-stretch px-4">
               <div className="d-block services text-center">
                 <div className="icon d-flex align-items-center justify-content-center">
                   <img
                     src="images/hair-cut-tool.png"
-                    alt=""
+                    alt="Hair Styling"
                     style={{
                       width: "50px",
                       height: "50px",
@@ -20,7 +187,7 @@ export default function Services() {
                   />
                 </div>
                 <div className="media-body p-4">
-                  <h3 className="heading">Hair Cutting</h3>
+                  <h3 className="heading">Hair Styling</h3>
                   <p>
                     Hair cutting for women transforms your look and showcases
                     your individuality. From chic bobs to long layers, our
@@ -30,7 +197,7 @@ export default function Services() {
                   <button
                     className="btn-custom d-flex align-items-center justify-content-center"
                     data-bs-toggle="modal"
-                    data-bs-target="#cuttingWomenModal"
+                    data-bs-target="#stylingModal"
                   >
                     <span className="fa fa-chevron-right"></span>
                     <i className="sr-only">Booking Now</i>
@@ -45,7 +212,7 @@ export default function Services() {
                 <div className="icon d-flex align-items-center justify-content-center">
                   <img
                     src="images/hair-dye.png"
-                    alt=""
+                    alt="Hair Coloring"
                     style={{
                       width: "50px",
                       height: "50px",
@@ -79,7 +246,7 @@ export default function Services() {
                 <div className="icon d-flex align-items-center justify-content-center">
                   <img
                     src="images/hair-treatment.png"
-                    alt=""
+                    alt="Hair Treatment"
                     style={{
                       width: "50px",
                       height: "50px",
@@ -106,24 +273,58 @@ export default function Services() {
                 </div>
               </div>
             </div>
+
+            {/* Spa Skin Treatment Service */}
+            <div
+              className="col-md-4 d-flex align-self-stretch px-4"
+              style={{ marginTop: "140px" }}
+            >
+              <div className="d-block services text-center">
+                <div className="icon d-flex align-items-center justify-content-center">
+                  <img
+                    src="images/skin-care.png"
+                    alt="Spa Skin"
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      filter: "brightness(0) invert(1)",
+                    }}
+                  />
+                </div>
+                <div className="media-body p-4">
+                  <h3 className="heading">Spa Skin Treatment</h3>
+                  <p>
+                    Pamper yourself with our luxurious spa skin treatments.
+                    Experience ultimate relaxation and rejuvenation for your
+                    skin with our expert techniques and high-quality products.
+                  </p>
+                  <button
+                    className="btn-custom d-flex align-items-center justify-content-center"
+                    data-bs-toggle="modal"
+                    data-bs-target="#spaSkinModal"
+                  >
+                    <span className="fa fa-chevron-right"></span>
+                    <i className="sr-only">Booking Now</i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Modal for Hair Cutting */}
+          {/* Modals for Services */}
+          {/* Hair Styling Modal */}
           <div
             className="modal fade"
-            id="cuttingWomenModal"
+            id="stylingModal"
             tabIndex="-1"
-            aria-labelledby="cuttingWomenModalLabel"
+            aria-labelledby="stylingModalLabel"
             aria-hidden="true"
           >
-            <div
-              className="modal-dialog"
-              style={{ maxWidth: "70vw" }}
-            >
+            <div className="modal-dialog modal-lg">
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="modal-title" id="cuttingWomenModalLabel">
-                    LeoPard Salon's Hair Cutting Services
+                  <h5 className="modal-title" id="stylingModalLabel">
+                    Hair Styling Services
                   </h5>
                   <button
                     type="button"
@@ -133,144 +334,31 @@ export default function Services() {
                   ></button>
                 </div>
                 <div className="modal-body">
-                  <div className="container">
-                    <div className="row">
-                      {/* Service 1 */}
-                      <div className="col-md-4 mb-4">
-                        <div
-                          className="card text-center"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: "350px",
-                          }}
-                        >
-                          <img
-                            src="images/image_1.jpg"
-                            className="card-img-top"
-                            alt="Service 1"
-                            style={{ objectFit: "cover", height: "150px" }}
-                          />
-                          <div className="card-body">
-                            <h5 className="card-title">Haircut Basic</h5>
-                            <p className="card-text" style={{ flexGrow: 1 }}>
-                              A simple yet stylish haircut to keep you looking
-                              fresh.
-                            </p>
-                            <p
-                              className="card-price"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1.2rem",
-                                color: "#d9534f",
-                              }}
-                            >
-                              Price: $30
-                            </p>
-                            <button className="btn btn-primary">
-                              Book Now
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                              
-                      {/* Service 2 */}
-                      <div className="col-md-4 mb-4">
-                        <div
-                          className="card text-center"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: "350px",
-                          }}
-                        >
-                          <img
-                            src="images/image_1.jpg"
-                            className="card-img-top"
-                            alt="Service 2"
-                            style={{ objectFit: "cover", height: "150px" }}
-                          />
-                          <div className="card-body">
-                            <h5 className="card-title">Haircut Deluxe</h5>
-                            <p className="card-text" style={{ flexGrow: 1 }}>
-                              Includes a detailed haircut with additional
-                              styling services.
-                            </p>
-                            <p
-                              className="card-price"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1.2rem",
-                                color: "#d9534f",
-                              }}
-                            >
-                              Price: $50
-                            </p>
-                            <button className="btn btn-primary">
-                              Book Now
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Service 3 */}
-                      <div className="col-md-4 mb-4">
-                        <div
-                          className="card text-center"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: "350px",
-                          }}
-                        >
-                          <img
-                            src="images/image_1.jpg"
-                            className="card-img-top"
-                            alt="Service 3"
-                            style={{ objectFit: "cover", height: "150px" }}
-                          />
-                          <div className="card-body">
-                            <h5 className="card-title">Haircut Premium</h5>
-                            <p className="card-text" style={{ flexGrow: 1 }}>
-                              Our premium package for a luxurious haircut
-                              experience.
-                            </p>
-                            <p
-                              className="card-price"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1.2rem",
-                                color: "#d9534f",
-                              }}
-                            >
-                              Price: $70
-                            </p>
-                            <button className="btn btn-primary">
-                              Book Now
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                  <div className="mb-3 d-flex justify-content-end">
+                    <div className="input-group" style={{ maxWidth: "300px" }}>
+                      <span className="input-group-text" id="search-icon">
+                        <FaSearch />
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search Hair Styling..."
+                        value={searchStylingTerm}
+                        onChange={(e) => setSearchStylingTerm(e.target.value)}
+                        style={{ width: "200px" }}
+                      />
                     </div>
                   </div>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Close
-                  </button>
+
+                  <div className="row">
+                    {renderServices(filteredStylingServices)}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Modal for Hair Coloring */}
+          {/* Hair Coloring Modal */}
           <div
             className="modal fade"
             id="coloringModal"
@@ -278,10 +366,7 @@ export default function Services() {
             aria-labelledby="coloringModalLabel"
             aria-hidden="true"
           >
-            <div
-              className="modal-dialog"
-              style={{ maxWidth: "70vw" }}
-            >
+            <div className="modal-dialog modal-lg">
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title" id="coloringModalLabel">
@@ -295,144 +380,31 @@ export default function Services() {
                   ></button>
                 </div>
                 <div className="modal-body">
-                  <div className="container">
-                    <div className="row">
-                      {/* Service 1 */}
-                      <div className="col-md-4 mb-4">
-                        <div
-                          className="card text-center"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: "350px",
-                          }}
-                        >
-                          <img
-                            src="images/image_1.jpg"
-                            className="card-img-top"
-                            alt="Service 1"
-                            style={{ objectFit: "cover", height: "150px" }}
-                          />
-                          <div className="card-body">
-                            <h5 className="card-title">Haircut Basic</h5>
-                            <p className="card-text" style={{ flexGrow: 1 }}>
-                              A simple yet stylish haircut to keep you looking
-                              fresh.
-                            </p>
-                            <p
-                              className="card-price"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1.2rem",
-                                color: "#d9534f",
-                              }}
-                            >
-                              Price: $30
-                            </p>
-                            <button className="btn btn-primary">
-                              Book Now
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                              
-                      {/* Service 2 */}
-                      <div className="col-md-4 mb-4">
-                        <div
-                          className="card text-center"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: "350px",
-                          }}
-                        >
-                          <img
-                            src="images/image_1.jpg"
-                            className="card-img-top"
-                            alt="Service 2"
-                            style={{ objectFit: "cover", height: "150px" }}
-                          />
-                          <div className="card-body">
-                            <h5 className="card-title">Haircut Deluxe</h5>
-                            <p className="card-text" style={{ flexGrow: 1 }}>
-                              Includes a detailed haircut with additional
-                              styling services.
-                            </p>
-                            <p
-                              className="card-price"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1.2rem",
-                                color: "#d9534f",
-                              }}
-                            >
-                              Price: $50
-                            </p>
-                            <button className="btn btn-primary">
-                              Book Now
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Service 3 */}
-                      <div className="col-md-4 mb-4">
-                        <div
-                          className="card text-center"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: "350px",
-                          }}
-                        >
-                          <img
-                            src="images/image_1.jpg"
-                            className="card-img-top"
-                            alt="Service 3"
-                            style={{ objectFit: "cover", height: "150px" }}
-                          />
-                          <div className="card-body">
-                            <h5 className="card-title">Haircut Premium</h5>
-                            <p className="card-text" style={{ flexGrow: 1 }}>
-                              Our premium package for a luxurious haircut
-                              experience.
-                            </p>
-                            <p
-                              className="card-price"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1.2rem",
-                                color: "#d9534f",
-                              }}
-                            >
-                              Price: $70
-                            </p>
-                            <button className="btn btn-primary">
-                              Book Now
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                  <div className="mb-3 d-flex justify-content-end">
+                    <div className="input-group" style={{ maxWidth: "300px" }}>
+                      <span className="input-group-text" id="search-icon">
+                        <FaSearch />
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search Hair Coloring..."
+                        value={searchColoringTerm}
+                        onChange={(e) => setSearchColoringTerm(e.target.value)}
+                        style={{ width: "200px" }}
+                      />
                     </div>
                   </div>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Close
-                  </button>
+
+                  <div className="row">
+                    {renderServices(filteredColoringServices)}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Modal for Hair Treatment */}
+          {/* Hair Treatment Modal */}
           <div
             className="modal fade"
             id="treatmentModal"
@@ -440,10 +412,7 @@ export default function Services() {
             aria-labelledby="treatmentModalLabel"
             aria-hidden="true"
           >
-            <div
-              className="modal-dialog"
-              style={{ maxWidth: "70vw" }}
-            >
+            <div className="modal-dialog modal-lg">
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title" id="treatmentModalLabel">
@@ -457,138 +426,70 @@ export default function Services() {
                   ></button>
                 </div>
                 <div className="modal-body">
-                  <div className="container">
-                    <div className="row">
-                      {/* Service 1 */}
-                      <div className="col-md-4 mb-4">
-                        <div
-                          className="card text-center"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: "350px",
-                          }}
-                        >
-                          <img
-                            src="images/image_1.jpg"
-                            className="card-img-top"
-                            alt="Service 1"
-                            style={{ objectFit: "cover", height: "150px" }}
-                          />
-                          <div className="card-body">
-                            <h5 className="card-title">Haircut Basic</h5>
-                            <p className="card-text" style={{ flexGrow: 1 }}>
-                              A simple yet stylish haircut to keep you looking
-                              fresh.
-                            </p>
-                            <p
-                              className="card-price"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1.2rem",
-                                color: "#d9534f",
-                              }}
-                            >
-                              Price: $30
-                            </p>
-                            <button className="btn btn-primary">
-                              Book Now
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                              
-                      {/* Service 2 */}
-                      <div className="col-md-4 mb-4">
-                        <div
-                          className="card text-center"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: "350px",
-                          }}
-                        >
-                          <img
-                            src="images/image_1.jpg"
-                            className="card-img-top"
-                            alt="Service 2"
-                            style={{ objectFit: "cover", height: "150px" }}
-                          />
-                          <div className="card-body">
-                            <h5 className="card-title">Haircut Deluxe</h5>
-                            <p className="card-text" style={{ flexGrow: 1 }}>
-                              Includes a detailed haircut with additional
-                              styling services.
-                            </p>
-                            <p
-                              className="card-price"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1.2rem",
-                                color: "#d9534f",
-                              }}
-                            >
-                              Price: $50
-                            </p>
-                            <button className="btn btn-primary">
-                              Book Now
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Service 3 */}
-                      <div className="col-md-4 mb-4">
-                        <div
-                          className="card text-center"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            minHeight: "350px",
-                          }}
-                        >
-                          <img
-                            src="images/image_1.jpg"
-                            className="card-img-top"
-                            alt="Service 3"
-                            style={{ objectFit: "cover", height: "150px" }}
-                          />
-                          <div className="card-body">
-                            <h5 className="card-title">Haircut Premium</h5>
-                            <p className="card-text" style={{ flexGrow: 1 }}>
-                              Our premium package for a luxurious haircut
-                              experience.
-                            </p>
-                            <p
-                              className="card-price"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1.2rem",
-                                color: "#d9534f",
-                              }}
-                            >
-                              Price: $70
-                            </p>
-                            <button className="btn btn-primary">
-                              Book Now
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                  <div className="mb-3 d-flex justify-content-end">
+                    <div className="input-group" style={{ maxWidth: "300px" }}>
+                      <span className="input-group-text" id="search-icon">
+                        <FaSearch />
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search Hair Treatment..."
+                        value={searchTreatmentTerm}
+                        onChange={(e) => setSearchTreatmentTerm(e.target.value)}
+                        style={{ width: "200px" }}
+                      />
                     </div>
                   </div>
+
+                  <div className="row">
+                    {renderServices(filteredTreatmentServices)}
+                  </div>
                 </div>
-                <div className="modal-footer">
+              </div>
+            </div>
+          </div>
+
+          {/* Spa Skin Modal */}
+          <div
+            className="modal fade"
+            id="spaSkinModal"
+            tabIndex="-1"
+            aria-labelledby="spaSkinModalLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog modal-lg">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="spaSkinModalLabel">
+                    Spa Skin Services
+                  </h5>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn-close"
                     data-bs-dismiss="modal"
-                  >
-                    Close
-                  </button>
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <div className="mb-3 d-flex justify-content-end">
+                    <div className="input-group" style={{ maxWidth: "300px" }}>
+                      <span className="input-group-text" id="search-icon">
+                        <FaSearch />
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search Spa Skin..."
+                        value={searchSpaSkinTerm}
+                        onChange={(e) => setSearchSpaSkinTerm(e.target.value)}
+                        style={{ width: "200px" }}
+                      />
+                    </div>
+                  </div>
+                  <div className="row">
+                    {renderServices(filteredSpaSkinServices)}
+                  </div>
                 </div>
               </div>
             </div>

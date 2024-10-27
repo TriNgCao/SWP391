@@ -5,9 +5,11 @@ import com.swp391.hairsalon.dto.EmployeeInfoDto;
 import com.swp391.hairsalon.dto.PersonnelBySalonDto;
 import com.swp391.hairsalon.dto.StylistInfoForBooking;
 import com.swp391.hairsalon.pojo.Account;
-import com.swp391.hairsalon.service.IAccountService;
+import com.swp391.hairsalon.pojo.Manager;
+import com.swp391.hairsalon.service.definitions.IAccountService;
+
 //import com.swp391.hairsalon.service.IManagerService;
-import com.swp391.hairsalon.service.IStylistservice;
+import com.swp391.hairsalon.service.definitions.IStylistservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

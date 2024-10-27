@@ -3,7 +3,7 @@ package com.swp391.hairsalon.controller;
 import com.swp391.hairsalon.dto.CustomerInfoDto;
 import com.swp391.hairsalon.dto.CustomerProfileDto;
 import com.swp391.hairsalon.repository.IAccountRepository;
-import com.swp391.hairsalon.service.IAccountService;
+import com.swp391.hairsalon.service.definitions.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,9 +1,11 @@
 package com.swp391.hairsalon.controller;
 
 import com.swp391.hairsalon.pojo.SalonService;
-import com.swp391.hairsalon.service.FileService;
-import com.swp391.hairsalon.service.IFileService;
-import com.swp391.hairsalon.service.SalonServiceService;
+import com.swp391.hairsalon.service.impl.SalonServiceService;
+
+import com.swp391.hairsalon.service.impl.FileService;
+import com.swp391.hairsalon.service.definitions.IFileService;
+//import com.swp391.hairsalon.service.SalonServiceService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

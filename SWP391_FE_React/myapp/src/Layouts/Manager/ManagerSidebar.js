@@ -1,11 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import GroupIcon from "@mui/icons-material/Group";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import PaidIcon from "@mui/icons-material/Paid";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
+import DescriptionIcon from '@mui/icons-material/Description';
 const ManagerSidebar = () => {
   return (
     <div className="sidebar" style={sidebarStyle}>
@@ -31,15 +32,20 @@ const ManagerSidebar = () => {
           </Link>
         </li>
         <li style={listItemStyle}>
+          <Link to="manager-blog" style={linkStyle}>
+          <DescriptionIcon/> Manage Blog
+          </Link>
+        </li>
+        <li style={listItemStyle}>
           <Link to="manager-payroll" style={linkStyle}>
             <PaidIcon /> Manage Payroll
           </Link>
         </li>
-        <li style={listItemStyle}>
+        {/* <li style={listItemStyle}>
           <Link to="manager-transaction" style={linkStyle}>
             <AccountBalanceIcon /> Manage Transaction
           </Link>
-        </li>
+        </li> */}
         <li style={listItemStyle}>
           <Link to="manager-appointments" style={linkStyle}>
             <SupervisorAccountIcon /> Manage Appointmnets
@@ -60,7 +66,7 @@ const sidebarStyle = {
 const listStyle = {
   listStyleType: "none",
   padding: 12,
-  color: "#333", // Changed to match the text color
+  color: "#4CAF50", // Changed to match the text color
   backgroundColor: "#DFDFDF",
 };
 
