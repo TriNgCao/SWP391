@@ -27,5 +27,10 @@ public class StaffService implements   IStaffService{
         return iStaffRepository.save(s);
     }
 
+    @Override
+    public Staff getStaffByAccountId(String accountId) {
+        return iStaffRepository.getStaffByAccount_Id(accountId);
+    }
+
 
 }

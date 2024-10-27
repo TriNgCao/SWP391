@@ -15,7 +15,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-@RequestMapping("/noti")
+@RequestMapping("api/noti")
 public class NotificationController {
     @Autowired
     private INotificationService iNotificationService;
@@ -30,10 +30,10 @@ public class NotificationController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> markAsRead(@PathVariable int id) {
+    @PutMapping("/{notiId}")
+    public ResponseEntity<String> markAsRead(@PathVariable int notiId) {
         try {
-            iNotificationService.markNotificationAsRead(id);
+            iNotificationService.markNotificationAsRead(notiId);
             return ResponseEntity.ok("Notification marked as reaed.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

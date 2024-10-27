@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.swp391.hairsalon.pojo.Appointment;
+import com.swp391.hairsalon.pojo.Salon;
 
 import java.sql.Date;
 
@@ -19,4 +20,6 @@ public interface IAppointmentRepository extends JpaRepository<Appointment, Integ
 
 
     public List<Appointment> findByCustomer_Account_Name(String name);
+
+    public List<Appointment> findByBranch(Salon branch);
 }

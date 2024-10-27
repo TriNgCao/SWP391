@@ -238,6 +238,7 @@ import BlogPost from "./components/Customer/BlogDetail";
 import UserProfile from "./components/Customer/CustomerProfile";
 import ViewAppointment from "./components/Customer/ViewAppointment";
 import CustomerPrivateRoute from "./components/PrivateRoute/CustomerPrivateRoute";
+import ManagerBlog from "./Pages/Manager/ManagerBlog";
 
 function App() {
   return (
@@ -355,6 +356,10 @@ function App() {
               path="manager-appointments"
               element={<ManagerAppointments />}
             />
+           <Route
+              path="manager-blog"
+              element={<ManagerBlog/>}
+            /> 
           </Route>
 
           {/* DASHBOARD ADMIN */}

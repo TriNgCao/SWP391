@@ -6,6 +6,7 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import PaidIcon from "@mui/icons-material/Paid";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
+import DescriptionIcon from '@mui/icons-material/Description';
 const ManagerSidebar = () => {
   return (
     <div className="sidebar" style={sidebarStyle}>
@@ -28,6 +29,11 @@ const ManagerSidebar = () => {
         <li style={listItemStyle}>
           <Link to="manager-services" style={linkStyle}>
             <PaidIcon /> Manage Services
+          </Link>
+        </li>
+        <li style={listItemStyle}>
+          <Link to="manager-blog" style={linkStyle}>
+          <DescriptionIcon/> Manage Blog
           </Link>
         </li>
         <li style={listItemStyle}>

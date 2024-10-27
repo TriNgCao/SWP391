@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "notification")
 @Getter
@@ -38,6 +40,7 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "acc_id", nullable = false)
+    @JsonIgnore
     private Account account;
 
     @Temporal(TemporalType.TIMESTAMP)
