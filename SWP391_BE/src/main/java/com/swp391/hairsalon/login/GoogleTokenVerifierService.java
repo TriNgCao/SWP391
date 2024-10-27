@@ -16,7 +16,7 @@ public class GoogleTokenVerifierService {
     // Khởi tạo GoogleIdTokenVerifier với client ID
     public GoogleTokenVerifierService() {
         this.verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
-                .setAudience(Collections.singletonList("500479775976-6h377dlqv30b55c9jfbuepburs6oo1ef.apps.googleusercontent.com")) // Thay YOUR_GOOGLE_CLIENT_ID bằng ID của bạn
+                .setAudience(Collections.singletonList("925746768505-b4bs779ll0nodni160a5uifq0njpngtb.apps.googleusercontent.com")) // Thay YOUR_GOOGLE_CLIENT_ID bằng ID của bạn
                 .build();
     }
 

@@ -23,9 +23,14 @@ public class SalonService {
     @Column(name = "Description")
     private String serviceDescription;
 
+    private String category;
+
     @Column(name = "Price")
     private double servicePrice;
 
     @Column(name = "Duration")
     private int maxTime;
+
+    private String imageName;
+
 }

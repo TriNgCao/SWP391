@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface IStaffService{
     public List<Staff> getStaffsBySalonId(int salonId);
-    public Staff updateSalary(int staffId, int salary);
+    public Staff updateSalary(String id, Staff staff);
 }

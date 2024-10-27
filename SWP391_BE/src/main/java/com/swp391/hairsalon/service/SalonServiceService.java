@@ -30,6 +30,11 @@ public class SalonServiceService implements ISalonServiceService {
     }
 
     @Override
+    public SalonService getServiceById(int id) {
+        return salonServiceRepository.getReferenceById((long) id);
+    }
+
+    @Override
     public SalonService addService(SalonService service) {
         return salonServiceRepository.save(service);
     }
@@ -42,6 +47,7 @@ public class SalonServiceService implements ISalonServiceService {
             updatedService.setServiceName(service.getServiceName());
             updatedService.setServiceDescription(service.getServiceDescription());
             updatedService.setServicePrice(service.getServicePrice());
+            updatedService.setCategory(service.getCategory());
             updatedService.setMaxTime(service.getMaxTime());
             return salonServiceRepository.save(updatedService);
         }

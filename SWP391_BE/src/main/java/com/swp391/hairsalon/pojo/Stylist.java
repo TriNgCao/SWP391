@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,6 +20,7 @@ public class Stylist {
     private int stylistId;
     private int salary;
     private double commission;
+    private String imageName;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
@@ -25,4 +29,7 @@ public class Stylist {
     @ManyToOne
     @JoinColumn(name = "salonId")
     private Salon salon;
+
+//    @ManyToMany(mappedBy = "stylists")
+//    private Set<Schedule> dates = new HashSet<>();
 }

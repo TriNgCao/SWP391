@@ -6,11 +6,14 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@ToString
-public class EmployeeInfo {
+public class EmployeeInfoDto {
+    private String id;
     private String name;
+    private String email;
     private int role;
-    private int salary;
+
     private boolean status;
+    private String salonName;
+//    private String imageName;
+
 }

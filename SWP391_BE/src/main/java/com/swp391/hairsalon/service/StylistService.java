@@ -1,6 +1,8 @@
 package com.swp391.hairsalon.service;
 
+import com.swp391.hairsalon.dto.StylistInfoForBooking;
 import com.swp391.hairsalon.pojo.Stylist;
+import com.swp391.hairsalon.repository.IAccountRepository;
 import com.swp391.hairsalon.repository.IStylistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import java.util.List;
 
 @Service
 public class StylistService implements IStylistservice{
+    @Autowired
+    private IAccountRepository iAccountRepository;
 
     @Autowired
     private IStylistRepository iStylistRepository;
@@ -19,10 +23,17 @@ public class StylistService implements IStylistservice{
     }
 
     @Override
-    public Stylist updateSalary(int stylistId, int salary, double commission) {
+    public Stylist updateSalary(String id, Stylist stylist) {
+        int stylistId = iAccountRepository.getById(id).getStylist().getStylistId();
         Stylist s = iStylistRepository.getById(stylistId);
-        s.setCommission(commission);
-        s.setSalary(salary);
+        s.setCommission(stylist.getCommission());
+        s.setSalary(stylist.getSalary());
         return iStylistRepository.save(s);
     }
+
+    @Override
+    public List<StylistInfoForBooking> getStylists(int salonId) {
+        return iStylistRepository.getStylistInfoForBooking( salonId);
+    }
+
 }

@@ -1,17 +1,25 @@
 package com.swp391.hairsalon.service;
 
-import com.swp391.hairsalon.dto.EmployeeInfo;
+import com.swp391.hairsalon.dto.CustomerInfoDto;
+import com.swp391.hairsalon.dto.CustomerProfileDto;
+import com.swp391.hairsalon.dto.EmployeeInfoDto;
+import com.swp391.hairsalon.dto.PersonnelBySalonDto;
 import com.swp391.hairsalon.pojo.*;
 import com.swp391.hairsalon.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AccountService implements IAccountService {
+
+    @Autowired
+    private ISalonRepository iSalonRepository;
 
     @Autowired
     private IManagerRepository iManagerRepository;
@@ -26,15 +34,23 @@ public class AccountService implements IAccountService {
     private ICustomerRepository iCustomerRepository;
 
     @Autowired
-    private ISalonService iSalonService;
-
-    @Autowired
     private IAccountRepository iAccountRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
     public Account addAccount(Account account) {
+
+        if (account.getPassword() != null) {
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
+        }
+        account.setId(UUID.randomUUID().toString());
+
+        account.setActive(true);
+        account.setRole(1);
+        account.setRegisterDate(Date.valueOf(LocalDate.now()));
+//        String password = passwordEncoder.encode(account.getPassword());
         Account savedAccount = iAccountRepository.save(account);
 
             Customer customer = new Customer();
@@ -47,9 +63,14 @@ public class AccountService implements IAccountService {
     }
     @Override
     public Account insertAccount(int salonId, Account account) {
+        if (account.getPassword() != null) {
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
+        }
+        account.setActive(true);
+        account.setId(UUID.randomUUID().toString());
         Account savedAccount = iAccountRepository.save(account);
 
-        Salon s = iSalonService.getSalonById(salonId);
+        Salon s = iSalonRepository.getById(salonId);
 
         if (account.getRole() == 2){
             Stylist stylist = new Stylist();
@@ -79,7 +100,7 @@ public class AccountService implements IAccountService {
 
 
     @Override
-    public List<EmployeeInfo> getAllEmployees() {
+    public List<EmployeeInfoDto> getAllEmployees() {
 
         return iAccountRepository.getAllEmployees();
     }
@@ -99,6 +120,7 @@ public class AccountService implements IAccountService {
 
         Account a = iAccountRepository.searchById(id);
         if (a != null) {
+//            a.setPassword(passwordEncoder.encode(naccount.getPassword()));
             a.setName(naccount.getName());
             a.setPhone(naccount.getPhone());
             return iAccountRepository.save(a);
@@ -126,5 +148,32 @@ public class AccountService implements IAccountService {
     public void setPassword(String email, String password) {
         Account a = iAccountRepository.searchByEmail(email);
         a.setPassword(passwordEncoder.encode(password));
+    }
+
+    @Override
+    public Account updateStatus(String id, boolean status) {
+        Account a = iAccountRepository.searchById(id);
+        a.setActive(status);
+        return iAccountRepository.save(a);
+    }
+
+    @Override
+    public List<PersonnelBySalonDto> getAllPersonnelBySalon(String id) {
+        return iAccountRepository.getPersonnelBySalon(id);
+    }
+
+    @Override
+    public List<CustomerInfoDto> getAllCustomers() {
+        return iAccountRepository.getCustomerInfo();
+    }
+
+    @Override
+    public CustomerProfileDto getCustomerProfile(String id) {
+        return iAccountRepository.getCustomerProfileById(id);
+    }
+
+    @Override
+    public boolean isActive(String email) {
+        return iAccountRepository.searchByEmail(email).isActive();
     }
 }

@@ -16,6 +16,10 @@ public class MyUserDetails implements UserDetails {
         account = user;
     }
 
+    public int getRoleAsInt() {
+        return account.getRole();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()  {
         return Collections.singletonList(new SimpleGrantedAuthority(mapRoleToAuthority(account.getRole())));
@@ -45,6 +49,6 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return account.getEmail();
+        return account.getId();
     }
 }

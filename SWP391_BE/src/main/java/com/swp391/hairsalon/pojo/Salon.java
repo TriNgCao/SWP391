@@ -12,24 +12,22 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Getter
+@Setter
 @Table(name = "salon")
 public class Salon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    @Setter
+
     private int salonId;
-    @Getter
-    @Setter
+
     private String salonName;
-    @Getter
-    @Setter
+
     private String salonAddress;
-    @Getter
-    @Setter
+
     private boolean salonStatus;
 
+    private String imageName;
 
     @OneToOne(mappedBy = "salon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Manager manager;
