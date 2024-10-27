@@ -2,7 +2,6 @@ package com.swp391.hairsalon.service.definitions;
 
 import com.swp391.hairsalon.dto.CustomerInfoDto;
 import com.swp391.hairsalon.dto.CustomerProfileDto;
-import com.swp391.hairsalon.dto.EmployeeInfoDto;
 import com.swp391.hairsalon.dto.PersonnelBySalonDto;
 import com.swp391.hairsalon.pojo.Account;
 
