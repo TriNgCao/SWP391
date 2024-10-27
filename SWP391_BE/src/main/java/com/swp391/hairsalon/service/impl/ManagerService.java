@@ -1,20 +1,22 @@
 package com.swp391.hairsalon.service.impl;
-//package com.swp391.hairsalon.service;
-//
-//import com.swp391.hairsalon.pojo.Manager;
-//import com.swp391.hairsalon.repository.IManagerRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
-//
-//@Service
-//public class ManagerService implements IManagerService {
-//
-//    @Autowired
-//    private IManagerRepository iManagerRepository;
-//
-//    @Override
-//    public Manager saveManager(Manager manager) {
-//        return iManagerRepository.save(manager);
-//
-//    }
-//}
+
+import com.swp391.hairsalon.pojo.Manager;
+import com.swp391.hairsalon.repository.IManagerRepository;
+import com.swp391.hairsalon.service.definitions.IManagerService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ManagerService implements IManagerService {
+
+   @Autowired
+   private IManagerRepository iManagerRepository;
+
+
+
+@Override
+public Manager findByAccountId(String id) {
+    return iManagerRepository.findByAccount_Id(id);
+}
+}

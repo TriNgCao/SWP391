@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.swp391.hairsalon.pojo.Appointment;
+import com.swp391.hairsalon.pojo.Salon;
 import com.swp391.hairsalon.repository.IAppointmentRepository;
 import com.swp391.hairsalon.service.definitions.IAppointmentService;
 
@@ -68,6 +69,11 @@ public class AppointmentService implements IAppointmentService {
             return Collections.emptyList();  // Return empty list instead of null
         }
         return appointments;
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByBranch(Salon bracnh) {
+        return appointmentRepo.findByBranch(bracnh);
     }
 
 }

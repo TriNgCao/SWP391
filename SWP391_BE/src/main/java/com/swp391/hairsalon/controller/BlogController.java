@@ -83,6 +83,7 @@ public class BlogController {
 
     }
     
+    
 
     @GetMapping(value = "/image/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public void downloadImage(@PathVariable("imageName") String imageName, HttpServletResponse response) throws IOException {
@@ -95,7 +96,6 @@ public class BlogController {
     public ResponseEntity<Blog> updateBlog(@PathVariable int id, @RequestBody BlogRequestDTO blogRequestDTO ) {
         //TODO: process PUT request
         Blog blog = iBlogService.getBlogById(id);
-        blog.setAccount(iAccountService.getAccountById(blogRequestDTO.getAccountId()));
         blog.setContent(blogRequestDTO.getContent());
         blog.setTitle(blogRequestDTO.getTitle());
         try {

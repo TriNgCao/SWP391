@@ -12,31 +12,24 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Getter
+@Setter
 @Table(name = "salon")
 public class Salon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    @Setter
+
     @Column(name = "salon_id")
     private int salonId;
 
-    @Getter
-    @Setter
     @Column(name = "salon_name")
     private String salonName;
 
-    @Getter
-    @Setter
     @Column(name = "salon_address")
     private String salonAddress;
 
-    @Getter
-    @Setter
     @Column(name = "status")
     private boolean salonStatus;
-
 
     @OneToOne(mappedBy = "salon", cascade = CascadeType.ALL)
     private Manager manager;
@@ -49,6 +42,5 @@ public class Salon {
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Appointment> appointments = new ArrayList<>();
-
 
 }

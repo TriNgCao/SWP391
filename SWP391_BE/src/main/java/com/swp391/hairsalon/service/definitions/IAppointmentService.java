@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.List;
 
 import com.swp391.hairsalon.pojo.Appointment;
+import com.swp391.hairsalon.pojo.Salon;
 
 public interface IAppointmentService {
     public List<Appointment> getAllAppointment();
@@ -21,4 +22,6 @@ public interface IAppointmentService {
     public List<Appointment> getAppointmentsByDate(Date date);
 
     public List<Appointment> getAppointmentsByCustomerName(String cusName);
+
+    public List<Appointment> getAppointmentsByBranch(Salon bracnh);
 }
