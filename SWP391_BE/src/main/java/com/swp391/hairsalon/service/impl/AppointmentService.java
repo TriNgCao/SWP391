@@ -76,4 +76,9 @@ public class AppointmentService implements IAppointmentService {
         return appointmentRepo.findByBranch(bracnh);
     }
 
+    @Override
+    public List<Appointment> getAppointmentsByStylistId(int stylistId) {
+        return appointmentRepo.findByStylist_StylistId(stylistId);
+    }
+
 }
