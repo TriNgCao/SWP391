@@ -24,4 +24,6 @@ public interface IAppointmentService {
     public List<Appointment> getAppointmentsByCustomerName(String cusName);
 
     public List<Appointment> getAppointmentsByBranch(Salon bracnh);
+
+    public List<Appointment> getAppointmentsByStylistId (int id);
 }
