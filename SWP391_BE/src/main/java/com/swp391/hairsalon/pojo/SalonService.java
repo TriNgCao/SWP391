@@ -15,33 +15,28 @@ public class SalonService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id")
+    private int serviceId;
 
-    @Column(name = "service_id")
-    private Long serviceId;
-
-
-    @Column(name = "service_name")
+    @Column(name = "Name")
     private String serviceName;
 
-
-    @Column(name = "description")
+    @Column(name = "Description")
     private String serviceDescription;
 
     private String category;
 
-//    @Column(name = "Price")
-
-    @Column(name = "price")
+    @Column(name = "Price")
     private double servicePrice;
 
-
-    @Column(name = "max_time")
+    @Column(name = "Duration")
     private int maxTime;
+
+    private String imageName;
 
 
     @ManyToMany(mappedBy = "services")
     private List<Appointment> appointments;
 
-    private String imageName;
 
 }
