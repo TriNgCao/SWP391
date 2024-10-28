@@ -310,9 +310,10 @@ const Booking = () => {
   };
 
   const calculateTotal = () => {
-    const total = selectedServices.reduce((sum, serviceTitle) => {
-      const service = services.find((s) => s.title === serviceTitle);
-      const price = service ? parseFloat(service.price.replace("$", "")) : 0;
+    const total = selectedServices.reduce((sum, serviceName) => {
+      const service = services.find((s) => s.title === serviceName);
+      // const price = service ? parseFloat(service.servicePrice.replace("$", "")) : 0;
+      const price = service ? service.servicePrice : 0;
       return sum + price;
     }, 0);
     return `${total.toLocaleString()}`;
@@ -325,9 +326,9 @@ const Booking = () => {
     try {
       const bookingData = {
         salonId: salons.find((salon) => salon.id === selectedSalon)?.id,
-        stylistId: stylists.find((stylist) => stylist.stylistName === selectedStylist)?.id,
-        serviceId: selectedServices.map((serviceTitle) =>
-          services.find((service) => service.serviceName === serviceTitle)?.id
+        stylistId: stylists.find((stylist) => stylist.stylistId === selectedStylist)?.stylistId,
+        serviceId: selectedServices.map((serviceName) =>
+          services.find((service) => service.serviceId === serviceName)?.serviceId
         ),
         date: selectedDate,
         startTime: selectedSlot,
@@ -350,12 +351,12 @@ const Booking = () => {
   const onBookingClick = async () => {
     const bookingData = {
       salonId: salons.find((salon) => salon.id === selectedSalon)?.id,
-      stylistId: stylists.find((stylist) => stylist.stylistName === selectedStylist)?.id,
-      serviceId: selectedServices.map((serviceTitle) =>
-        services.find((service) => service.serviceName === serviceTitle)?.id
-      ),
-      date: selectedDate,
-      startTime: selectedSlot,
+        stylistId: stylists.find((stylist) => stylist.stylistId === selectedStylist)?.stylistId,
+        serviceId: selectedServices.map((serviceName) =>
+          services.find((service) => service.serviceId === serviceName)?.serviceId
+        ),
+        date: selectedDate,
+        startTime: selectedSlot,
     };
 
     console.log("Booking Data:", JSON.stringify(bookingData, null, 2));
@@ -776,7 +777,7 @@ const Booking = () => {
                                 color: "#d9534f",
                               }}
                             >
-                              Price: {service.servicePrice}
+                              Price: ${service.servicePrice}
                             </p>
                             <button
                               className="btn btn-primary"
