@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = null;
         String token = null;
         if (requestHeader != null && requestHeader.startsWith("Bearer")) {
-            //looking good
+
             token = requestHeader.substring(7);
             try {
 
@@ -75,22 +75,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.info("Invalid Header Value !! ");
         }
 
-
-        //
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-
-            //fetch user detail from username
-            //
             MyUserDetails myUserDetails = this.myUserDetailsService.loadUserByUsername(username);
-//            Account user;
 
 
             Boolean validateToken = this.jwtHelper.validateToken(token, username);
 
             if (validateToken) {
 
-                //set the authentication
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(myUserDetails, null, myUserDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);

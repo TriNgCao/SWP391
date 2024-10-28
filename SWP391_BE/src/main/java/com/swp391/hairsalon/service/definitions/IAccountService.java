@@ -1,13 +1,14 @@
 package com.swp391.hairsalon.service.definitions;
 
-import com.swp391.hairsalon.dto.EmployeeInfoDTO;
+import com.swp391.hairsalon.dto.CustomerInfoDto;
+import com.swp391.hairsalon.dto.CustomerProfileDto;
+import com.swp391.hairsalon.dto.PersonnelBySalonDto;
 import com.swp391.hairsalon.pojo.Account;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IAccountService {
-    public List<EmployeeInfoDTO> getAllEmployees();
+    public List<EmployeeInfoDto> getAllEmployees();
     public List<Account> getAllCustomer();
     public Account getAccountById(String id);
     public Account addAccount(Account account);
@@ -16,4 +17,9 @@ public interface IAccountService {
     public boolean isEmailExist(String email);
     public void deleteAccount(String id);
     public void setPassword(String email, String password);
+    Account updateStatus(String id, boolean status);
+    List<PersonnelBySalonDto> getAllPersonnelBySalon(String id);
+    List<CustomerInfoDto> getAllCustomers();
+    CustomerProfileDto getCustomerProfile(String id);
+    boolean isActive(String email);
 }

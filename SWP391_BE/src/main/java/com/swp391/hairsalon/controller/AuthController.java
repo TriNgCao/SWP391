@@ -4,6 +4,8 @@ import com.swp391.hairsalon.login.GoogleAuthRequest;
 import com.swp391.hairsalon.login.JwtRequest;
 import com.swp391.hairsalon.login.JwtResponse;
 import com.swp391.hairsalon.login.MyUserDetails;
+import com.swp391.hairsalon.pojo.Account;
+import com.swp391.hairsalon.repository.IAccountRepository;
 import com.swp391.hairsalon.security.JwtHelper;
 import com.swp391.hairsalon.service.definitions.IAccountService;
 import com.swp391.hairsalon.login.GoogleTokenVerifierService;
@@ -44,15 +46,39 @@ public class AuthController {
 
         this.doAuthenticate(request.getEmail(), request.getPassword());
 
-        MyUserDetails myUserDetails = myUserDetailsService.loadUserByUsername(request.getEmail());
+        if(iAccountService.isActive(request.getEmail())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-        String token = this.helper.generateToken(request.getEmail());
 
-        JwtResponse response = JwtResponse.builder()
-                .jwtToken(token)
-                .userName(myUserDetails.getUsername()).build();
+            MyUserDetails myUserDetails = myUserDetailsService.loadUserByUsername(request.getEmail());
+
+            String token = this.helper.generateToken(request.getEmail());
+
+            JwtResponse response = JwtResponse.builder()
+                    .token(token)
+                    .userID(myUserDetails.getUsername())
+                    .userRole(myUserDetails.getRoleAsInt())
+                    .build();
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<JwtResponse> register(@RequestBody Account newAccount) {
+        if(iAccountService.isEmailExist(newAccount.getEmail())) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        iAccountService.addAccount(newAccount);
+        String token = this.helper.generateToken(newAccount.getEmail());
+        JwtResponse response = JwtResponse.builder().token(token)
+                .userID(newAccount.getEmail())
+                .userRole(1)
+                        .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
     @PostMapping("/auth/google")
     public ResponseEntity<JwtResponse> authenticateGoogleUser(@RequestBody GoogleAuthRequest request) {
@@ -66,8 +92,9 @@ public class AuthController {
                 String token = this.helper.generateToken(email);
 
                 JwtResponse response = JwtResponse.builder()
-                        .jwtToken(token)
-                        .userName(email)
+                        .token(token)
+                        .userID(email)
+                        .userRole(1)
                         .build();
             return new ResponseEntity<>(response, HttpStatus.OK);
 

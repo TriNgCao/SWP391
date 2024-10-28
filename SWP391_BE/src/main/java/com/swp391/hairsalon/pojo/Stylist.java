@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,6 +24,7 @@ public class Stylist {
     private int salary;
 
     private double commission;
+    private String imageName;
 
     @OneToOne()
     @JoinColumn(name = "account_id")
