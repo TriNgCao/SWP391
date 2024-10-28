@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
-import { FaArrowCircleLeft, FaGoogle } from "react-icons/fa";
+import {FaGoogle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -128,30 +128,6 @@ const CustomerLoginModal = () => {
               alignItems: "center",
             }}
           >
-            <div style={{ display: "flex",flexDirection: 'column', alignItems: "center" }}>
-              <FaArrowCircleLeft
-                onClick={() => {
-                  navigate("/");
-                  const closeButton = document.querySelector(
-                    "#customerLoginModal .btn-close"
-                  );
-                  if (closeButton) {
-                    closeButton.click();
-                  }
-                }}
-                style={{
-                  fontSize: "28px", // Increase arrow size
-                  cursor: "pointer",
-                  color: "#6dbe45",
-                  marginRight: "5px", // Adjust spacing between the arrow and text
-                }}
-              />
-              <span
-                style={{ fontSize: "12px", color: "#6dbe45", marginLeft: '-5px' }}
-              >
-                Back
-              </span>
-            </div>
 
             <h5
               className="modal-title text-center w-100"
