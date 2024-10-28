@@ -2,6 +2,7 @@ package com.swp391.hairsalon.repository;
 
 import com.swp391.hairsalon.dto.CustomerInfoDto;
 import com.swp391.hairsalon.dto.CustomerProfileDto;
+import com.swp391.hairsalon.dto.EmployeeInfoDto;
 import com.swp391.hairsalon.dto.PersonnelBySalonDto;
 import com.swp391.hairsalon.pojo.Account;
 import org.springframework.data.jpa.repository.JpaRepository;

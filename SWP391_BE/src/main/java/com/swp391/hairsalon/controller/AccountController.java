@@ -1,6 +1,7 @@
 package com.swp391.hairsalon.controller;
 
 import com.swp391.hairsalon.dto.CustomerInfoDto;
+import com.swp391.hairsalon.dto.EmployeeInfoDto;
 import com.swp391.hairsalon.dto.PersonnelBySalonDto;
 import com.swp391.hairsalon.dto.StylistInfoForBooking;
 import com.swp391.hairsalon.pojo.Account;
