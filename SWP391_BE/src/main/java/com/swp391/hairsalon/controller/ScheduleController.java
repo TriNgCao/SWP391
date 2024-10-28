@@ -3,14 +3,12 @@ package com.swp391.hairsalon.controller;
 import com.swp391.hairsalon.dto.ScheduleStylistDto;
 import com.swp391.hairsalon.pojo.BookedSchedule;
 import com.swp391.hairsalon.pojo.Schedule;
-import com.swp391.hairsalon.service.IScheduleService;
-import com.swp391.hairsalon.service.ScheduleService;
+import com.swp391.hairsalon.service.definitions.IScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController

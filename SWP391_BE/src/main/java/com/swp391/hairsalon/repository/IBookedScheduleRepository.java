@@ -10,11 +10,18 @@ import java.sql.Date;
 import java.util.List;
 
 public interface IBookedScheduleRepository extends JpaRepository<BookedSchedule, Integer> {
-    @Query(" select new com.swp391.hairsalon.dto.ScheduleTableDto( s.startTime, s.endTime, b.bookedTime, b.duration) " +
+    @Query(" select new com.swp391.hairsalon.dto.ScheduleTableDto( s.startTime, s.endTime, b.bookedTime, b.duration, s.schedule_id) " +
             " from Schedule s " +
             " left join BookedSchedule b on s.schedule_id = b.schedule.schedule_id " +
             " where s.date = :date and s.stylist_id = :id and b.booked = true")
     List<ScheduleTableDto> getScheduleByStylistAndDate(@Param("date") Date date, @Param("id") int id);
+
+
+    @Query(" select new com.swp391.hairsalon.dto.ScheduleTableDto( s.startTime, s.endTime, b.bookedTime, b.duration, s.schedule_id) " +
+            " from Schedule s " +
+            " left join BookedSchedule b on s.schedule_id = b.schedule.schedule_id " +
+            " where s.date = :date and b.booked = true")
+    List<ScheduleTableDto> getScheduleByDate(@Param("date") Date date);
 
 
 }

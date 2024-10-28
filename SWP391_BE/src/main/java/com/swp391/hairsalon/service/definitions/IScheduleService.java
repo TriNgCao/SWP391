@@ -1,11 +1,8 @@
-package com.swp391.hairsalon.service;
+package com.swp391.hairsalon.service.definitions;
 
-import com.swp391.hairsalon.dto.ScheduleTableDto;
 import com.swp391.hairsalon.pojo.BookedSchedule;
 import com.swp391.hairsalon.pojo.Schedule;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 
 public interface IScheduleService {

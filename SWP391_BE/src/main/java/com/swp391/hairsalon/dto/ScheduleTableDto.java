@@ -14,4 +14,5 @@ public class ScheduleTableDto {
     private int endTime;
     private int bookedTime;
     private int duration;
+    private int scheduleId;
 }

@@ -1,15 +1,13 @@
-package com.swp391.hairsalon.service;
+package com.swp391.hairsalon.service.impl;
 
-import com.swp391.hairsalon.dto.ScheduleTableDto;
 import com.swp391.hairsalon.pojo.BookedSchedule;
 import com.swp391.hairsalon.pojo.Schedule;
 import com.swp391.hairsalon.repository.IBookedScheduleRepository;
 import com.swp391.hairsalon.repository.IScheduleRepository;
+import com.swp391.hairsalon.service.definitions.IScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
