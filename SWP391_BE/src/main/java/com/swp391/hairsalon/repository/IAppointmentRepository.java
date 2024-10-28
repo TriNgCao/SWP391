@@ -22,4 +22,6 @@ public interface IAppointmentRepository extends JpaRepository<Appointment, Integ
     public List<Appointment> findByCustomer_Account_Name(String name);
 
     public List<Appointment> findByBranch(Salon branch);
+
+    public List<Appointment> findByStylist_StylistId(int stylistId);
 }
