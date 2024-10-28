@@ -62,7 +62,7 @@ const accountID = sessionStorage.getItem("accountId")
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/appointment/manage/${accountID}`);
+        const response = await axios.get(`http://localhost:8080/api/appointment/manage/4`);
         setAppointments(response.data);
       } catch (error) {
         console.error("Failed to fetch appointments:", error);

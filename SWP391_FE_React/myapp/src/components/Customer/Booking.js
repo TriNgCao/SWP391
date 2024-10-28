@@ -62,6 +62,8 @@ const Booking = () => {
   const [searchStylistTerm, setSearchStylistTerm] = useState("");
   const [stylistBookedSlots, setStylistBookedSlots] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [disabledSlotsSet, setDisabledSlotsSet] = useState(new Set());
+  const [dateKey, setDateKey] = useState(0);
 
   const filteredServices = services.filter(
     (service) =>
@@ -140,19 +142,23 @@ const Booking = () => {
 
 
   useEffect(() => {
-    if (selectedStylistId && selectedDate) {
+    if (selectedDate) {
       console.log("Fetching booked slots with:");
       console.log("Stylist ID:", selectedStylistId);
       console.log("Selected Date:", selectedDate);
-
+  
       const fetchStylistBookedSlots = async () => {
         try {
-          const response = await axios.get(`YOUR_API_URL_HERE`, {
-            params: {
-              stylistId: selectedStylistId,
-              date: selectedDate,
-            },
-          });
+          let response;
+          
+          if (selectedStylistId === 0) {
+            // API nếu selectedStylistId bằng 0
+            response = await axios.get(`http://localhost:8080/book-schedule/booked/${selectedDate}`);
+          } else {
+            // API hiện tại nếu selectedStylistId khác 0
+            response = await axios.get(`http://localhost:8080/book-schedule/booked/${selectedStylistId}/${selectedDate}`);
+          }
+  
           if (response.status === 200) {
             console.log("Booked Slots Response:", response.data);
             setStylistBookedSlots(response.data);
@@ -161,9 +167,11 @@ const Booking = () => {
           console.error("Error fetching booked slots:", error);
         }
       };
+  
       fetchStylistBookedSlots();
     }
   }, [selectedStylistId, selectedDate]);
+  
 
   const handleSalonSelect = (salonName, salonId) => {
     setSelectedSalon(salonName);
@@ -172,15 +180,10 @@ const Booking = () => {
     setSelectedStylist(null);
     setSelectedStylistId(null);
     setSelectedDate(null);
+    setDateKey(dateKey + 1);
     setSelectedSlot(null);
   };
 
-  // const handleStylistSelect = (stylistName) => {
-  //   setSelectedStylist((prevStylist) =>
-  //     prevStylist === stylistName ? null : stylistName
-  //   );
-  //   setSelectedSlot(null);
-  // };
   const handleStylistSelect = (stylistName, stylistId) => {
     setSelectedStylist((prevStylist) =>
       prevStylist === stylistName ? null : stylistName
@@ -188,6 +191,8 @@ const Booking = () => {
     setSelectedStylistId((prevStylistId) =>
       prevStylistId === stylistId ? null : stylistId
     );
+    setSelectedDate(null);
+    setDateKey(dateKey + 1);
     setSelectedSlot(null);
   };
 
@@ -203,7 +208,7 @@ const Booking = () => {
   const generateTimeSlots = () => {
     const slots = [];
     for (let hour = 8; hour <= 22; hour++) {
-      const time = `${hour < 10 ? `0${hour}` : hour}:00`;
+      const time = `${hour < 10 ? `${hour}` : hour}:00`;
       slots.push(time);
     }
     return slots;
@@ -211,44 +216,9 @@ const Booking = () => {
 
   const timeSlots = generateTimeSlots();
 
-  // const getDisabledSlots = (bookedTime, duration) => {
-  //   const bookedHour = parseInt(bookedTime.split(":")[0]);
-  //   const durationHours = parseInt(duration.split("")[0]);
-  //   const disabledSlots = [];
-
-  //   for (let i = 0; i < durationHours; i++) {
-  //     const hour = bookedHour + i;
-  //     disabledSlots.push(`${hour}:00`);
-  //   }
-
-  //   return disabledSlots;
-  // };
-
-  // const calculateDisabledSlots = () => {
-  //   const bookedSlots = stylistBookedSlots.filter(
-  //     (slotData) =>
-  //       slotData.stylistName === selectedStylist &&
-  //       slotData.date === selectedDate
-  //   );
-
-  //   const allDisabledSlots = new Set();
-
-  //   bookedSlots.forEach((slotData) => {
-  //     const disabledSlots = getDisabledSlots(
-  //       slotData.startTime,
-  //       slotData.duration
-  //     );
-  //     disabledSlots.forEach((disabledSlot) =>
-  //       allDisabledSlots.add(disabledSlot)
-  //     );
-  //   });
-
-  //   return allDisabledSlots;
-  // };
-
   const getDisabledSlots = (bookedTime, duration, startTime, endTime) => {
     const disabledSlots = [];
-  
+
     // Disable all hours outside working hours
     for (let hour = 0; hour < startTime; hour++) {
       disabledSlots.push(`${hour}:00`);
@@ -256,7 +226,10 @@ const Booking = () => {
     for (let hour = endTime + 1; hour <= 23; hour++) {
       disabledSlots.push(`${hour}:00`);
     }
-  
+
+    // Log working hours disable result
+    console.log("Disabled slots for non-working hours:", disabledSlots);
+
     // Disable booked slots based on bookedTime and duration
     for (let i = 0; i < duration; i++) {
       const hour = bookedTime + i;
@@ -264,39 +237,43 @@ const Booking = () => {
         disabledSlots.push(`${hour}:00`);
       }
     }
-  
+
+    // Log booked time slots disable result
+    console.log(`Disabled slots for booked time (${bookedTime} with duration ${duration}):`, disabledSlots);
+
     return disabledSlots;
   };
-  
-  const calculateDisabledSlots = () => {
-    const bookedSlots = stylistBookedSlots.filter(
-      (slotData) =>
-        slotData.stylistId === selectedStylistId && slotData.date === selectedDate
-    );
-  
-    const allDisabledSlots = new Set();
-  
-    bookedSlots.forEach((slotData) => {
-      const disabledSlots = getDisabledSlots(
-        slotData.bookedTime,
-        slotData.duration,
-        slotData.startTime,
-        slotData.endTime
-      );
-      disabledSlots.forEach((disabledSlot) => allDisabledSlots.add(disabledSlot));
-    });
-  
-    return allDisabledSlots;
-  };
-  
 
-  const disabledSlotsSet = calculateDisabledSlots();
+  useEffect(() => {
+    if (stylistBookedSlots.length === 0) {
+      // Nếu không có booked slots, tất cả các slot đều khả dụng
+      setDisabledSlotsSet(new Set());
+    } else {
+      // Nếu có booked slots, tính toán các slot bị disable
+      const allDisabledSlots = new Set();
+      stylistBookedSlots.forEach((slotData) => {
+        const disabledSlots = getDisabledSlots(
+          slotData.bookedTime,
+          slotData.duration,
+          slotData.startTime,
+          slotData.endTime
+        );
+        disabledSlots.forEach((disabledSlot) => allDisabledSlots.add(disabledSlot));
+      });
+      setDisabledSlotsSet(allDisabledSlots);
+    }
+  }, [stylistBookedSlots]);
 
   const handleSlotClick = (slot) => {
+    console.log("Slot clicked:", slot);
     if (!disabledSlotsSet.has(slot)) {
+      console.log("Slot is available:", slot);
       setSelectedSlot(slot);
+    } else {
+      console.log("Slot is disabled:", slot);
     }
   };
+
 
   const inputStyle = {
     width: "100%",
@@ -456,6 +433,7 @@ const Booking = () => {
           <span style={stepNumberStyle}>Step 3:</span> Choose Date
         </div>
         <select
+          key={dateKey}
           style={inputStyle}
           onChange={(e) => setSelectedDate(e.target.value)}
         >
