@@ -343,6 +343,80 @@ const Booking = () => {
     !selectedSlot ||
     selectedServices.length === 0;
 
+  // const handleBooking = async () => {
+  //   try {
+  //     const userID = sessionStorage.getItem("userID");
+  //     const bookingData = {
+  //       salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
+  //       stylistId: stylists.find(
+  //         (stylist) => stylist.stylistName === selectedStylist
+  //       )?.stylistId,
+  //       serviceId: selectedServices.map(
+  //         (serviceName) =>
+  //           services.find((service) => service.serviceName === serviceName)
+  //             ?.serviceId
+  //       ),
+  //       date: selectedDate,
+  //       startTime: parseInt(selectedSlot),
+  //       userID: userID,
+  //     };
+
+  //     const response = await axios.post("http://localhost:8080/api/appointment", bookingData);
+
+  //     if (response.status === 201) {
+  //       toast.success("Booking Successfully!");
+  //     } else {
+  //       toast.error("Booking failed. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error in booking:", error);
+  //     toast.error("Booking failed!");
+  //   }
+  // };
+
+  // const onBookingClick = async () => {
+  //   const userID = sessionStorage.getItem("userID");
+  //   const bookingData = {
+  //     salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
+  //     stylistId: stylists.find(
+  //       (stylist) => stylist.stylistName === selectedStylist
+  //     )?.stylistId,
+  //     serviceId: selectedServices.map(
+  //       (serviceName) =>
+  //         services.find((service) => service.serviceName === serviceName)
+  //           ?.serviceId
+  //     ),
+  //     date: selectedDate,
+  //     startTime: parseInt(selectedSlot),
+  //     userID: userID,
+  //   };
+
+  //   console.log("Booking Data:", JSON.stringify(bookingData, null, 2));
+
+  //   try {
+  //     const response = await handleBooking();
+  //     if (response.status === 201) {
+  //       toast.success("Booking Successfully!");
+
+  //       const additionalData = {
+  //       stylistId: stylists.find(
+  //         (stylist) => stylist.stylistName === selectedStylist
+  //       )?.stylistId,
+  //       serviceId: selectedServices.map(
+  //         (serviceName) =>
+  //           services.find((service) => service.serviceName === serviceName)
+  //             ?.serviceId
+  //       ),
+  //       date: selectedDate,
+  //       bookedTime: parseInt(selectedSlot),
+  //       };
+
+  //       await axios.post("http://localhost:8080/book-schedule", additionalData);
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.message || "Send booking fail!");
+  //   }
+  // };
   const handleBooking = async () => {
     try {
       const userID = sessionStorage.getItem("userID");
@@ -360,20 +434,25 @@ const Booking = () => {
         startTime: parseInt(selectedSlot),
         userID: userID,
       };
-
-      const response = await axios.post("YOUR_API_BOOKING_URL", bookingData);
-
-      if (response.status === 200) {
+  
+      const response = await axios.post("http://localhost:8080/api/appointment", bookingData);
+  
+      if (response.status === 201) {
         toast.success("Booking Successfully!");
       } else {
         toast.error("Booking failed. Please try again.");
       }
+  
+      // Return the response so it can be used in `onBookingClick`
+      return response;
+  
     } catch (error) {
       console.error("Error in booking:", error);
       toast.error("Booking failed!");
+      throw error; // Propagate the error to `onBookingClick`
     }
   };
-
+  
   const onBookingClick = async () => {
     const userID = sessionStorage.getItem("userID");
     const bookingData = {
@@ -390,27 +469,32 @@ const Booking = () => {
       startTime: parseInt(selectedSlot),
       userID: userID,
     };
-
+  
     console.log("Booking Data:", JSON.stringify(bookingData, null, 2));
-
+  
     try {
       const response = await handleBooking();
-      if (response.status === 200) {
-        toast.success("Booking Successfully!");
-
+      if (response.status === 201) {
         const additionalData = {
-          stylistId: bookingData.stylistId,
-          serviceId: bookingData.serviceId,
-          date: bookingData.date,
-          startTime: bookingData.startTime,
+          stylistId: stylists.find(
+            (stylist) => stylist.stylistName === selectedStylist
+          )?.stylistId,
+          serviceId: selectedServices.map(
+            (serviceName) =>
+              services.find((service) => service.serviceName === serviceName)
+                ?.serviceId
+          ),
+          date: selectedDate,
+          bookedTime: parseInt(selectedSlot),
         };
-
-        await axios.post("YOUR_OTHER_API_URL", additionalData);
+  
+        await axios.post("http://localhost:8080/book-schedule", additionalData);
       }
     } catch (error) {
       toast.error(error.message || "Send booking fail!");
     }
   };
+  
 
   return (
     <div style={containerStyle}>
