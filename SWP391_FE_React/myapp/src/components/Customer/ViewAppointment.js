@@ -34,8 +34,8 @@ const ViewAppointment = () => {
     );
     const filtered = selectedStatus
       ? sortedAppointments.filter(
-          (appointment) => appointment.status === selectedStatus
-        )
+        (appointment) => appointment.status === selectedStatus
+      )
       : sortedAppointments;
 
     setFilteredAppointments(filtered);
@@ -153,7 +153,7 @@ const ViewAppointment = () => {
               <td style={styles.cell}>{appointment.status}</td>
               <td style={styles.cell}>
                 {appointment.status === "Pending" ||
-                appointment.status === "Ready" ? (
+                  appointment.status === "Ready" ? (
                   <button
                     style={styles.cancelBtn}
                     onClick={() =>

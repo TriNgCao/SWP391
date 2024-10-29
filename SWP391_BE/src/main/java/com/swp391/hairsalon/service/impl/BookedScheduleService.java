@@ -2,9 +2,11 @@ package com.swp391.hairsalon.service.impl;
 
 import com.swp391.hairsalon.dto.ScheduleTableDto;
 import com.swp391.hairsalon.pojo.BookedSchedule;
+import com.swp391.hairsalon.pojo.BookedSchedule;
 import com.swp391.hairsalon.pojo.Schedule;
 import com.swp391.hairsalon.pojo.Stylist;
 import com.swp391.hairsalon.repository.IBookedScheduleRepository;
+import com.swp391.hairsalon.repository.IScheduleRepository;
 import com.swp391.hairsalon.repository.IStylistRepository;
 import com.swp391.hairsalon.service.definitions.IBookedScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +23,32 @@ public class BookedScheduleService implements IBookedScheduleService {
     private IBookedScheduleRepository iBookedScheduleRepository;
 
     @Autowired
+    private IScheduleRepository iScheduleRepository;
+
+    @Autowired
     private IStylistRepository iStylistRepository;
 
     @Override
     public List<ScheduleTableDto> getScheduleByStylistIdAndDate(int stylistId, Date date) {
+        if(iScheduleRepository.getScheduleId(stylistId, date) == null){
+            System.out.println("No Schedule Found");
+            List<ScheduleTableDto> lists = new ArrayList<>();
+            ScheduleTableDto scheduleTableDto = new ScheduleTableDto();
+            scheduleTableDto.setEndTime(7);
+            lists.add(scheduleTableDto);
+            return lists;
+        }
         return iBookedScheduleRepository.getScheduleByStylistAndDate(date, stylistId);
     }
 
     @Override
     public List<ScheduleTableDto> getAllBookedSchedule(Date date) {
 
+
         List<Integer> lists = getAllBookedTime(date);
+        if (lists.isEmpty()) {
+            return null;
+        }
         List<ScheduleTableDto> listDto = new ArrayList<>();
         for (Integer i : lists) {
             ScheduleTableDto scheduleTableDto = new ScheduleTableDto();
@@ -45,14 +62,23 @@ public class BookedScheduleService implements IBookedScheduleService {
         return listDto;
     }
 
+    @Override
+    public void addBookedSchedule(BookedSchedule bookedSchedule) {
+        iBookedScheduleRepository.save(bookedSchedule);
+    }
+
     public List<Integer> getAllBookedTime(Date date) {
         int[] arr = {8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
         List<ScheduleTableDto> lists = iBookedScheduleRepository.getScheduleByDate(date);
+        int count = iBookedScheduleRepository.countByDate(date);
 
         // Bước 1: Nhóm các ScheduleTableDto theo scheduleId
         Map<Integer, List<ScheduleTableDto>> groupedSchedules = new HashMap<>();
         for (ScheduleTableDto schedule : lists) {
             groupedSchedules.computeIfAbsent(schedule.getScheduleId(), k -> new ArrayList<>()).add(schedule);
+        }
+        if (count > groupedSchedules.size()) {
+            return null;
         }
 
         // Bước 2: Lấy thời gian bận cho từng nhóm scheduleId
@@ -164,7 +190,7 @@ public class BookedScheduleService implements IBookedScheduleService {
     return true;
 }
 
-    
+
 }
 
 

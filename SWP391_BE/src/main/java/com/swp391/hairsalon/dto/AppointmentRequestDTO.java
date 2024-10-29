@@ -18,12 +18,12 @@ import lombok.ToString;
 @Builder
 @ToString
 public class AppointmentRequestDTO {
-    private int cusId;
+    private String userID;
     private int salonId;
     private int stylistId;
     private List<Long> serviceId;
     private Date date;
-    private LocalTime startTime;
+    private int startTime;
     private String status; 
     private String feedback;
     private int rating;

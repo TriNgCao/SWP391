@@ -54,6 +54,15 @@ public class SalonServiceService implements ISalonServiceService {
     }
 
     @Override
+    public int getTotalDurationBySalonId(List<Integer> serviceId) {
+        int duration = 0;
+        for(Integer i : serviceId) {
+            duration += salonServiceRepository.getById((long) i).getMaxTime();
+        }
+        return duration;
+    }
+
+    @Override
     public SalonService getServiceById(Long serviceId) {
         return salonServiceRepository.getReferenceById(serviceId);
     }

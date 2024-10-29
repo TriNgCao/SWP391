@@ -23,5 +23,6 @@ public interface IBookedScheduleRepository extends JpaRepository<BookedSchedule,
  " where s.date = :date and b.booked = true")
 List<ScheduleTableDto> getScheduleByDate(@Param("date") Date date);
 
-
+    @Query("select count(*) from Schedule where date = :date")
+    int countByDate(@Param("date") Date date);
 }

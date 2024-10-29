@@ -21,4 +21,6 @@ public interface ISalonService {
     public List<SalonInfoDto> getAllSalons();
 
     List<SalonInfoDto> getActiveSalons();
+
+
 }
