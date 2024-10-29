@@ -58,7 +58,7 @@ public class ServiceController {
 
     @PostMapping("image/upload/{serviceId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public SalonService createNewService(@RequestParam("image") MultipartFile image, @PathVariable int serviceId) throws IOException {
+    public SalonService createNewService(@RequestParam("image") MultipartFile image, @PathVariable long serviceId) throws IOException {
         String fileName = iFileService.uploadImage(path, image);
         SalonService service = salonServiceService.getServiceById(serviceId);
         service.setImageName(fileName);

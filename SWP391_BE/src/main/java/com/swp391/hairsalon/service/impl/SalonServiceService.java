@@ -31,10 +31,7 @@ public class SalonServiceService implements ISalonServiceService {
         return salonServiceRepository.findAll();
     }
 
-    @Override
-    public SalonService getServiceById(int id) {
-        return salonServiceRepository.getReferenceById((long) id);
-    }
+    
 
     @Override
     public SalonService addService(SalonService service) {
@@ -60,4 +57,6 @@ public class SalonServiceService implements ISalonServiceService {
     public SalonService getServiceById(Long serviceId) {
         return salonServiceRepository.getReferenceById(serviceId);
     }
+
+    
 }

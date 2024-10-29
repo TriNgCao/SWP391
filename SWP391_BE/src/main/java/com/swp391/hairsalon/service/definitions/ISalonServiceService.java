@@ -8,7 +8,6 @@ public interface ISalonServiceService {
     List<SalonService> getServiceByPrice(double minPrice, double maxPrice);
     List<SalonService> getServiceByName(String serviceName);
     List<SalonService> getAllServices();
-    SalonService getServiceById(int id);
     SalonService addService(SalonService service);
     SalonService updateCombo(Long serviceId, SalonService service);
     SalonService getServiceById(Long serviceId);

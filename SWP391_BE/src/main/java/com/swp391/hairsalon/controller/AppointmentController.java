@@ -20,6 +20,7 @@ import com.swp391.hairsalon.pojo.SalonService;
 import com.swp391.hairsalon.pojo.Staff;
 import com.swp391.hairsalon.service.definitions.IAccountService;
 import com.swp391.hairsalon.service.definitions.IAppointmentService;
+import com.swp391.hairsalon.service.definitions.IBookedScheduleService;
 import com.swp391.hairsalon.service.definitions.ICustomerService;
 import com.swp391.hairsalon.service.definitions.IManagerService;
 import com.swp391.hairsalon.service.definitions.INotificationService;
@@ -54,6 +55,8 @@ public class AppointmentController {
     private IStaffService iStaffService;
     @Autowired
     private IManagerService iManagerService;
+    @Autowired
+    private IBookedScheduleService iBookedScheduleService;
 
     public AppointmentController(IAppointmentService appointmentService) {
         this.appointmentService = appointmentService;
@@ -127,6 +130,10 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<String> addAppointment(@RequestBody AppointmentRequestDTO appointmentRequest) {
+        if (appointmentRequest.getStylistId() == 0){
+            int duration = calculateTotalDuration(appointmentRequest);
+            appointmentRequest.setStylistId(iBookedScheduleService.chooseRandomAvailableStylist(appointmentRequest.getStartTime().getHour(),duration , appointmentRequest.getSalonId(), appointmentRequest.getDate()));
+        }
         Appointment appointment = new Appointment();
         appointment.setCustomer(iCustomerService.getCustomerById(appointmentRequest.getCusId()));
         appointment.setBranch(iSalonService.getSalonById(appointmentRequest.getSalonId()));
@@ -147,6 +154,8 @@ public class AppointmentController {
         }
         return ResponseEntity.status(HttpStatus.CREATED).body("Add appointment successfully!");
     }
+
+    
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateAppointment(@PathVariable int id,
@@ -211,6 +220,12 @@ public class AppointmentController {
             }
             return ResponseEntity.ok(("Update appointment successfully!"));
         }
+    }
+    private int calculateTotalDuration(AppointmentRequestDTO appointmentRequest) {
+        List<SalonService> services = getSalonServicesById(appointmentRequest);
+        return services.stream()
+                       .mapToInt(SalonService::getMaxTime)  // Lấy giá trị maxTime của từng dịch vụ
+                       .sum();                             // Tính tổng
     }
 
     @DeleteMapping("/{id}")

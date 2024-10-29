@@ -77,8 +77,8 @@ public class AppointmentService implements IAppointmentService {
     }
 
     @Override
-    public List<Appointment> getAppointmentsByStylistId(int stylistId) {
-        return appointmentRepo.findByStylist_StylistId(stylistId);
+    public List<Appointment> getAppointmentsByStylistId(int id) {
+        return appointmentRepo.findByStylist_StylistId(id);
     }
-
+    
 }
