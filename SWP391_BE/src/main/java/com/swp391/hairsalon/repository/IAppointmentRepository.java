@@ -23,4 +23,9 @@ public interface IAppointmentRepository extends JpaRepository<Appointment, Integ
 
     public List<Appointment> findByBranch(Salon branch);
     public List<Appointment> findByStylist_StylistId(int stylistId);
+
+    @Query("SELECT a FROM Appointment a WHERE a.stylist.stylistId = :stylistId AND a.status = 'Completed'") // Giả sử có trường status để xác định trạng thái
+    List<Appointment> getCompletedAppointmentsByStylist(int stylistId);
+
+    public List<Appointment> findByCustomer_Account_Id(String accountId);
 }
