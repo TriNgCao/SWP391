@@ -25,8 +25,6 @@ public class Salon {
 
     private String salonAddress;
 
-
-    @Column(name = "status")
     private boolean salonStatus;
 
     private String imageName;

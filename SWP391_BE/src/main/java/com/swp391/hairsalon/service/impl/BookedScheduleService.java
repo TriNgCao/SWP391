@@ -30,14 +30,15 @@ public class BookedScheduleService implements IBookedScheduleService {
 
     @Override
     public List<ScheduleTableDto> getAllBookedSchedule(Date date) {
-        ScheduleTableDto scheduleTableDto = new ScheduleTableDto();
-        scheduleTableDto.setScheduleId(0);
-        scheduleTableDto.setStartTime(8);
-        scheduleTableDto.setEndTime(22);
-        scheduleTableDto.setDuration(1);
+
         List<Integer> lists = getAllBookedTime(date);
         List<ScheduleTableDto> listDto = new ArrayList<>();
         for (Integer i : lists) {
+            ScheduleTableDto scheduleTableDto = new ScheduleTableDto();
+            scheduleTableDto.setScheduleId(0);
+            scheduleTableDto.setStartTime(8);
+            scheduleTableDto.setEndTime(22);
+            scheduleTableDto.setDuration(1);
             scheduleTableDto.setBookedTime(i);
             listDto.add(scheduleTableDto);
         }

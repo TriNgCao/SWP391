@@ -37,7 +37,7 @@ const ViewAppointment = () => {
       : sortedAppointments;
 
     setFilteredAppointments(filtered);
-    setCurrentPage(1); // Reset về trang đầu khi lọc
+    setCurrentPage(1); // Reset to the first page when filtering
   }, [appointments, selectedStatus]);
 
   const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
@@ -60,7 +60,7 @@ const ViewAppointment = () => {
       <h1 style={styles.title}>Your Appointments</h1>
       <div style={styles.filterContainer}>
         <label style={{ marginRight: '10px' }}>Filter by Status:</label>
-        <select onChange={handleStatusChange} value={selectedStatus}>
+        <select onChange={handleStatusChange} value={selectedStatus} style={styles.select}>
           <option value="">All</option>
           <option value="Pending">Pending</option>
           <option value="Ready">Ready</option>
@@ -120,8 +120,6 @@ const ViewAppointment = () => {
           }}
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = styles.paginationButtonHover.backgroundColor)}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = styles.paginationButton.backgroundColor)}
         >
           Previous
         </button>
@@ -133,8 +131,6 @@ const ViewAppointment = () => {
           }}
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = styles.paginationButtonHover.backgroundColor)}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = styles.paginationButton.backgroundColor)}
         >
           Next
         </button>
@@ -143,7 +139,7 @@ const ViewAppointment = () => {
   );
 };
 
-// Styles CSS trực tiếp trong file
+// Styles CSS directly in file
 const styles = {
   appointmentContainer: {
     display: 'flex',
@@ -161,6 +157,17 @@ const styles = {
     marginBottom: '20px',
     marginRight: '155px',
   },
+  select: {
+    padding: '8px',
+    borderRadius: '8px',
+    border: '1px solid #ccc',
+    outline: 'none',
+    transition: '0.3s',
+    cursor: 'pointer',
+    '&:hover': {
+      border: '1px solid #007bff',
+    },
+  },
   appointmentTable: {
     width: '80%',
     borderCollapse: 'collapse',
@@ -172,6 +179,7 @@ const styles = {
     textAlign: 'center',
     backgroundColor: '#f2f2f2',
     color: 'black',
+    borderRadius: '5px',
   },
   cell: {
     border: '1px solid #ddd',
@@ -189,16 +197,18 @@ const styles = {
     backgroundColor: 'red',
     padding: '5px 10px',
     border: 'none',
+    borderRadius: '5px',
     cursor: 'pointer',
-    width: '80px',
+    transition: 'background-color 0.3s',
   },
   feedbackBtn: {
     color: 'white',
     backgroundColor: 'green',
     padding: '5px 6px',
     border: 'none',
+    borderRadius: '5px',
     cursor: 'pointer',
-    width: '80px',
+    transition: 'background-color 0.3s',
   },
   pagination: {
     marginTop: '20px',
@@ -213,7 +223,7 @@ const styles = {
     padding: '8px 16px',
     margin: '0 5px',
     cursor: 'pointer',
-    borderRadius: '4px',
+    borderRadius: '20px',
     transition: 'background-color 0.3s ease',
   },
   paginationButtonHover: {
