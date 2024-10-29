@@ -29,4 +29,5 @@ public class AppointmentResponseDTO {
     private String status;
     private int rating;
     private String feedback;
+    private String salonName;
 }

@@ -73,7 +73,7 @@ public class AppointmentController {
                 serviceName.add(service.getServiceName());
                 totalPrice = totalPrice + service.getServicePrice();
             }
-            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback()));
+            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback(), appointment.getBranch().getSalonName()));
         }
         return finalList;
     }
@@ -90,7 +90,7 @@ public class AppointmentController {
                 serviceName.add(service.getServiceName());
                 totalPrice = totalPrice + service.getServicePrice();
             }
-            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback()));
+            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback(),appointment.getBranch().getSalonName()));
         }
         return finalList;
     }
@@ -107,7 +107,7 @@ public class AppointmentController {
                 serviceName.add(service.getServiceName());
                 totalPrice = totalPrice + service.getServicePrice();
             }
-            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback()));
+            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback(), appointment.getBranch().getSalonName()));
         }
         return finalList;
     }
@@ -123,9 +123,21 @@ public class AppointmentController {
         }
     }
 
-    @GetMapping("/customer/{name}")
-    public List<Appointment> getAppointmentsByCustomerName(@PathVariable String name) {
-        return appointmentService.getAppointmentsByCustomerName(name);
+    @GetMapping("/customer/{accountId}")
+    public List<AppointmentResponseDTO> getAppointmentsByCustomerName(@PathVariable String accountId) {
+        
+        List<Appointment> list = appointmentService.getAppointmentsByCustomerAccountId(accountId);
+        List<AppointmentResponseDTO> finalList = new ArrayList<>();
+        for (Appointment appointment : list) {
+            List<String> serviceName = new ArrayList<>();
+            double totalPrice = 0;
+            for (SalonService service : appointment.getServices()) {
+                serviceName.add(service.getServiceName());
+                totalPrice = totalPrice + service.getServicePrice();    
+            }
+            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback(), appointment.getBranch().getSalonName()));
+        }
+        return finalList;
     }
 
     @PostMapping
@@ -145,9 +157,9 @@ public class AppointmentController {
         appointment.setStartTime(appointmentRequest.getStartTime());
         appointment.setStatus("Pending");
         appointment = appointmentService.addAppointment(appointment);
-        String msgStaff = "A booking request has just been created by <b>"
+        String msgStaff = "A booking request has just been created by "
                 + iCustomerService.getCustomerById(appointmentRequest.getCusId()).getAccount().getName()
-                + "</b>, please check and process it.";
+                + ", please check and process it.";
         List<Staff> staffList = iStaffService.getStaffsBySalonId(appointmentRequest.getSalonId());
         for (Staff staff : staffList) {
             iNotificationService.addNewNotification("Appointment Request Created", msgStaff, staff.getAccount());
@@ -161,10 +173,16 @@ public class AppointmentController {
     public ResponseEntity<String> updateAppointment(@PathVariable int id,
             @RequestBody AppointmentRequestDTO appointmentRequest) {
         Appointment existAppointment = appointmentService.getAppointmentById(id);
+        if (appointmentRequest.getStatus() == null){
+            existAppointment.setFeedback(appointmentRequest.getFeedback());
+            existAppointment.setRating(appointmentRequest.getRating());
+            return ResponseEntity.ok("Update feedback and rating success!");
+        }
         if (existAppointment == null) {
             return ResponseEntity.notFound().build();
         } else {
             String previousStatus = existAppointment.getStatus();
+            
             
             existAppointment.setStatus(appointmentRequest.getStatus());
             existAppointment = appointmentService.updateAppointment(existAppointment);
@@ -221,13 +239,7 @@ public class AppointmentController {
             return ResponseEntity.ok(("Update appointment successfully!"));
         }
     }
-    private int calculateTotalDuration(AppointmentRequestDTO appointmentRequest) {
-        List<SalonService> services = getSalonServicesById(appointmentRequest);
-        return services.stream()
-                       .mapToInt(SalonService::getMaxTime)  // Lấy giá trị maxTime của từng dịch vụ
-                       .sum();                             // Tính tổng
-    }
-
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAppointment(@PathVariable int id) {
         Appointment appointment = appointmentService.getAppointmentById(id);
@@ -270,5 +282,12 @@ public class AppointmentController {
             }
         } 
         return loyalPoint;
+    }
+
+    private int calculateTotalDuration(AppointmentRequestDTO appointmentRequest) {
+        List<SalonService> services = getSalonServicesById(appointmentRequest);
+        return services.stream()
+                       .mapToInt(SalonService::getMaxTime)  // Lấy giá trị maxTime của từng dịch vụ
+                       .sum();                             // Tính tổng
     }
 }

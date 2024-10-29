@@ -44,4 +44,8 @@ public class StylistService implements IStylistservice{
 
         return iStylistRepository.getReferenceById(id);
     }
+
+    public List<Stylist> getAllStylists(){
+        return iStylistRepository.findAll();
+    }
 }
