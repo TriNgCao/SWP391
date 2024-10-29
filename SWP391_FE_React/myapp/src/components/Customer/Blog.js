@@ -7,7 +7,6 @@ const BlogSection = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Hàm giả lập API với Axios
     async function fetchBlogs() {
       try {
         const response = await axios.get("http://localhost:8080/api/blog");
@@ -77,7 +76,6 @@ const BlogSection = () => {
         </div>
       </section>
 
-      {/* CSS trong JSX */}
       <style>{`
   .blog-entry {
     transition: transform 0.3s ease, box-shadow 0.3s ease;

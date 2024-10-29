@@ -10,7 +10,6 @@ const BlogPost = () => {
   const [liked, setLiked] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
 
-  // Retrieve user data from sessionStorage
   const accountId = sessionStorage.getItem("userId");
   const token = sessionStorage.getItem("token");
   const userRole = sessionStorage.getItem("userRole");
@@ -166,7 +165,7 @@ const BlogPost = () => {
           </span>
         </div>
 
-        {/* Comments Section */}
+        {/* Comments */}
         <div style={styles.commentsSection}>
           <h3>Comments</h3>
           {isLoggedIn && (

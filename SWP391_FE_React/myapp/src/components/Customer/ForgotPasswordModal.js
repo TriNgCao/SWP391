@@ -142,7 +142,7 @@ const ForgotPasswordModal = () => {
             <h5
               className="modal-title text-center w-100"
               id="loginModalLabel"
-              style={{ marginLeft: "85px" }}
+              style={{ marginLeft: "65px" }}
             >
               <img
                 src="images/logo.png"
