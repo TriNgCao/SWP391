@@ -37,7 +37,12 @@ public class Appointment {
     @JoinColumn(name = "branch_id")
     private Salon branch;
 
-    @ManyToMany(mappedBy = "appointments")
+    @ManyToMany
+    (fetch = FetchType.EAGER)
+    @JoinTable(name = "appointment_service", // Tên bảng trung gian
+            joinColumns = @JoinColumn(name = "appointment_id"), // Khóa ngoại cho Appointment
+            inverseJoinColumns = @JoinColumn(name = "service_id") // Khóa ngoại cho SalonService
+    )
     private List<SalonService> services;
 
     @Column(name = "appointment_date")

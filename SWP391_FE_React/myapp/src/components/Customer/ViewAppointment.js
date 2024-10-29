@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FaStar } from "react-icons/fa";
 
 const ViewAppointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -11,7 +12,7 @@ const ViewAppointment = () => {
   const [modalContent, setModalContent] = useState(null);
   const itemsPerPage = 10;
 
-  const accountId = sessionStorage.getItem("accountId");
+  const accountId = sessionStorage.getItem("userID");
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -33,8 +34,8 @@ const ViewAppointment = () => {
     );
     const filtered = selectedStatus
       ? sortedAppointments.filter(
-          (appointment) => appointment.status === selectedStatus
-        )
+        (appointment) => appointment.status === selectedStatus
+      )
       : sortedAppointments;
 
     setFilteredAppointments(filtered);
@@ -62,14 +63,10 @@ const ViewAppointment = () => {
   };
 
   const handleCancelAppointment = async (appointmentId) => {
-    const appointment = appointments.find(
-      (a) => a.appointmentId === appointmentId
-    );
-
     try {
       const response = await axios.put(
         `http://localhost:8080/api/appointment/${appointmentId}`,
-        { status: appointment.status }
+        { status: "Cancelled" }
       );
 
       if (response.status === 200) {
@@ -82,26 +79,19 @@ const ViewAppointment = () => {
     closeModal();
   };
 
-  const handleSubmitFeedback = () => {
-    setModalContent((prev) => ({
-      ...prev,
-      type: "submitFeedback",
-    }));
-  };
+  const handleFeedbackSubmit = async () => {
+    const { appointmentId, rating, feedback } = modalContent;
 
-  const handleFeedbackSubmit = async (appointmentId, rate, feedback) => {
     try {
       const response = await axios.put(
         `http://localhost:8080/api/appointment/${appointmentId}`,
-        { rate, feedback }
+        { rating: rating, feedback }
       );
       if (response.status === 200) {
         toast.success("Feedback submitted successfully");
         setAppointments((prevAppointments) =>
           prevAppointments.map((a) =>
-            a.appointmentId === appointmentId
-              ? { ...a, rating: rate, feedback }
-              : a
+            a.appointmentId === appointmentId ? { ...a, rating, feedback } : a
           )
         );
       }
@@ -131,7 +121,7 @@ const ViewAppointment = () => {
           <option value="Ready">Ready</option>
           <option value="On Process">On Process</option>
           <option value="Completed">Completed</option>
-          <option value="Canceled">Canceled</option>
+          <option value="Cancelled">Cancelled</option>
         </select>
       </div>
       <table style={styles.appointmentTable}>
@@ -163,7 +153,7 @@ const ViewAppointment = () => {
               <td style={styles.cell}>{appointment.status}</td>
               <td style={styles.cell}>
                 {appointment.status === "Pending" ||
-                appointment.status === "Ready" ? (
+                  appointment.status === "Ready" ? (
                   <button
                     style={styles.cancelBtn}
                     onClick={() =>
@@ -241,74 +231,107 @@ const ViewAppointment = () => {
 
       {/* Modal */}
       {showModal && (
-        <div style={styles.modal}>
-          {modalContent.type === "cancel" ? (
-            <>
-              <p>Are you sure you want to cancel this appointment?</p>
-              <button
-                onClick={() =>
-                  handleCancelAppointment(modalContent.appointmentId)
-                }
-              >
-                Yes
-              </button>
-              <button onClick={closeModal}>No</button>
-            </>
-          ) : modalContent.type === "feedback" ? (
-            <>
-              <p>Provide feedback and rating:</p>
-              <textarea
-                value={modalContent.feedback || ""}
-                onChange={(e) =>
-                  setModalContent((prev) => ({
-                    ...prev,
-                    feedback: e.target.value,
-                  }))
-                }
-              />
-              <input
-                type="number"
-                max="5"
-                min="0"
-                value={modalContent.rating || ""}
-                onChange={(e) =>
-                  setModalContent((prev) => ({
-                    ...prev,
-                    rating: e.target.value,
-                  }))
-                }
-              />
-              <button onClick={handleSubmitFeedback}>Submit</button>
-              <button onClick={closeModal}>Close</button>
-            </>
-          ) : modalContent.type === "submitFeedback" ? (
-            <>
-              <p>Are you sure you want to submit this feedback?</p>
-              <button
-                onClick={() =>
-                  handleFeedbackSubmit(
-                    modalContent.appointmentId,
-                    modalContent.rating,
-                    modalContent.feedback
-                  )
-                }
-              >
-                Yes
-              </button>
-              <button onClick={closeModal}>No</button>
-            </>
-          ) : modalContent.type === "viewFeedback" ? (
-            <>
-              <p>Rating: {modalContent.rating}</p>
-              <p>Feedback: {modalContent.feedback}</p>
-              <button onClick={closeModal}>Close</button>
-            </>
-          ) : null}
+        <div style={styles.overlay}>
+          <div style={styles.modal}>
+            {modalContent.type === "cancel" ? (
+              <>
+                <p>Are you sure you want to cancel this appointment?</p>
+                <button
+                  style={{ ...styles.modalButton, ...styles.confirmButton }}
+                  onClick={() =>
+                    handleCancelAppointment(modalContent.appointmentId)
+                  }
+                >
+                  Yes
+                </button>
+                <button
+                  style={{ ...styles.modalButton, ...styles.cancelButton }}
+                  onClick={closeModal}
+                >
+                  No
+                </button>
+              </>
+            ) : modalContent.type === "feedback" ? (
+              <>
+                <p>Provide feedback and rating:</p>
+                <StarRating
+                  rating={modalContent.rating}
+                  onRatingChange={(rating) =>
+                    setModalContent((prev) => ({ ...prev, rating }))
+                  }
+                />
+                <textarea
+                  value={modalContent.feedback || ""}
+                  onChange={(e) =>
+                    setModalContent((prev) => ({
+                      ...prev,
+                      feedback: e.target.value,
+                    }))
+                  }
+                  style={styles.feedbackInput}
+                />
+                <button
+                  style={{ ...styles.modalButton, ...styles.confirmButton }}
+                  onClick={handleFeedbackSubmit}
+                >
+                  Submit
+                </button>
+                <button
+                  style={{ ...styles.modalButton, ...styles.cancelButton }}
+                  onClick={closeModal}
+                >
+                  Close
+                </button>
+              </>
+            ) : modalContent.type === "viewFeedback" ? (
+              <>
+                <p>Feedback and Rating:</p>
+                <StarRating
+                  rating={modalContent.rating}
+                  onRatingChange={(rating) =>
+                    setModalContent((prev) => ({ ...prev, rating }))
+                  }
+                  disabled={modalContent.type === "viewFeedback"}
+                />
+                <textarea
+                  value={modalContent.feedback || ""}
+                  onChange={(e) =>
+                    setModalContent((prev) => ({
+                      ...prev,
+                      feedback: e.target.value,
+                    }))
+                  }
+                  style={styles.feedbackInput}
+                />
+                <button
+                  style={{ ...styles.modalButton, ...styles.cancelButton }}
+                  onClick={closeModal}
+                >
+                  Close
+                </button>
+              </>
+            ) : null}
+          </div>
         </div>
       )}
     </div>
   );
 };
+
+// Additional components and styling code
+const StarRating = ({ rating, onRatingChange, disabled }) => (
+  <div style={styles.starRatingContainer}>
+    {[...Array(5)].map((_, index) => (
+      <FaStar
+        key={index}
+        color={index < rating ? "#FFC107" : "#E4E5E9"}
+        size={30} // Larger size for the stars
+        onClick={() => !disabled && onRatingChange(index + 1)}
+        style={disabled ? { cursor: "not-allowed" } : { cursor: "pointer" }}
+      />
+    ))}
+  </div>
+);
 
 // Styles CSS directly in file
 const styles = {
@@ -403,6 +426,57 @@ const styles = {
   paginationButtonDisabled: {
     backgroundColor: "#cccccc",
     cursor: "not-allowed",
+  },
+  overlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  modalButton: {
+    padding: "8px 12px",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    marginTop: "15px",
+    float: "right",
+  },
+  confirmButton: {
+    backgroundColor: "#007bff",
+    color: "white",
+  },
+  cancelButton: {
+    backgroundColor: "red",
+    color: "white",
+  },
+  feedbackInput: {
+    width: "100%",
+    height: "80px",
+    padding: "10px",
+    marginTop: "10px",
+    borderRadius: "5px",
+    border: "1px solid #ccc",
+  },
+  modal: {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "500px",
+    backgroundColor: "white",
+    padding: "20px",
+    borderRadius: "8px",
+    zIndex: 1001,
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+    textAlign: "center",
+  },
+  starRatingContainer: {
+    display: "flex",
+    justifyContent: "center",
+    marginBottom: "15px",
   },
 };
 

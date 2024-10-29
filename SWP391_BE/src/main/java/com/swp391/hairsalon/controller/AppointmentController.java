@@ -179,6 +179,7 @@ public class AppointmentController {
         if (appointmentRequest.getStatus() == null){
             existAppointment.setFeedback(appointmentRequest.getFeedback());
             existAppointment.setRating(appointmentRequest.getRating());
+           existAppointment = appointmentService.updateAppointment(existAppointment);
             return ResponseEntity.ok("Update feedback and rating success!");
         }
         if (existAppointment == null) {

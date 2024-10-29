@@ -1,5 +1,6 @@
 package com.swp391.hairsalon.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,11 +36,8 @@ public class SalonService {
     private String imageName;
 
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "appointment_service", // Tên bảng trung gian
-            joinColumns = @JoinColumn(name = "service_id"), // Khóa ngoại cho Appointment
-            inverseJoinColumns = @JoinColumn(name = "appointment_id") // Khóa ngoại cho SalonService
-    )
+    @ManyToMany(mappedBy = "services")
+    @JsonIgnore
     private List<Appointment> appointments;
 
 
