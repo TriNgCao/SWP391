@@ -1,43 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const ViewAppointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
   const itemsPerPage = 10;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const fakeData = [
-        { id: 1, stylistName: 'John Doe', salonName: 'Salon A', date: '2024-10-25', services: ['Haircut', 'Color', 'Shampoo', 'Blowdry'], status: 'Pending' },
-        { id: 2, stylistName: 'Jane Smith', salonName: 'Salon B', date: '2024-10-26', services: ['Massage', 'Facial', 'Manicure', 'Pedicure'], status: 'Completed' },
-        { id: 3, stylistName: 'Alex Johnson', salonName: 'Salon C', date: '2024-10-27', services: ['Haircut', 'Style'], status: 'Ready' },
-        { id: 4, stylistName: 'Maria Garcia', salonName: 'Salon D', date: '2024-10-24', services: ['Color', 'Shampoo'], status: 'On Process' },
-        { id: 5, stylistName: 'Linda Brown', salonName: 'Salon E', date: '2024-10-23', services: ['Massage'], status: 'Ready' },
-        { id: 6, stylistName: 'James Wilson', salonName: 'Salon F', date: '2024-10-22', services: ['Haircut'], status: 'Completed' },
-        { id: 7, stylistName: 'Emma Clark', salonName: 'Salon G', date: '2024-10-21', services: ['Color', 'Style'], status: 'Pending' },
-        { id: 8, stylistName: 'Michael Lee', salonName: 'Salon H', date: '2024-10-20', services: ['Blowdry'], status: 'On Process' },
-        { id: 9, stylistName: 'Sophia Martinez', salonName: 'Salon I', date: '2024-10-19', services: ['Haircut', 'Shampoo'], status: 'Ready' },
-        { id: 10, stylistName: 'William Harris', salonName: 'Salon J', date: '2024-10-18', services: ['Massage', 'Facial'], status: 'Pending' },
-        { id: 11, stylistName: 'Olivia Walker', salonName: 'Salon K', date: '2024-10-17', services: ['Haircut'], status: 'Completed' },
-      ];
+  const accountId = sessionStorage.getItem("accountId");
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setAppointments(fakeData);
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/appointment/customer/${accountId}`
+        );
+        setAppointments(response.data);
+      } catch (error) {
+        toast.error("Failed to fetch appointments");
+      }
     };
-
-    fetchData();
-  }, []);
+    fetchAppointments();
+  }, [accountId]);
 
   useEffect(() => {
-    const sortedAppointments = [...appointments].sort((b, a) => new Date(a.date) - new Date(b.date));
+    const sortedAppointments = [...appointments].sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
     const filtered = selectedStatus
-      ? sortedAppointments.filter((appointment) => appointment.status === selectedStatus)
+      ? sortedAppointments.filter(
+          (appointment) => appointment.status === selectedStatus
+        )
       : sortedAppointments;
 
     setFilteredAppointments(filtered);
-    setCurrentPage(1); // Reset về trang đầu khi lọc
+    setCurrentPage(1);
   }, [appointments, selectedStatus]);
 
   const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
@@ -50,6 +51,66 @@ const ViewAppointment = () => {
     setCurrentPage(page);
   };
 
+  const openModal = (content) => {
+    setModalContent(content);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  const handleCancelAppointment = async (appointmentId) => {
+    const appointment = appointments.find(
+      (a) => a.appointmentId === appointmentId
+    );
+
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/api/appointment/${appointmentId}`,
+        { status: appointment.status }
+      );
+
+      if (response.status === 200) {
+        toast.success("Appointment status updated successfully");
+      }
+    } catch (error) {
+      toast.error("Failed to update appointment status");
+    }
+
+    closeModal();
+  };
+
+  const handleSubmitFeedback = () => {
+    setModalContent((prev) => ({
+      ...prev,
+      type: "submitFeedback",
+    }));
+  };
+
+  const handleFeedbackSubmit = async (appointmentId, rate, feedback) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/api/appointment/${appointmentId}`,
+        { rate, feedback }
+      );
+      if (response.status === 200) {
+        toast.success("Feedback submitted successfully");
+        setAppointments((prevAppointments) =>
+          prevAppointments.map((a) =>
+            a.appointmentId === appointmentId
+              ? { ...a, rating: rate, feedback }
+              : a
+          )
+        );
+      }
+    } catch (error) {
+      toast.error("Failed to submit feedback");
+    }
+    closeModal();
+  };
+
   const paginatedAppointments = filteredAppointments.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -59,8 +120,12 @@ const ViewAppointment = () => {
     <div style={styles.appointmentContainer}>
       <h1 style={styles.title}>Your Appointments</h1>
       <div style={styles.filterContainer}>
-        <label style={{ marginRight: '10px' }}>Filter by Status:</label>
-        <select onChange={handleStatusChange} value={selectedStatus}>
+        <label style={{ marginRight: "10px" }}>Filter by Status:</label>
+        <select
+          onChange={handleStatusChange}
+          value={selectedStatus}
+          style={styles.select}
+        >
           <option value="">All</option>
           <option value="Pending">Pending</option>
           <option value="Ready">Ready</option>
@@ -77,35 +142,69 @@ const ViewAppointment = () => {
             <th style={styles.headerCell}>Salon Name</th>
             <th style={styles.headerCell}>Date</th>
             <th style={styles.headerCell}>Services</th>
+            <th style={styles.headerCell}>Total</th>
             <th style={styles.headerCell}>Status</th>
             <th style={styles.headerCell}>Action</th>
           </tr>
         </thead>
         <tbody>
           {paginatedAppointments.map((appointment, index) => (
-            <tr key={appointment.id}>
-              <td style={styles.cell}>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+            <tr key={appointment.appointmentId}>
+              <td style={styles.cell}>
+                {(currentPage - 1) * itemsPerPage + index + 1}
+              </td>
               <td style={styles.cell}>{appointment.stylistName}</td>
               <td style={styles.cell}>{appointment.salonName}</td>
               <td style={styles.cell}>{appointment.date}</td>
-              <td style={{ ...styles.cell, ...styles.servicesCell }}>{appointment.services.join(', ')}</td>
-              <td
-                style={{
-                  ...styles.cell,
-                  color: appointment.status === 'Pending' ? 'orange' :
-                         appointment.status === 'Ready' ? 'blue' :
-                         appointment.status === 'On Process' ? 'purple' :
-                         appointment.status === 'Completed' ? 'green' : 'red',
-                  fontWeight: 'bold',
-                }}
-              >
-                {appointment.status}
+              <td style={{ ...styles.cell, ...styles.servicesCell }}>
+                {appointment.serviceName.join(", ")}
               </td>
+              <td style={styles.cell}>${appointment.totalPrice}</td>
+              <td style={styles.cell}>{appointment.status}</td>
               <td style={styles.cell}>
-                {appointment.status === 'Pending' || appointment.status === 'Ready' ? (
-                  <button style={styles.cancelBtn}><b>Cancel</b></button>
-                ) : appointment.status === 'Completed' ? (
-                  <button style={styles.feedbackBtn}><b>Feedback</b></button>
+                {appointment.status === "Pending" ||
+                appointment.status === "Ready" ? (
+                  <button
+                    style={styles.cancelBtn}
+                    onClick={() =>
+                      openModal({
+                        type: "cancel",
+                        appointmentId: appointment.appointmentId,
+                      })
+                    }
+                  >
+                    Cancel
+                  </button>
+                ) : appointment.status === "Completed" ? (
+                  appointment.rating > 0 ? (
+                    <button
+                      style={styles.feedbackBtn}
+                      onClick={() =>
+                        openModal({
+                          type: "viewFeedback",
+                          appointmentId: appointment.appointmentId,
+                          rating: appointment.rating,
+                          feedback: appointment.feedback,
+                        })
+                      }
+                    >
+                      View Feedback
+                    </button>
+                  ) : (
+                    <button
+                      style={styles.feedbackBtn}
+                      onClick={() =>
+                        openModal({
+                          type: "feedback",
+                          appointmentId: appointment.appointmentId,
+                          rating: appointment.rating,
+                          feedback: appointment.feedback,
+                        })
+                      }
+                    >
+                      Give Feedback
+                    </button>
+                  )
                 ) : null}
               </td>
             </tr>
@@ -120,108 +219,190 @@ const ViewAppointment = () => {
           }}
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = styles.paginationButtonHover.backgroundColor)}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = styles.paginationButton.backgroundColor)}
         >
           Previous
         </button>
-        <span style={{ margin: '0 10px' }}>Page {currentPage} of {totalPages}</span>
+        <span style={{ margin: "0 10px" }}>
+          Page {currentPage} of {totalPages}
+        </span>
         <button
           style={{
             ...styles.paginationButton,
-            ...(currentPage === totalPages ? styles.paginationButtonDisabled : {}),
+            ...(currentPage === totalPages
+              ? styles.paginationButtonDisabled
+              : {}),
           }}
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = styles.paginationButtonHover.backgroundColor)}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = styles.paginationButton.backgroundColor)}
         >
           Next
         </button>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div style={styles.modal}>
+          {modalContent.type === "cancel" ? (
+            <>
+              <p>Are you sure you want to cancel this appointment?</p>
+              <button
+                onClick={() =>
+                  handleCancelAppointment(modalContent.appointmentId)
+                }
+              >
+                Yes
+              </button>
+              <button onClick={closeModal}>No</button>
+            </>
+          ) : modalContent.type === "feedback" ? (
+            <>
+              <p>Provide feedback and rating:</p>
+              <textarea
+                value={modalContent.feedback || ""}
+                onChange={(e) =>
+                  setModalContent((prev) => ({
+                    ...prev,
+                    feedback: e.target.value,
+                  }))
+                }
+              />
+              <input
+                type="number"
+                max="5"
+                min="0"
+                value={modalContent.rating || ""}
+                onChange={(e) =>
+                  setModalContent((prev) => ({
+                    ...prev,
+                    rating: e.target.value,
+                  }))
+                }
+              />
+              <button onClick={handleSubmitFeedback}>Submit</button>
+              <button onClick={closeModal}>Close</button>
+            </>
+          ) : modalContent.type === "submitFeedback" ? (
+            <>
+              <p>Are you sure you want to submit this feedback?</p>
+              <button
+                onClick={() =>
+                  handleFeedbackSubmit(
+                    modalContent.appointmentId,
+                    modalContent.rating,
+                    modalContent.feedback
+                  )
+                }
+              >
+                Yes
+              </button>
+              <button onClick={closeModal}>No</button>
+            </>
+          ) : modalContent.type === "viewFeedback" ? (
+            <>
+              <p>Rating: {modalContent.rating}</p>
+              <p>Feedback: {modalContent.feedback}</p>
+              <button onClick={closeModal}>Close</button>
+            </>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 };
 
-// Styles CSS trực tiếp trong file
+// Styles CSS directly in file
 const styles = {
   appointmentContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '20px',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "20px",
   },
   title: {
-    fontSize: '34px',
-    fontWeight: 'bold',
-    marginBottom: '20px',
+    fontSize: "34px",
+    fontWeight: "bold",
+    marginBottom: "20px",
   },
   filterContainer: {
-    alignSelf: 'flex-end',
-    marginBottom: '20px',
-    marginRight: '155px',
+    alignSelf: "flex-end",
+    marginBottom: "20px",
+    marginRight: "155px",
+  },
+  select: {
+    padding: "8px",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    outline: "none",
+    transition: "0.3s",
+    cursor: "pointer",
+    "&:hover": {
+      border: "1px solid #007bff",
+    },
   },
   appointmentTable: {
-    width: '80%',
-    borderCollapse: 'collapse',
-    fontFamily: 'Arial, sans-serif',
+    width: "80%",
+    borderCollapse: "collapse",
+    fontFamily: "Arial, sans-serif",
   },
   headerCell: {
-    border: '1px solid #ddd',
-    padding: '8px',
-    textAlign: 'center',
-    backgroundColor: '#f2f2f2',
-    color: 'black',
+    border: "1px solid #ddd",
+    padding: "8px",
+    textAlign: "center",
+    backgroundColor: "#f2f2f2",
+    color: "black",
+    borderRadius: "5px",
   },
   cell: {
-    border: '1px solid #ddd',
-    padding: '8px',
-    textAlign: 'center',
-    verticalAlign: 'middle',
+    border: "1px solid #ddd",
+    padding: "8px",
+    textAlign: "center",
+    verticalAlign: "middle",
   },
   servicesCell: {
-    whiteSpace: 'normal',
-    wordWrap: 'break-word',
-    maxWidth: '150px',
+    whiteSpace: "normal",
+    wordWrap: "break-word",
+    maxWidth: "150px",
   },
   cancelBtn: {
-    color: 'white',
-    backgroundColor: 'red',
-    padding: '5px 10px',
-    border: 'none',
-    cursor: 'pointer',
-    width: '80px',
+    color: "white",
+    backgroundColor: "red",
+    padding: "5px 10px",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    transition: "background-color 0.3s",
   },
   feedbackBtn: {
-    color: 'white',
-    backgroundColor: 'green',
-    padding: '5px 6px',
-    border: 'none',
-    cursor: 'pointer',
-    width: '80px',
+    color: "white",
+    backgroundColor: "green",
+    padding: "5px 6px",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    transition: "background-color 0.3s",
   },
   pagination: {
-    marginTop: '20px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: "20px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   paginationButton: {
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    padding: '8px 16px',
-    margin: '0 5px',
-    cursor: 'pointer',
-    borderRadius: '4px',
-    transition: 'background-color 0.3s ease',
+    backgroundColor: "#007bff",
+    color: "white",
+    border: "none",
+    padding: "8px 16px",
+    margin: "0 5px",
+    cursor: "pointer",
+    borderRadius: "20px",
+    transition: "background-color 0.3s ease",
   },
   paginationButtonHover: {
-    backgroundColor: '#0056b3',
+    backgroundColor: "#0056b3",
   },
   paginationButtonDisabled: {
-    backgroundColor: '#cccccc',
-    cursor: 'not-allowed',
+    backgroundColor: "#cccccc",
+    cursor: "not-allowed",
   },
 };
 

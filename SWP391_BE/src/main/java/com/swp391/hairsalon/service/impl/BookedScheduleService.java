@@ -2,11 +2,17 @@ package com.swp391.hairsalon.service.impl;
 
 import com.swp391.hairsalon.dto.ScheduleTableDto;
 import com.swp391.hairsalon.pojo.BookedSchedule;
+import com.swp391.hairsalon.pojo.BookedSchedule;
+import com.swp391.hairsalon.pojo.Schedule;
+import com.swp391.hairsalon.pojo.Stylist;
 import com.swp391.hairsalon.repository.IBookedScheduleRepository;
 import com.swp391.hairsalon.repository.IScheduleRepository;
+import com.swp391.hairsalon.repository.IStylistRepository;
 import com.swp391.hairsalon.service.definitions.IBookedScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 import java.sql.Date;
 import java.util.*;
@@ -18,6 +24,9 @@ public class BookedScheduleService implements IBookedScheduleService {
 
     @Autowired
     private IScheduleRepository iScheduleRepository;
+
+    @Autowired
+    private IStylistRepository iStylistRepository;
 
     @Override
     public List<ScheduleTableDto> getScheduleByStylistIdAndDate(int stylistId, Date date) {
@@ -137,4 +146,51 @@ public class BookedScheduleService implements IBookedScheduleService {
         return timeArray;
     }
 
+     public Integer chooseRandomAvailableStylist(int startBookedTime, int duration, int salonId, Date date) {
+        // Lấy danh sách tất cả stylists theo salonId
+    List<Stylist> allStylists = iStylistRepository.getStylistsBySalonId(salonId);
+
+    // Lọc stylist trống hoặc có thời gian trống trong ngày
+    List<Stylist> availableStylists = allStylists.stream()
+        .filter(stylist -> stylist.getSchedules().stream()
+            .filter(schedule -> schedule.getDate().equals(date))
+            .allMatch(schedule -> isStylistAvailableForDuration(schedule, startBookedTime, duration))
+        )
+        .collect(Collectors.toList());
+
+    // Nếu không có stylist nào rảnh vào khoảng thời gian đó, trả về null hoặc xử lý khác
+    if (availableStylists.isEmpty()) {
+        return null;
+    }
+    // Chọn stylist ngẫu nhiên từ danh sách stylist khả dụng
+    Random random = new Random();
+    int randomIndex = random.nextInt(availableStylists.size());
+    return availableStylists.get(randomIndex).getStylistId();
+    }
+
+
+    private boolean isStylistAvailableForDuration(Schedule schedule, int startBookedTime, int duration) {
+    // Tính toán thời gian kết thúc dự kiến
+    int endBookedTime = startBookedTime + duration;
+
+    // Duyệt qua tất cả các BookedSchedule của lịch trình để kiểm tra xung đột
+    for (BookedSchedule bookedSchedule : schedule.getBookedSchedules()) {
+        int bookedStartTime = bookedSchedule.getBookedTime();
+        int bookedEndTime = bookedStartTime + bookedSchedule.getDuration();
+
+        // Kiểm tra xung đột thời gian: stylist không khả dụng nếu khoảng thời gian yêu cầu trùng lặp
+        if ((startBookedTime >= bookedStartTime && startBookedTime < bookedEndTime) ||
+            (endBookedTime > bookedStartTime && endBookedTime <= bookedEndTime) ||
+            (startBookedTime <= bookedStartTime && endBookedTime >= bookedEndTime)) {
+            return false; // Không khả dụng do trùng lặp thời gian
+        }
+    }
+
+    // Nếu không có xung đột thời gian nào, stylist khả dụng
+    return true;
 }
+
+
+}
+
+

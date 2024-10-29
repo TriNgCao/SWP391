@@ -15,7 +15,7 @@ public class SalonService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id")
+    @Column(name = "id")
     private int serviceId;
 
     @Column(name = "Name")

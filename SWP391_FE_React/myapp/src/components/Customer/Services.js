@@ -9,84 +9,18 @@ export default function Services() {
   const [searchTreatmentTerm, setSearchTreatmentTerm] = useState("");
   const [searchSpaSkinTerm, setSearchSpaSkinTerm] = useState("");
 
-  // useEffect(() => {
-  //   const fetchServices = async () => {
-  //     try {
-  //       const response = await new Promise((resolve) =>
-  //         setTimeout(() => {
-  //           resolve({
-  //             data: [
-  //               {
-  //                 id: 1,
-  //                 title: "Haircut Basic",
-  //                 description:
-  //                   "A simple yet stylish haircut to keep you looking fresh.",
-  //                 price: "$37",
-  //                 image: "images/image_1.jpg",
-  //                 category: "Hair Styling",
-  //                 time: "1 Hours",
-  //               },
-  //               {
-  //                 id: 2,
-  //                 title: "Hair Color Vivid",
-  //                 description: "Bold hair color to express yourself.",
-  //                 price: "$50",
-  //                 image: "images/image_2.jpg",
-  //                 category: "Hair Coloring",
-  //                 time: "1 Hours",
-  //               },
-  //               {
-  //                 id: 3,
-  //                 title: "Deep Conditioning",
-  //                 description: "Nourishing treatment for healthy hair.",
-  //                 price: "$40",
-  //                 image: "images/image_3.jpg",
-  //                 category: "Hair Treatment",
-  //                 time: "2 Hours",
-  //               },
-  //               {
-  //                 id: 4,
-  //                 title: "Classic Hair Styling",
-  //                 description: "Elegant hair styling for any occasion.",
-  //                 price: "$60",
-  //                 image: "images/image_4.jpg",
-  //                 category: "Hair Styling",
-  //                 time: "1 Hours",
-  //               },
-  //               {
-  //                 serviceId: 5,
-  //                 serviceName: "Luxury Spa Skin Treatment",
-  //                 serviceDescription:
-  //                   "Rejuvenating spa treatments to restore your skin's glow.",
-  //                 category: "Spa Skin",
-  //                 servicePrice: "$70",
-  //                 maxTime: "1 Hours",
-  //                 imageName: "url"
-  //               },
-  //             ],
-  //           });
-  //         }, 1000)
-  //       );
-  //       setServices(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching services:", error);
-  //     }
-  //   };
-
-  //   fetchServices();
-  // }, []);
   useEffect(() => {
     const fetchServices = async () => {
       try {
         const response = await axios.get("URL_API_CỦA_BẠN");
-        
+
         const updatedServices = response.data.map((service) => ({
           ...service,
           imageUrl: `http://localhost:8080/services/image/${encodeURIComponent(
             service.imageName
           )}`,
         }));
-        
+
         setServices(updatedServices);
       } catch (error) {
         console.error("Error fetching services:", error);
@@ -118,7 +52,7 @@ export default function Services() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            height: "100%", 
+            height: "100%",
           }}
         >
           <img
@@ -160,7 +94,9 @@ export default function Services() {
   );
 
   const filteredTreatmentServices = hairTreatmentServices.filter((service) =>
-    service.serviceName.toLowerCase().includes(searchTreatmentTerm.toLowerCase())
+    service.serviceName
+      .toLowerCase()
+      .includes(searchTreatmentTerm.toLowerCase())
   );
 
   const filteredSpaSkinServices = spaSkinServices.filter((service) =>
@@ -282,7 +218,7 @@ export default function Services() {
               <div className="d-block services text-center">
                 <div className="icon d-flex align-items-center justify-content-center">
                   <img
-                    src="images/skin-care.png"
+                    src="images/hair-care.png"
                     alt="Spa Skin"
                     style={{
                       width: "50px",
@@ -354,6 +290,15 @@ export default function Services() {
                     {renderServices(filteredStylingServices)}
                   </div>
                 </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -399,6 +344,15 @@ export default function Services() {
                   <div className="row">
                     {renderServices(filteredColoringServices)}
                   </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
                 </div>
               </div>
             </div>
@@ -446,6 +400,15 @@ export default function Services() {
                     {renderServices(filteredTreatmentServices)}
                   </div>
                 </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -490,6 +453,15 @@ export default function Services() {
                   <div className="row">
                     {renderServices(filteredSpaSkinServices)}
                   </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
                 </div>
               </div>
             </div>

@@ -37,5 +37,9 @@ public class StaffService implements   IStaffService{
         return iStaffRepository.getStaffByAccount_Id(accountId);
     }
 
+    public List<Staff> getAllStaffs (){
+        return iStaffRepository.findAll();
+    }
+
 
 }

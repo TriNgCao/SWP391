@@ -50,4 +50,8 @@ public class StylistService implements IStylistservice{
     public List<StylistListDto> getStylistLists(String id) {
         return iStylistRepository.getStylistList(id);
     }
+
+    public List<Stylist> getAllStylists(){
+        return iStylistRepository.findAll();
+    }
 }

@@ -21,6 +21,7 @@ import com.swp391.hairsalon.pojo.SalonService;
 import com.swp391.hairsalon.pojo.Staff;
 import com.swp391.hairsalon.service.definitions.IAccountService;
 import com.swp391.hairsalon.service.definitions.IAppointmentService;
+import com.swp391.hairsalon.service.definitions.IBookedScheduleService;
 import com.swp391.hairsalon.service.definitions.ICustomerService;
 import com.swp391.hairsalon.service.definitions.IManagerService;
 import com.swp391.hairsalon.service.definitions.INotificationService;
@@ -57,6 +58,8 @@ public class AppointmentController {
     private IStaffService iStaffService;
     @Autowired
     private IManagerService iManagerService;
+    @Autowired
+    private IBookedScheduleService iBookedScheduleService;
 
     public AppointmentController(IAppointmentService appointmentService) {
         this.appointmentService = appointmentService;
@@ -73,7 +76,7 @@ public class AppointmentController {
                 serviceName.add(service.getServiceName());
                 totalPrice = totalPrice + service.getServicePrice();
             }
-            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback()));
+            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback(), appointment.getBranch().getSalonName()));
         }
         return finalList;
     }
@@ -90,7 +93,7 @@ public class AppointmentController {
                 serviceName.add(service.getServiceName());
                 totalPrice = totalPrice + service.getServicePrice();
             }
-            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback()));
+            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback(),appointment.getBranch().getSalonName()));
         }
         return finalList;
     }
@@ -107,7 +110,7 @@ public class AppointmentController {
                 serviceName.add(service.getServiceName());
                 totalPrice = totalPrice + service.getServicePrice();
             }
-            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback()));
+            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback(), appointment.getBranch().getSalonName()));
         }
         return finalList;
     }
@@ -123,13 +126,29 @@ public class AppointmentController {
         }
     }
 
-    @GetMapping("/customer/{name}")
-    public List<Appointment> getAppointmentsByCustomerName(@PathVariable String name) {
-        return appointmentService.getAppointmentsByCustomerName(name);
+    @GetMapping("/customer/{accountId}")
+    public List<AppointmentResponseDTO> getAppointmentsByCustomerName(@PathVariable String accountId) {
+
+        List<Appointment> list = appointmentService.getAppointmentsByCustomerAccountId(accountId);
+        List<AppointmentResponseDTO> finalList = new ArrayList<>();
+        for (Appointment appointment : list) {
+            List<String> serviceName = new ArrayList<>();
+            double totalPrice = 0;
+            for (SalonService service : appointment.getServices()) {
+                serviceName.add(service.getServiceName());
+                totalPrice = totalPrice + service.getServicePrice();
+            }
+            finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback(), appointment.getBranch().getSalonName()));
+        }
+        return finalList;
     }
 
     @PostMapping
     public ResponseEntity<String> addAppointment(@RequestBody AppointmentRequestDTO appointmentRequest) {
+        if (appointmentRequest.getStylistId() == 0){
+            int duration = calculateTotalDuration(appointmentRequest);
+            appointmentRequest.setStylistId(iBookedScheduleService.chooseRandomAvailableStylist(appointmentRequest.getStartTime(),duration , appointmentRequest.getSalonId(), appointmentRequest.getDate()));
+        }
         Appointment appointment = new Appointment();
         appointment.setCustomer(iCustomerService.getCustomerById(iAccountService.getCustomerIdByAccountID(appointmentRequest.getUserID())));
         appointment.setBranch(iSalonService.getSalonById(appointmentRequest.getSalonId()));
@@ -151,15 +170,22 @@ public class AppointmentController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Add appointment successfully!");
     }
 
+
+
     @PutMapping("/{id}")
     public ResponseEntity<String> updateAppointment(@PathVariable int id,
             @RequestBody AppointmentRequestDTO appointmentRequest) {
         Appointment existAppointment = appointmentService.getAppointmentById(id);
+        if (appointmentRequest.getStatus() == null){
+            existAppointment.setFeedback(appointmentRequest.getFeedback());
+            existAppointment.setRating(appointmentRequest.getRating());
+            return ResponseEntity.ok("Update feedback and rating success!");
+        }
         if (existAppointment == null) {
             return ResponseEntity.notFound().build();
         } else {
             String previousStatus = existAppointment.getStatus();
-
+            
             existAppointment.setStatus(appointmentRequest.getStatus());
             existAppointment = appointmentService.updateAppointment(existAppointment);
             if ("Ready".equals(existAppointment.getStatus())) {
@@ -256,10 +282,17 @@ public class AppointmentController {
             if (service != null) {
                 loyalPoint = loyalPoint +  (int) Math.ceil(service.getServicePrice());
             }
-        }
+        } 
         return loyalPoint;
     }
     public LocalTime convertToLocalTime(int startTime) {
         return LocalTime.of(startTime, 00);
+    }
+
+    private int calculateTotalDuration(AppointmentRequestDTO appointmentRequest) {
+        List<SalonService> services = getSalonServicesById(appointmentRequest);
+        return services.stream()
+                       .mapToInt(SalonService::getMaxTime)  // Lấy giá trị maxTime của từng dịch vụ
+                       .sum();                             // Tính tổng
     }
 }

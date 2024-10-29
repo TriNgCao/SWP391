@@ -10,6 +10,7 @@ import java.util.List;
 public interface IBookedScheduleService {
     List<ScheduleTableDto> getScheduleByStylistIdAndDate(int stylistId, Date date);
     List<ScheduleTableDto> getAllBookedSchedule(Date date);
+    public Integer chooseRandomAvailableStylist(int startBookedTime, int duration, int salonId, Date date);
     void addBookedSchedule(BookedSchedule bookedSchedule);
 
 }

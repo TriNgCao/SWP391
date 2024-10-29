@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
-import { FaArrowCircleLeft, FaGoogle } from "react-icons/fa";
+import {FaArrowCircleLeft, FaGoogle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -128,7 +128,7 @@ const CustomerLoginModal = () => {
               alignItems: "center",
             }}
           >
-            <div style={{ display: "flex",flexDirection: 'column', alignItems: "center" }}>
+                      <div style={{ display: "flex",flexDirection: 'column', alignItems: "center" }}>
               <FaArrowCircleLeft
                 onClick={() => {
                   navigate("/");
