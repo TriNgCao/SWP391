@@ -1,6 +1,7 @@
 package com.swp391.hairsalon.service.impl;
 
 import com.swp391.hairsalon.dto.StylistInfoForBooking;
+import com.swp391.hairsalon.dto.StylistListDto;
 import com.swp391.hairsalon.pojo.Stylist;
 import com.swp391.hairsalon.repository.IAccountRepository;
 import com.swp391.hairsalon.repository.IStylistRepository;
@@ -43,5 +44,10 @@ public class StylistService implements IStylistservice{
     public Stylist getStylistById(int id) {
 
         return iStylistRepository.getReferenceById(id);
+    }
+
+    @Override
+    public List<StylistListDto> getStylistLists(String id) {
+        return iStylistRepository.getStylistList(id);
     }
 }

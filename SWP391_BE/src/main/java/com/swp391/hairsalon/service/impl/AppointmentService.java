@@ -1,6 +1,7 @@
 package com.swp391.hairsalon.service.impl;
 
 import java.sql.Date;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -80,5 +81,9 @@ public class AppointmentService implements IAppointmentService {
     public List<Appointment> getAppointmentsByStylistId(int stylistId) {
         return appointmentRepo.findByStylist_StylistId(stylistId);
     }
+
+
+
+
 
 }

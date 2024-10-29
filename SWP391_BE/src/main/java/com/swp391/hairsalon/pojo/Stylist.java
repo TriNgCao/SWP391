@@ -9,6 +9,7 @@ import java.util.List;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.ArrayList;
 
 @Entity
 @NoArgsConstructor
@@ -38,4 +39,7 @@ public class Stylist {
 
     @OneToMany(mappedBy = "stylist", cascade = CascadeType.ALL)
     private List<Appointment> appointments;
+
+    @OneToMany(mappedBy = "stylist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedules = new ArrayList<>();
 }

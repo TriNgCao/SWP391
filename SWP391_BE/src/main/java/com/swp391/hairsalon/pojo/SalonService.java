@@ -35,7 +35,11 @@ public class SalonService {
     private String imageName;
 
 
-    @ManyToMany(mappedBy = "services")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "appointment_service", // Tên bảng trung gian
+            joinColumns = @JoinColumn(name = "service_id"), // Khóa ngoại cho Appointment
+            inverseJoinColumns = @JoinColumn(name = "appointment_id") // Khóa ngoại cho SalonService
+    )
     private List<Appointment> appointments;
 
 

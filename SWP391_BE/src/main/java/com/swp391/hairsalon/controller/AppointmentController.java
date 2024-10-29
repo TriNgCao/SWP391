@@ -2,6 +2,7 @@ package com.swp391.hairsalon.controller;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class AppointmentController {
     @Autowired
     private ICustomerService iCustomerService;
+    @Autowired
+    private IAccountService iAccountService;
     @Autowired
     private IAppointmentService appointmentService;
     @Autowired
@@ -128,18 +131,18 @@ public class AppointmentController {
     @PostMapping
     public ResponseEntity<String> addAppointment(@RequestBody AppointmentRequestDTO appointmentRequest) {
         Appointment appointment = new Appointment();
-        appointment.setCustomer(iCustomerService.getCustomerById(appointmentRequest.getCusId()));
+        appointment.setCustomer(iCustomerService.getCustomerById(iAccountService.getCustomerIdByAccountID(appointmentRequest.getUserID())));
         appointment.setBranch(iSalonService.getSalonById(appointmentRequest.getSalonId()));
         appointment.setDate(appointmentRequest.getDate());
         appointment.setFeedback(null);
         appointment.setRating(-1);
         appointment.setServices(getSalonServicesById(appointmentRequest));
         appointment.setStylist(iStylistservice.getStylistById(appointmentRequest.getStylistId()));
-        appointment.setStartTime(appointmentRequest.getStartTime());
+        appointment.setStartTime(convertToLocalTime(appointmentRequest.getStartTime()));
         appointment.setStatus("Pending");
         appointment = appointmentService.addAppointment(appointment);
         String msgStaff = "A booking request has just been created by <b>"
-                + iCustomerService.getCustomerById(appointmentRequest.getCusId()).getAccount().getName()
+                + iCustomerService.getCustomerById(iAccountService.getCustomerIdByAccountID(appointmentRequest.getUserID())).getAccount().getName()
                 + "</b>, please check and process it.";
         List<Staff> staffList = iStaffService.getStaffsBySalonId(appointmentRequest.getSalonId());
         for (Staff staff : staffList) {
@@ -156,7 +159,7 @@ public class AppointmentController {
             return ResponseEntity.notFound().build();
         } else {
             String previousStatus = existAppointment.getStatus();
-            
+
             existAppointment.setStatus(appointmentRequest.getStatus());
             existAppointment = appointmentService.updateAppointment(existAppointment);
             if ("Ready".equals(existAppointment.getStatus())) {
@@ -253,7 +256,10 @@ public class AppointmentController {
             if (service != null) {
                 loyalPoint = loyalPoint +  (int) Math.ceil(service.getServicePrice());
             }
-        } 
+        }
         return loyalPoint;
+    }
+    public LocalTime convertToLocalTime(int startTime) {
+        return LocalTime.of(startTime, 00);
     }
 }

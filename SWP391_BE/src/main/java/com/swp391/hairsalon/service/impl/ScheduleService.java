@@ -1,5 +1,6 @@
 package com.swp391.hairsalon.service.impl;
 
+import com.swp391.hairsalon.dto.ScheduleViewAllDto;
 import com.swp391.hairsalon.pojo.BookedSchedule;
 import com.swp391.hairsalon.pojo.Schedule;
 import com.swp391.hairsalon.repository.IBookedScheduleRepository;
@@ -8,6 +9,7 @@ import com.swp391.hairsalon.service.definitions.IScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -21,10 +23,10 @@ public class ScheduleService implements IScheduleService {
     private IScheduleRepository iScheduleRepository;
 
     @Override
-    public void addSchedule(Schedule schedule) {
+    public Schedule addSchedule(Schedule schedule) {
 
 
-        iScheduleRepository.save(schedule);
+        return iScheduleRepository.save(schedule);
 
     }
 
@@ -53,6 +55,22 @@ public class ScheduleService implements IScheduleService {
     @Override
     public Schedule getScheduleById(int scheduleId) {
         return iScheduleRepository.getReferenceById(scheduleId);
+    }
+
+    @Override
+    public int getScheduleByStylistIdAndDate(int stylistId, Date date) {
+        return iScheduleRepository.getScheduleId(stylistId, date);
+    }
+
+    @Override
+    public List<ScheduleViewAllDto> getAllSchedule(String id, Date date) {
+        return iScheduleRepository.getSchedule(id, date);
+    }
+
+    @Override
+    public void deleteSchedule(String name, Date date) {
+        int scheduleId = iScheduleRepository.getScheduleId(name, date);
+        iScheduleRepository.deleteById(scheduleId);
     }
 
 }

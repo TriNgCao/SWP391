@@ -19,7 +19,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Appointment")
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,11 +37,7 @@ public class Appointment {
     @JoinColumn(name = "branch_id")
     private Salon branch;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "appointment_service", // Tên bảng trung gian
-            joinColumns = @JoinColumn(name = "appointment_id"), // Khóa ngoại cho Appointment
-            inverseJoinColumns = @JoinColumn(name = "service_id") // Khóa ngoại cho SalonService
-    )
+    @ManyToMany(mappedBy = "appointments")
     private List<SalonService> services;
 
     @Column(name = "appointment_date")
@@ -182,7 +177,7 @@ public class Appointment {
         int totalServiceTimeInMinutes = services.stream().mapToInt(SalonService::getMaxTime).sum();
 
         // Tính toán endTime
-        return startTime.plusMinutes(totalServiceTimeInMinutes);
+        return startTime.plusMinutes(totalServiceTimeInMinutes * 60);
     }
 
 }

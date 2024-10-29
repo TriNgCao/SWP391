@@ -16,10 +16,15 @@ import java.util.List;
 public interface IAccountRepository extends JpaRepository<Account, String> {
     public List<Account> findByRoleNot(int role);
 
-//    @Query("SELECT a. , a.role, COALESCE(s1.salary, s2.salary) AS salary " +
+    //    @Query("SELECT a. , a.role, COALESCE(s1.salary, s2.salary) AS salary " +
 //            "FROM Account a" +
 //            "LEFT JOIN Staff s1 ON a.account_id = s1.account_id" +
 //            "LEFT JOIN Stylist s2 ON a.account_id = s2.account_id")
+    @Query("select c.customerId " +
+            "from Account a " +
+            "left join Customer c on a.id = c.account.id " +
+            "where a.id = :id ")
+    int getCusIdByAccountId(@Param("id") String id);
 
 
     @Query("select new com.swp391.hairsalon.dto.EmployeeInfoDto(a.id, a.name, a.email , a.role, a.active, s3.salonName ) " +
