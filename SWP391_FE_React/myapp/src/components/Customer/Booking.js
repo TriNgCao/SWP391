@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaChevronRight, FaSearch } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const Booking = () => {
@@ -64,6 +65,7 @@ const Booking = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [disabledSlotsSet, setDisabledSlotsSet] = useState(new Set());
   const [dateKey, setDateKey] = useState(0);
+  const navigate = useNavigate();
 
   const filteredServices = services.filter((service) => {
     const matchesCategory =
@@ -359,7 +361,6 @@ const Booking = () => {
         date: selectedDate,
         startTime: parseInt(selectedSlot),
         userID: userID,
-        total: calculateTotal(),
       };
 
       const response = await axios.post(
@@ -369,6 +370,7 @@ const Booking = () => {
 
       if (response.status === 201) {
         toast.success("Booking Successfully!");
+        navigate("/viewappointment");
       } else {
         toast.error("Booking failed. Please try again.");
       }
@@ -395,7 +397,6 @@ const Booking = () => {
       date: selectedDate,
       startTime: parseInt(selectedSlot),
       userID: userID,
-      total: calculateTotal(),
     };
 
     console.log("Booking Data:", JSON.stringify(bookingData, null, 2));
