@@ -12,7 +12,7 @@ export default function Services() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get("URL_API_CỦA_BẠN");
+        const response = await axios.get("http://localhost:8080/services/fetchAll");
 
         const updatedServices = response.data.map((service) => ({
           ...service,

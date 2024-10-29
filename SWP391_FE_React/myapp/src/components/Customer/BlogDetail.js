@@ -10,7 +10,7 @@ const BlogPost = () => {
   const [liked, setLiked] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
 
-  const accountId = sessionStorage.getItem("userId");
+  const accountId = sessionStorage.getItem("userID");
   const token = sessionStorage.getItem("token");
   const userRole = sessionStorage.getItem("userRole");
   const isLoggedIn = token && accountId && userRole;
