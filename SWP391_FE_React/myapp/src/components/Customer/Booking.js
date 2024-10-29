@@ -343,80 +343,6 @@ const Booking = () => {
     !selectedSlot ||
     selectedServices.length === 0;
 
-  // const handleBooking = async () => {
-  //   try {
-  //     const userID = sessionStorage.getItem("userID");
-  //     const bookingData = {
-  //       salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
-  //       stylistId: stylists.find(
-  //         (stylist) => stylist.stylistName === selectedStylist
-  //       )?.stylistId,
-  //       serviceId: selectedServices.map(
-  //         (serviceName) =>
-  //           services.find((service) => service.serviceName === serviceName)
-  //             ?.serviceId
-  //       ),
-  //       date: selectedDate,
-  //       startTime: parseInt(selectedSlot),
-  //       userID: userID,
-  //     };
-
-  //     const response = await axios.post("http://localhost:8080/api/appointment", bookingData);
-
-  //     if (response.status === 201) {
-  //       toast.success("Booking Successfully!");
-  //     } else {
-  //       toast.error("Booking failed. Please try again.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error in booking:", error);
-  //     toast.error("Booking failed!");
-  //   }
-  // };
-
-  // const onBookingClick = async () => {
-  //   const userID = sessionStorage.getItem("userID");
-  //   const bookingData = {
-  //     salonId: salons.find((salon) => salon.name === selectedSalon)?.id,
-  //     stylistId: stylists.find(
-  //       (stylist) => stylist.stylistName === selectedStylist
-  //     )?.stylistId,
-  //     serviceId: selectedServices.map(
-  //       (serviceName) =>
-  //         services.find((service) => service.serviceName === serviceName)
-  //           ?.serviceId
-  //     ),
-  //     date: selectedDate,
-  //     startTime: parseInt(selectedSlot),
-  //     userID: userID,
-  //   };
-
-  //   console.log("Booking Data:", JSON.stringify(bookingData, null, 2));
-
-  //   try {
-  //     const response = await handleBooking();
-  //     if (response.status === 201) {
-  //       toast.success("Booking Successfully!");
-
-  //       const additionalData = {
-  //       stylistId: stylists.find(
-  //         (stylist) => stylist.stylistName === selectedStylist
-  //       )?.stylistId,
-  //       serviceId: selectedServices.map(
-  //         (serviceName) =>
-  //           services.find((service) => service.serviceName === serviceName)
-  //             ?.serviceId
-  //       ),
-  //       date: selectedDate,
-  //       bookedTime: parseInt(selectedSlot),
-  //       };
-
-  //       await axios.post("http://localhost:8080/book-schedule", additionalData);
-  //     }
-  //   } catch (error) {
-  //     toast.error(error.message || "Send booking fail!");
-  //   }
-  // };
   const handleBooking = async () => {
     try {
       const userID = sessionStorage.getItem("userID");
@@ -433,26 +359,27 @@ const Booking = () => {
         date: selectedDate,
         startTime: parseInt(selectedSlot),
         userID: userID,
+        total: calculateTotal(),
       };
-  
-      const response = await axios.post("http://localhost:8080/api/appointment", bookingData);
-  
+
+      const response = await axios.post(
+        "http://localhost:8080/api/appointment",
+        bookingData
+      );
+
       if (response.status === 201) {
         toast.success("Booking Successfully!");
       } else {
         toast.error("Booking failed. Please try again.");
       }
-  
-      // Return the response so it can be used in `onBookingClick`
       return response;
-  
     } catch (error) {
       console.error("Error in booking:", error);
       toast.error("Booking failed!");
-      throw error; // Propagate the error to `onBookingClick`
+      throw error;
     }
   };
-  
+
   const onBookingClick = async () => {
     const userID = sessionStorage.getItem("userID");
     const bookingData = {
@@ -468,10 +395,11 @@ const Booking = () => {
       date: selectedDate,
       startTime: parseInt(selectedSlot),
       userID: userID,
+      total: calculateTotal(),
     };
-  
+
     console.log("Booking Data:", JSON.stringify(bookingData, null, 2));
-  
+
     try {
       const response = await handleBooking();
       if (response.status === 201) {
@@ -487,14 +415,13 @@ const Booking = () => {
           date: selectedDate,
           bookedTime: parseInt(selectedSlot),
         };
-  
+
         await axios.post("http://localhost:8080/book-schedule", additionalData);
       }
     } catch (error) {
       toast.error(error.message || "Send booking fail!");
     }
   };
-  
 
   return (
     <div style={containerStyle}>
@@ -805,10 +732,20 @@ const Booking = () => {
                 </div>
               </div>
             </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Modal for Selecting Services */}
       {/* Modal for Selecting Services */}
       <div
         className="modal fade"
@@ -892,14 +829,13 @@ const Booking = () => {
                               key={service.serviceId}
                             >
                               <div
-                                className="card d-flex flex-column text-center"
+                                className={`card d-flex flex-column text-center ${
+                                  selectedServices.includes(service.serviceName)
+                                    ? "selected-card"
+                                    : ""
+                                }`}
                                 style={{
                                   minHeight: "400px",
-                                  backgroundColor: selectedServices.includes(
-                                    service.serviceName
-                                  )
-                                    ? "#add5f0"
-                                    : "#fff",
                                 }}
                               >
                                 <img
@@ -929,7 +865,13 @@ const Booking = () => {
                                     Price: ${service.servicePrice}
                                   </p>
                                   <button
-                                    className="btn btn-primary"
+                                    className={`btn ${
+                                      selectedServices.includes(
+                                        service.serviceName
+                                      )
+                                        ? "btn-success"
+                                        : "btn-primary"
+                                    }`}
                                     onClick={() =>
                                       handleServiceSelect(service.serviceName)
                                     }
@@ -954,14 +896,13 @@ const Booking = () => {
                       {filteredServices.map((service) => (
                         <div className="col-md-4 mb-4" key={service.serviceId}>
                           <div
-                            className="card d-flex flex-column text-center"
+                            className={`card d-flex flex-column text-center ${
+                              selectedServices.includes(service.serviceName)
+                                ? "selected-card"
+                                : ""
+                            }`}
                             style={{
                               minHeight: "400px",
-                              backgroundColor: selectedServices.includes(
-                                service.serviceName
-                              )
-                                ? "#add5f0"
-                                : "#fff",
                             }}
                           >
                             <img
@@ -991,7 +932,11 @@ const Booking = () => {
                                 Price: ${service.servicePrice}
                               </p>
                               <button
-                                className="btn btn-primary"
+                                className={`btn ${
+                                  selectedServices.includes(service.serviceName)
+                                    ? "btn-success"
+                                    : "btn-primary"
+                                }`}
                                 onClick={() =>
                                   handleServiceSelect(service.serviceName)
                                 }
@@ -1008,6 +953,15 @@ const Booking = () => {
                   </div>
                 )}
               </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-primary"
+                data-bs-dismiss="modal"
+              >
+                Done
+              </button>
             </div>
           </div>
         </div>
@@ -1152,6 +1106,30 @@ const Booking = () => {
                 </div>
               </div>
             </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+            <style jsx>{`
+              .selected-card {
+                background-color: #add5f0;
+                border: 2px solid #0056b3;
+              }
+
+              .btn-success {
+                background-color: #28a745;
+                color: white;
+              }
+
+              .btn-primary {
+                background-color: #007bff;
+              }
+            `}</style>
           </div>
         </div>
       </div>
