@@ -34,8 +34,8 @@ const ViewAppointment = () => {
     );
     const filtered = selectedStatus
       ? sortedAppointments.filter(
-        (appointment) => appointment.status === selectedStatus
-      )
+          (appointment) => appointment.status === selectedStatus
+        )
       : sortedAppointments;
 
     setFilteredAppointments(filtered);
@@ -62,18 +62,39 @@ const ViewAppointment = () => {
     setModalContent(null);
   };
 
-  const handleCancelAppointment = async (appointmentId) => {
-    try {
-      const response = await axios.put(
-        `http://localhost:8080/api/appointment/${appointmentId}`,
-        { status: "Cancelled" }
-      );
+  // const handleCancelAppointment = async (appointmentId) => {
+  //   try {
+  //     const response = await axios.put(
+  //       `http://localhost:8080/api/appointment/${appointmentId}`,
+  //       { status: "Cancelled" }
+  //     );
 
-      if (response.status === 200) {
-        toast.success("Appointment status updated successfully");
+  //     if (response.status === 200) {
+  //       toast.success("Appointment status updated successfully");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Failed to update appointment status");
+  //   }
+
+  //   closeModal();
+  // };
+  const handleCancelAppointment = async (appointment) => {
+    try {
+      const [updateResponse, additionalResponse] = await Promise.all([
+        axios.put(`http://localhost:8080/api/appointment/${appointment.id}`, {
+          status: "Cancelled",
+        }),
+        axios.put(`http://localhost:8080/api/additional-endpoint`, {
+          accountID: sessionStorage.getItem("userID"),
+          date: appointment.date,
+          bookedTime: appointment.startTime,
+        }),
+      ]);
+      if (updateResponse.status === 200 && additionalResponse.status === 200) {
+        toast.success("Appointment cancel successfully");
       }
     } catch (error) {
-      toast.error("Failed to update appointment status");
+      toast.error("Failed to cancel appointment please try again");
     }
 
     closeModal();
@@ -106,6 +127,22 @@ const ViewAppointment = () => {
     currentPage * itemsPerPage
   );
 
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case "Completed":
+        return { color: "green" };
+      case "Processing":
+        return { color: "blue" };
+      case "Cancelled":
+        return { color: "red" };
+      case "Ready":
+        return { color: "pink" };
+      case "Pending":
+        return { color: "orange" };
+      default:
+        return { color: "black" };
+    }
+  };
   return (
     <div style={styles.appointmentContainer}>
       <h1 style={styles.title}>Your Appointments</h1>
@@ -150,10 +187,18 @@ const ViewAppointment = () => {
                 {appointment.serviceName.join(", ")}
               </td>
               <td style={styles.cell}>${appointment.totalPrice}</td>
-              <td style={styles.cell}>{appointment.status}</td>
+              <td
+                style={{
+                  ...styles.cell,
+                  ...getStatusStyle(appointment.status),
+                }}
+              >
+                {" "}
+                <b>{appointment.status}</b>
+              </td>
               <td style={styles.cell}>
                 {appointment.status === "Pending" ||
-                  appointment.status === "Ready" ? (
+                appointment.status === "Ready" ? (
                   <button
                     style={styles.cancelBtn}
                     onClick={() =>
@@ -235,7 +280,9 @@ const ViewAppointment = () => {
           <div style={styles.modal}>
             {modalContent.type === "cancel" ? (
               <>
-                <p>Are you sure you want to cancel this appointment?</p>
+                <p style={{ fontSize: "30px" }}>
+                  <b>Are you sure you want to cancel this appointment?</b>
+                </p>
                 <button
                   style={{ ...styles.modalButton, ...styles.confirmButton }}
                   onClick={() =>
@@ -248,12 +295,14 @@ const ViewAppointment = () => {
                   style={{ ...styles.modalButton, ...styles.cancelButton }}
                   onClick={closeModal}
                 >
-                  No
+                  Cancel
                 </button>
               </>
             ) : modalContent.type === "feedback" ? (
               <>
-                <p>Provide feedback and rating:</p>
+                <p style={{ fontSize: "20px" }}>
+                  <b>Provide feedback and rating:</b>
+                </p>
                 <StarRating
                   rating={modalContent.rating}
                   onRatingChange={(rating) =>
@@ -285,7 +334,9 @@ const ViewAppointment = () => {
               </>
             ) : modalContent.type === "viewFeedback" ? (
               <>
-                <p>Feedback and Rating:</p>
+                <p style={{ fontSize: "20px" }}>
+                  <b>Feedback and Rating:</b>
+                </p>
                 <StarRating
                   rating={modalContent.rating}
                   onRatingChange={(rating) =>
@@ -302,6 +353,7 @@ const ViewAppointment = () => {
                     }))
                   }
                   style={styles.feedbackInput}
+                  disabled
                 />
                 <button
                   style={{ ...styles.modalButton, ...styles.cancelButton }}
@@ -325,7 +377,7 @@ const StarRating = ({ rating, onRatingChange, disabled }) => (
       <FaStar
         key={index}
         color={index < rating ? "#FFC107" : "#E4E5E9"}
-        size={30} // Larger size for the stars
+        size={50} // Larger size for the stars
         onClick={() => !disabled && onRatingChange(index + 1)}
         style={disabled ? { cursor: "not-allowed" } : { cursor: "pointer" }}
       />
@@ -397,7 +449,7 @@ const styles = {
   },
   feedbackBtn: {
     color: "white",
-    backgroundColor: "green",
+    backgroundColor: "#4caf50",
     padding: "5px 6px",
     border: "none",
     borderRadius: "5px",
@@ -445,20 +497,23 @@ const styles = {
     float: "right",
   },
   confirmButton: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#4caf50",
     color: "white",
+    minWidth: "50px",
   },
   cancelButton: {
-    backgroundColor: "red",
+    backgroundColor: "gray",
     color: "white",
+    marginRight: "10px",
   },
   feedbackInput: {
     width: "100%",
-    height: "80px",
+    height: "150px",
     padding: "10px",
     marginTop: "10px",
-    borderRadius: "5px",
+    borderRadius: "8px",
     border: "1px solid #ccc",
+    resize: "none",
   },
   modal: {
     position: "fixed",

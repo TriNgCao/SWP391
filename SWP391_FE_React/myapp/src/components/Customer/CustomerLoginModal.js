@@ -194,7 +194,7 @@ const CustomerLoginModal = () => {
                 className={`form-control ${
                   !validateEmail(email) && email ? "is-invalid" : ""
                 }`}
-                id="email"
+                id="email1"
                 placeholder="Enter your email"
                 style={{ borderRadius: "10px", padding: "10px" }}
                 value={email}
@@ -221,7 +221,7 @@ const CustomerLoginModal = () => {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="rememberMe"
+                id="rememberMe1"
               />
               <label className="form-check-label" htmlFor="rememberMe">
                 Remember me

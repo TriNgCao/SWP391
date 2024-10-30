@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
+import { useRef, useEffect } from "react";
 
 const ForgotPasswordModal = () => {
   const [email, setEmail] = useState("");
@@ -22,6 +23,20 @@ const ForgotPasswordModal = () => {
     setConfirmPassword("");
     setStep(1);
   };
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    const modalElement = modalRef.current;
+    const handleHide = () => resetForm();
+    if (modalElement) {
+      modalElement.addEventListener("hide.bs.modal", handleHide);
+    }
+    return () => {
+      if (modalElement) {
+        modalElement.removeEventListener("hide.bs.modal", handleHide);
+      }
+    };
+  }, []);
 
   const handleSendEmail = async (e) => {
     e.preventDefault();
@@ -77,7 +92,7 @@ const ForgotPasswordModal = () => {
   };
 
   return (
-    <div className="modal-dialog modal-dialog-centered" onHide={resetForm}>
+    <div ref={modalRef} className="modal-dialog modal-dialog-centered">
       <Link
         to="#"
         id="backToLoginLink"
