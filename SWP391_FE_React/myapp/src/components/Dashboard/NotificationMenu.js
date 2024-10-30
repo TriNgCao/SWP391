@@ -53,9 +53,10 @@ function NotificationMenu({ anchorEl, handleClose, setUnreadCount }) {
         const response = await axios.get(
           `http://localhost:8080/api/noti/${accountID}`
         );
+        const sortedNotifications = response.data.sort((a, b) => b.notiId - a.notiId);
         console.log(response);
         setNotifications(response.data);
-        const unreadNotifications = response.data.filter((n) => !n.read).length;
+        const unreadNotifications = sortedNotifications.filter((n) => !n.read).length;
         setUnreadCount(unreadNotifications);
       } catch (error) {
         console.error("Failed to fetch notifications:", error);
