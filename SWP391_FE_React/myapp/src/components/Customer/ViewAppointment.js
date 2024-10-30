@@ -66,19 +66,14 @@ const ViewAppointment = () => {
 
   const handleCancelAppointment = async (appointmentId, stylistId, date, bookedTime) => {
     try {
-      // API 1: Cancel the appointment
       const cancelAppointmentRequest = axios.put(
         `http://localhost:8080/api/appointment/${appointmentId}`,
         { status: "Cancelled" }
       );
-  
-      // API 2: Send additional info with stylistID, date, startTime
       const additionalInfoRequest = axios.put(
         `http://localhost:8080/book-schedule/cancel`,
         { stylistId, date, bookedTime }
       );
-  
-      // Run both APIs in parallel
       const [cancelResponse, additionalInfoResponse] = await Promise.all([
         cancelAppointmentRequest,
         additionalInfoRequest,
@@ -86,8 +81,6 @@ const ViewAppointment = () => {
   
       if (cancelResponse.status === 200 && additionalInfoResponse.status === 200) {
         toast.success("Appointment status updated successfully");
-        
-        // Re-fetch appointments to update the list
         const response = await axios.get(
           `http://localhost:8080/api/appointment/customer/${accountId}`
         );
@@ -100,23 +93,6 @@ const ViewAppointment = () => {
     closeModal();
   };
   
-
-  // const handleCancelAppointment = async (appointmentId) => {
-  //   try {
-  //     const response = await axios.put(
-  //       `http://localhost:8080/api/appointment/${appointmentId}`,
-  //       { status: "Cancelled" }
-  //     );
-
-  //     if (response.status === 200) {
-  //       toast.success("Appointment status updated successfully");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Failed to update appointment status");
-  //   }
-
-  //   closeModal();
-  // };
   const handleFeedbackSubmit = async () => {
     const { appointmentId, rating, feedback } = modalContent;
 
@@ -193,7 +169,7 @@ const ViewAppointment = () => {
         </thead>
         <tbody>
           {paginatedAppointments
-            .sort((b, a) => a.appointmentId - b.appointmentId) // Sort in descending order
+            .sort((b, a) => a.appointmentId - b.appointmentId)
             .map((appointment, index) => (
               <tr key={appointment.appointmentId}>
                 <td style={styles.cell}>
