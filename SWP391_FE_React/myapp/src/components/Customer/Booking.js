@@ -745,8 +745,6 @@ const Booking = () => {
           </div>
         </div>
       </div>
-
-      {/* Modal for Selecting Services */}
       {/* Modal for Selecting Services */}
       <div
         className="modal fade"

@@ -35,9 +35,6 @@ const CustomerLoginModal = () => {
       });
 
       const { token, userID, userRole } = response.data;
-
-      // Check if token, userID, and userRole are provided and userRole is '1'
-      //
       if (token && userID && userRole === 1) {
         sessionStorage.setItem("token", token);
         sessionStorage.setItem("userID", userID);
@@ -72,8 +69,7 @@ const CustomerLoginModal = () => {
       const response = await axios.post(
         "https://your-api.com/api/google-login",
         {
-          email: email, // Usually, you'd get this from a Google login flow
-          // Note: You may need to use a Google API client to get the token or user details.
+          email: email,
         }
       );
 
@@ -140,10 +136,10 @@ const CustomerLoginModal = () => {
                   }
                 }}
                 style={{
-                  fontSize: "28px", // Increase arrow size
+                  fontSize: "28px",
                   cursor: "pointer",
                   color: "#6dbe45",
-                  marginRight: "5px", // Adjust spacing between the arrow and text
+                  marginRight: "5px",
                 }}
               />
               <span

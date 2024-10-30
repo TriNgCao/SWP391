@@ -62,22 +62,6 @@ const ViewAppointment = () => {
     setModalContent(null);
   };
 
-  // const handleCancelAppointment = async (appointmentId) => {
-  //   try {
-  //     const response = await axios.put(
-  //       `http://localhost:8080/api/appointment/${appointmentId}`,
-  //       { status: "Cancelled" }
-  //     );
-
-  //     if (response.status === 200) {
-  //       toast.success("Appointment status updated successfully");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Failed to update appointment status");
-  //   }
-
-  //   closeModal();
-  // };
   const handleCancelAppointment = async (appointment) => {
     try {
       const [updateResponse, additionalResponse] = await Promise.all([
@@ -370,14 +354,14 @@ const ViewAppointment = () => {
   );
 };
 
-// Additional components and styling code
+
 const StarRating = ({ rating, onRatingChange, disabled }) => (
   <div style={styles.starRatingContainer}>
     {[...Array(5)].map((_, index) => (
       <FaStar
         key={index}
         color={index < rating ? "#FFC107" : "#E4E5E9"}
-        size={50} // Larger size for the stars
+        size={50}
         onClick={() => !disabled && onRatingChange(index + 1)}
         style={disabled ? { cursor: "not-allowed" } : { cursor: "pointer" }}
       />
