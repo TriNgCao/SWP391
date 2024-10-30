@@ -37,7 +37,6 @@ const BlogSection = () => {
         <div className="container">
           <div className="row d-flex">
             {blogs
-              .filter((blog) => blog.status)
               .map((blog) => (
                 <div key={blog.blogId} className="col-md-4 d-flex">
                   <div

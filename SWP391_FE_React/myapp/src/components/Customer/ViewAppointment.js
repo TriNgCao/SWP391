@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { FaStar } from "react-icons/fa";
 
 const ViewAppointment = () => {
@@ -35,8 +35,8 @@ const ViewAppointment = () => {
     );
     const filtered = selectedStatus
       ? sortedAppointments.filter(
-          (appointment) => appointment.status === selectedStatus
-        )
+        (appointment) => appointment.status === selectedStatus
+      )
       : sortedAppointments;
 
     setFilteredAppointments(filtered);
@@ -160,76 +160,78 @@ const ViewAppointment = () => {
           </tr>
         </thead>
         <tbody>
-          {paginatedAppointments.map((appointment, index) => (
-            <tr key={appointment.appointmentId}>
-              <td style={styles.cell}>
-                {(currentPage - 1) * itemsPerPage + index + 1}
-              </td>
-              <td style={styles.cell}>{appointment.stylistName}</td>
-              <td style={styles.cell}>{appointment.salonName}</td>
-              <td style={styles.cell}>{appointment.date}</td>
-              <td style={{ ...styles.cell, ...styles.servicesCell }}>
-                {appointment.serviceName.join(", ")}
-              </td>
-              <td style={styles.cell}>${appointment.totalPrice}</td>
-              <td
-                style={{
-                  ...styles.cell,
-                  ...getStatusStyle(appointment.status),
-                }}
-              >
-                {" "}
-                <b>{appointment.status}</b>
-              </td>
-              <td style={styles.cell}>
-                {appointment.status === "Pending" ||
-                appointment.status === "Ready" ? (
-                  <button
-                    style={styles.cancelBtn}
-                    onClick={() =>
-                      openModal({
-                        type: "cancel",
-                        appointmentId: appointment.appointmentId,
-                      })
-                    }
-                  >
-                    Cancel
-                  </button>
-                ) : appointment.status === "Completed" ? (
-                  appointment.rating > 0 ? (
+          {paginatedAppointments
+            .sort((b, a) => a.appointmentId - b.appointmentId) // Sort in descending order
+            .map((appointment, index) => (
+              <tr key={appointment.appointmentId}>
+                <td style={styles.cell}>
+                  {(currentPage - 1) * itemsPerPage + index + 1}
+                </td>
+                <td style={styles.cell}>{appointment.stylistName}</td>
+                <td style={styles.cell}>{appointment.salonName}</td>
+                <td style={styles.cell}>{appointment.date}</td>
+                <td style={{ ...styles.cell, ...styles.servicesCell }}>
+                  {appointment.serviceName.join(", ")}
+                </td>
+                <td style={styles.cell}>${appointment.totalPrice}</td>
+                <td
+                  style={{
+                    ...styles.cell,
+                    ...getStatusStyle(appointment.status),
+                  }}
+                >
+                  <b>{appointment.status}</b>
+                </td>
+                <td style={styles.cell}>
+                  {appointment.status === "Pending" ||
+                    appointment.status === "Ready" ? (
                     <button
-                      style={styles.feedbackBtn}
+                      style={styles.cancelBtn}
                       onClick={() =>
                         openModal({
-                          type: "viewFeedback",
+                          type: "cancel",
                           appointmentId: appointment.appointmentId,
-                          rating: appointment.rating,
-                          feedback: appointment.feedback,
                         })
                       }
                     >
-                      View Feedback
+                      Cancel
                     </button>
-                  ) : (
-                    <button
-                      style={styles.feedbackBtn}
-                      onClick={() =>
-                        openModal({
-                          type: "feedback",
-                          appointmentId: appointment.appointmentId,
-                          rating: appointment.rating,
-                          feedback: appointment.feedback,
-                        })
-                      }
-                    >
-                      Give Feedback
-                    </button>
-                  )
-                ) : null}
-              </td>
-            </tr>
-          ))}
+                  ) : appointment.status === "Completed" ? (
+                    appointment.rating > 0 ? (
+                      <button
+                        style={styles.feedbackBtn}
+                        onClick={() =>
+                          openModal({
+                            type: "viewFeedback",
+                            appointmentId: appointment.appointmentId,
+                            rating: appointment.rating,
+                            feedback: appointment.feedback,
+                          })
+                        }
+                      >
+                        View Feedback
+                      </button>
+                    ) : (
+                      <button
+                        style={styles.feedbackBtn}
+                        onClick={() =>
+                          openModal({
+                            type: "feedback",
+                            appointmentId: appointment.appointmentId,
+                            rating: appointment.rating,
+                            feedback: appointment.feedback,
+                          })
+                        }
+                      >
+                        Give Feedback
+                      </button>
+                    )
+                  ) : null}
+                </td>
+              </tr>
+            ))}
         </tbody>
+
       </table>
       <div style={styles.pagination}>
         <button

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,35 +14,56 @@ import {
   TableRow,
   Button,
   Modal,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
-import { format } from "date-fns";
+import { format, subMonths } from "date-fns";
 
 const API_URL = "http://localhost:8080/api/payroll/salon/manager";
 
 const ManagerPayroll = () => {
   const [payrollData, setPayrollData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPayrollId, setSelectedPayrollId] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(format(new Date(), "yyyy-MM"));
 
-  useEffect(() => {
-    fetchPayrollData();
-  }, []);
-
-  const fetchPayrollData = async () => {
+  const fetchPayrollData = useCallback(async () => {
     try {
       const response = await axios.get(API_URL);
-      setPayrollData(response.data);
+      const data = response.data;
+      setPayrollData(data);
+      filterPayrollByMonth(data, selectedMonth);
     } catch (error) {
       console.error("Error fetching payroll data:", error);
     }
+  }, [selectedMonth]);
+
+  useEffect(() => {
+    fetchPayrollData();
+  }, [fetchPayrollData]);
+
+  const filterPayrollByMonth = (data, month) => {
+    const filtered = data.filter((item) =>
+      format(new Date(item.payrollDate), "yyyy-MM") === month
+    );
+    setFilteredData(filtered);
+  };
+
+  const handleMonthChange = (event) => {
+    const month = event.target.value;
+    setSelectedMonth(month);
+    filterPayrollByMonth(payrollData, month);
   };
 
   const updateStatus = async (payrollId) => {
     try {
       await axios.put(`http://localhost:8080/api/payroll/${payrollId}/true`);
-      fetchPayrollData();
-      toast.success("Paid Successfully!")
+      toast.success("Paid Successfully!");
       closeModal();
+      fetchPayrollData();
     } catch (error) {
       console.error("Error updating status:", error);
     }
@@ -57,6 +78,17 @@ const ManagerPayroll = () => {
     setModalOpen(false);
     setSelectedPayrollId(null);
   };
+
+  // Generate last 6 months for dropdown
+  const getLastSixMonths = () => {
+    const months = [];
+    for (let i = 0; i < 6; i++) {
+      const date = subMonths(new Date(), i);
+      months.push({ value: format(date, "yyyy-MM"), label: format(date, "MMMM yyyy") });
+    }
+    return months;
+  };
+
   const styles = {
     modal: {
       position: "fixed",
@@ -100,6 +132,22 @@ const ManagerPayroll = () => {
         Payments Details
       </Typography>
 
+      {/* Month Filter Dropdown */}
+      <FormControl sx={{ mb: 3, minWidth: 200 }}>
+        <InputLabel>Filter by Month</InputLabel>
+        <Select
+          value={selectedMonth}
+          onChange={handleMonthChange}
+          label="Filter by Month"
+        >
+          {getLastSixMonths().map((month) => (
+            <MenuItem key={month.value} value={month.value}>
+              {month.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
       <TableContainer
         component={Paper}
         sx={{ backgroundColor: "#f5f5f5", borderRadius: "8px" }}
@@ -119,8 +167,8 @@ const ManagerPayroll = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {payrollData.length > 0 ? (
-              payrollData.map((row, index) => (
+            {filteredData.length > 0 ? (
+              filteredData.map((row, index) => (
                 <TableRow key={row.payrollId}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{row.name}</TableCell>
@@ -141,7 +189,6 @@ const ManagerPayroll = () => {
                   </TableCell>
 
                   <TableCell>
-                    {/* Show button only if status is "Not Yet" */}
                     {!row.status && (
                       <Button
                         variant="contained"
@@ -172,7 +219,7 @@ const ManagerPayroll = () => {
           <Typography variant="h6" component="h2" gutterBottom>
             Are you sure you want to set this payroll as paid?
           </Typography>
-          <Box display="flex" justifyContent="flex-end" mt={2}> 
+          <Box display="flex" justifyContent="flex-end" mt={2}>
             <Button
               variant="outlined"
               sx={styles.cancelButton}

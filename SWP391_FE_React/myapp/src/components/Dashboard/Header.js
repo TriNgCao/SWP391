@@ -8,6 +8,7 @@ import Container from "@mui/material/Container";
 import Tooltip from "@mui/material/Tooltip";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import { AuthContext } from "../Customer/AuthContext";
 import {
   Badge,
   Button,
@@ -30,6 +31,7 @@ const Header = () => {
   const [anchorElNotification, setAnchorElNotification] = React.useState(null);
   const [unreadCount, setUnreadCount] = React.useState(0);
   const navigate = useNavigate();
+  const { hasToken, setHasToken } = React.useContext(AuthContext);
 
   const handleOpenNotificationMenu = (event) => {
     setAnchorElNotification(event.currentTarget);
@@ -43,6 +45,7 @@ const Header = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("userID");
     sessionStorage.removeItem("userRole");
+    setHasToken(false);
     navigate("/");
   };
 
@@ -78,58 +81,60 @@ const Header = () => {
             </Box>
 
             {/* Notification & Log Out */}
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Tooltip title="Open notifications">
-                <IconButton
-                  onClick={handleOpenNotificationMenu}
-                  sx={{ color: "white", mr: 1 }}
-                >
-                  <Badge
-                    color="error"
-                    variant="dot"
-                    invisible={unreadCount === 0} // Ẩn dấu chấm đỏ nếu không có thông báo chưa đọc
+            {hasToken && (
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Tooltip title="Open notifications">
+                  <IconButton
+                    onClick={handleOpenNotificationMenu}
+                    sx={{ color: "white", mr: 1 }}
                   >
-                    <NotificationsIcon />
-                  </Badge>
-                </IconButton>
-              </Tooltip>
+                    <Badge
+                      color="error"
+                      variant="dot"
+                      invisible={unreadCount === 0}
+                    >
+                      <NotificationsIcon />
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+                {/* Menu thông báo */}
+                <NotificationMenu
+                  anchorEl={anchorElNotification}
+                  handleClose={handleCloseNotificationMenu}
+                  setUnreadCount={setUnreadCount}
+                />
 
-              {/* Menu thông báo */}
-              <NotificationMenu
-                anchorEl={anchorElNotification}
-                handleClose={handleCloseNotificationMenu}
-                setUnreadCount={setUnreadCount} // Cập nhật số thông báo chưa đọc
-              />
+                <Tooltip title="Log out">
+                  <Button
+                    variant="contained"
+                    onClick={handleLogout}
+                    startIcon={<ExitToAppIcon style={{ color: "#4CAF50" }} />}
+                    sx={{
+                      bgcolor: "white",
+                      color: "#4CAF50",
+                      padding: "8px 16px",
+                      borderRadius: "8px",
+                      fontWeight: "bold",
+                      fontSize: "0.9rem",
+                      textTransform: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      border: "1px solid #4CAF50",
+                      "&:hover": {
+                        bgcolor: "#f0f0f0",
+                      },
+                      "&:active": {
+                        bgcolor: "#e0e0e0",
+                      },
+                    }}
+                  >
+                    Log Out
+                  </Button>
+                </Tooltip>
+              </Box>
+            )}
 
-              <Tooltip title="Log out">
-                <Button
-                  variant="contained"
-                  onClick={handleLogout}
-                  startIcon={<ExitToAppIcon style={{ color: "#4CAF50" }} />}
-                  sx={{
-                    bgcolor: "white",
-                    color: "#4CAF50",
-                    padding: "8px 16px",
-                    borderRadius: "8px",
-                    fontWeight: "bold",
-                    fontSize: "0.9rem",
-                    textTransform: "none",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    border: "1px solid #4CAF50",
-                    "&:hover": {
-                      bgcolor: "#f0f0f0",
-                    },
-                    "&:active": {
-                      bgcolor: "#e0e0e0",
-                    },
-                  }}
-                >
-                  Log Out
-                </Button>
-              </Tooltip>
-            </Box>
           </Toolbar>
         </Container>
       </AppBar>
