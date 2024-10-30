@@ -11,7 +11,7 @@
 
         const handleStorageChange = () => {
         const updatedToken = sessionStorage.getItem("token");
-        setHasToken(!!updatedToken); // Cập nhật token
+        setHasToken(!!updatedToken);
         };
 
         window.addEventListener("storage", handleStorageChange);
