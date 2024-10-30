@@ -42,8 +42,7 @@ public class OAuthAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         logger.info("onAuthenticationSuccess");
-        this.setAlwaysUseDefaultTargetUrl(true);
-        this.setDefaultTargetUrl("http://localhost:3000");
+
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
         OAuth2User user = oauthToken.getPrincipal();
 //        DefaultOAuth2User user = (DefaultOAuth2User) authentication.getPrincipal();
@@ -72,7 +71,9 @@ public class OAuthAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
             customer.setAccount(a); // Gán Account cho Customer
             customer.setLoyaltyPoints(0); // Khởi tạo điểm loyalty
             iCustomerRepository.save(customer); // Lưu Customer vào cơ sở dữ liệu
+
         }
+        response.sendRedirect("http://localhost:3000");
     }
 //    public String getIdToken(String authorizationCode) {
 //        String tokenEndpoint = "https://oauth2.googleapis.com/token";

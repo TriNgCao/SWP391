@@ -3,17 +3,15 @@ package com.swp391.hairsalon.dto;
 import lombok.*;
 
 import java.sql.Date;
-import java.util.List;
+import java.time.LocalTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BookScheduleRequestDto {
+public class BookedScheduleCancelRequestDto {
     private int stylistId;
-    private int salonId;
-    private List<Integer> serviceId;
     private Date date;
-    private int bookedTime;
+    private LocalTime bookedTime;
 }

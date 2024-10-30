@@ -9,6 +9,7 @@ import com.swp391.hairsalon.pojo.Manager;
 import com.swp391.hairsalon.service.definitions.IAccountService;
 
 //import com.swp391.hairsalon.service.IManagerService;
+import com.swp391.hairsalon.service.definitions.ICustomerService;
 import com.swp391.hairsalon.service.definitions.IStylistservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,9 @@ public class AccountController {
 
     @Autowired
     private IAccountService iAccountService;
+
+    @Autowired
+    private ICustomerService iCustomerService;
 
     @Autowired
     private IStylistservice iStylistservice;
@@ -81,6 +85,10 @@ public class AccountController {
         return ResponseEntity.ok(iAccountService.getAllCustomers());
     }
 
+    @GetMapping("/customer/point/{id}")
+    public int getPoint(@PathVariable int id) {
+        return iCustomerService.getCustomerById(id).getLoyaltyPoints();
+    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable String id){
