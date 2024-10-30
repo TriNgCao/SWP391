@@ -6,7 +6,7 @@ const LoginButton = () => {
   const { hasToken } = useContext(AuthContext);
 
   if (hasToken) {
-    return null; // Không hiển thị nút nếu có token
+    return null;
   }
 
   return (

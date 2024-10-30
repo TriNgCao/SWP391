@@ -37,7 +37,7 @@ const CustomerPrivateRoute = () => {
     );
   }
 
-  return <Outlet />; // Render các component con nếu đã xác thực
+  return <Outlet />;
 };
 
 export default CustomerPrivateRoute;

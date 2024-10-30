@@ -11,6 +11,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 
+
 const modalStyle = {
   position: "fixed",
   top: "50%",
@@ -41,7 +42,7 @@ const menuStyle = {
   },
 };
 
-function NotificationMenu({ anchorEl, handleClose, setUnreadCount }) {
+function CustomerNotificationMenu({ anchorEl, handleClose, setUnreadCount }) {
   const [notifications, setNotifications] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [selectedNotification, setSelectedNotification] = React.useState(null);
@@ -226,4 +227,4 @@ function NotificationMenu({ anchorEl, handleClose, setUnreadCount }) {
   );
 }
 
-export default NotificationMenu;
+export default CustomerNotificationMenu;
