@@ -72,7 +72,7 @@ public class AuthController {
         iAccountService.addAccount(newAccount);
         String token = this.helper.generateToken(newAccount.getEmail());
         JwtResponse response = JwtResponse.builder().token(token)
-                .userID(newAccount.getEmail())
+                .userID(newAccount.getId())
                 .userRole(1)
                         .build();
 

@@ -27,4 +27,8 @@ public class BlogResponseDTO {
     private String content;
     private Date createDate;
     private boolean status;
+    private boolean isLikeByAccount;
+    private int likeId;
+    
+
 }

@@ -19,9 +19,12 @@ import org.springframework.http.MediaType;
 import com.swp391.hairsalon.dto.BlogRequestDTO;
 import com.swp391.hairsalon.dto.BlogResponseDTO;
 import com.swp391.hairsalon.pojo.Blog;
+import com.swp391.hairsalon.pojo.Likes;
 import com.swp391.hairsalon.service.definitions.IAccountService;
 import com.swp391.hairsalon.service.definitions.IBlogService;
 import com.swp391.hairsalon.service.definitions.IFileService;
+import com.swp391.hairsalon.service.definitions.ILikeService;
+
 import java.io.InputStream;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -43,16 +46,25 @@ public class BlogController {
     private String path;
     @Autowired
     private IFileService iFileService;
+    @Autowired
+    private ILikeService iLikeService;
 
     @GetMapping
     public List<Blog> getAllBlog() {
         return iBlogService.getAllBlog();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<BlogResponseDTO> getBlogById(@PathVariable int id) {
+    @GetMapping("/{id}/{accountId}")
+    public ResponseEntity<BlogResponseDTO> getBlogById(@PathVariable int id, @PathVariable String accountId) {
         Blog blog = iBlogService.getBlogById(id);
-        BlogResponseDTO responseDTO = new BlogResponseDTO(id, blog.getAccount().getId(), blog.getAccount().getName(), blog.getImageName(), blog.getTitle(), blog.getContent(), blog.getCreateDate(), blog.isStatus());
+        Likes like = iLikeService.findByAccountIdAndBlogId(accountId, id);
+        BlogResponseDTO responseDTO = new BlogResponseDTO();
+        if (like != null)
+        {
+        responseDTO = new BlogResponseDTO(id, blog.getAccount().getId(), blog.getAccount().getName(), blog.getImageName(), blog.getTitle(), blog.getContent(), blog.getCreateDate(), blog.isStatus(), true, like.getLikeId());
+        } else {
+        responseDTO = new BlogResponseDTO(id, blog.getAccount().getId(), blog.getAccount().getName(), blog.getImageName(), blog.getTitle(), blog.getContent(), blog.getCreateDate(), blog.isStatus(), false, -1);
+        }
         return ResponseEntity.ok(responseDTO);
     }
 

@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
-  Grid,
   Paper,
   Typography,
   Table,
@@ -11,94 +11,45 @@ import {
   TableHead,
   TableRow,
   Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
 } from "@mui/material";
+import { format } from "date-fns";
 
-// Sample payroll data
-const payrollData = [
-  {
-    id: 1,
-    invoiceNo: "180001",
-    employeeName: "Amit Singh",
-    employeeId: "12324",
-    phone: "9515456478",
-    email: "amitsingh@gmail.com",
-    transactionId: "VJ00423BHW2",
-    earnings: "₹ 1,40,600.00",
-    status: "Completed",
-  },
-  {
-    id: 2,
-    invoiceNo: "180002",
-    employeeName: "Rahul Bhat",
-    employeeId: "45789",
-    phone: "9514456478",
-    email: "rahulb@gmail.com",
-    transactionId: "VJ00423FDRS",
-    earnings: "₹ 1,00,000.00",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    invoiceNo: "180003",
-    employeeName: "Harsha TL",
-    employeeId: "70538",
-    phone: "9512456478",
-    email: "harsha@gmail.com",
-    transactionId: "VJ00423ERQE",
-    earnings: "₹ 1,80,000.00",
-    status: "Completed",
-  },
-  {
-    id: 4,
-    invoiceNo: "180004",
-    employeeName: "Sandeep Roy",
-    employeeId: "98456",
-    phone: "9515456479",
-    email: "sandeep@gmail.com",
-    transactionId: "RJSDER93449",
-    earnings: "₹ 1,60,000.00",
-    status: "Completed",
-  },
-  {
-    id: 5,
-    invoiceNo: "180005",
-    employeeName: "Arjun Raj",
-    employeeId: "2417",
-    phone: "9515456478",
-    email: "arjun@gmail.com",
-    transactionId: "SHJERE84747",
-    earnings: "₹ 1,30,000.00",
-    status: "Pending",
-  },
-  {
-    id: 6,
-    invoiceNo: "180006",
-    employeeName: "Neha Sharma",
-    employeeId: "32415",
-    phone: "9512456487",
-    email: "neha@gmail.com",
-    transactionId: "JKL432AOWE",
-    earnings: "₹ 1,25,000.00",
-    status: "Completed",
-  },
-  {
-    id: 7,
-    invoiceNo: "180007",
-    employeeName: "Ravi Kumar",
-    employeeId: "67534",
-    phone: "9513456789",
-    email: "ravi.kumar@gmail.com",
-    transactionId: "ERTU78294A",
-    earnings: "₹ 1,75,000.00",
-    status: "Pending",
-  },
-];
+// URL của API có id là 1 nha cậu Trí
+
+const API_URL = "http://localhost:8080/api/payroll/salon/manager";
 
 const ManagerPayroll = () => {
+  const [payrollData, setPayrollData] = useState([]);
+
+  // Lấy dữ liệu payroll từ API khi tải trang
+  useEffect(() => {
+    fetchPayrollData();
+  }, []);
+
+  // Hàm gọi API để lấy dữ liệu payroll
+  const fetchPayrollData = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      setPayrollData(response.data);
+    } catch (error) {
+      console.error("Error fetching payroll data:", error);
+    }
+  };
+
+  // Hàm cập nhật trạng thái status của payroll
+  const updateStatus = async (payrollId, newStatus) => {
+    try {
+      // Gọi API PUT để cập nhật trạng thái của payroll
+      await axios.put(`http://localhost:8080/api/payroll/${payrollId}`, {
+        status: newStatus,
+      });
+      alert("Status updated successfully.");
+      fetchPayrollData(); // Cập nhật lại dữ liệu sau khi thay đổi
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -108,31 +59,15 @@ const ManagerPayroll = () => {
         color: "#333",
       }}
     >
-      <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
+      <Typography
+        variant="h4"
+        fontWeight="bold"
+        sx={{ mb: 2, color: "#4CAF50" }}
+      >
         Payments Details
       </Typography>
 
-      {/* Filter Section and Download Button */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ backgroundColor: "#4CAF50" }}
-        >
-          Download
-        </Button>
-        <FormControl sx={{ width: "200px" }}>
-          <InputLabel>This Month</InputLabel>
-          <Select defaultValue="This Month">
-            <MenuItem value="This Month">This Month</MenuItem>
-            <MenuItem value="Last Month">Last Month</MenuItem>
-            <MenuItem value="Last 3 Months">Last 3 Months</MenuItem>
-            <MenuItem value="This Year">This Year</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-
-      {/* Payroll Table */}
+      {/* Bảng hiển thị payroll */}
       <TableContainer
         component={Paper}
         sx={{ backgroundColor: "#f5f5f5", borderRadius: "8px" }}
@@ -140,45 +75,58 @@ const ManagerPayroll = () => {
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#4caf50", color: "#fff" }}>
-              <TableCell sx={{ color: "#fff" }}>Invoice No</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Employee Name</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Employee ID</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Phone No</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Email ID</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Transaction ID</TableCell>
+              <TableCell sx={{ color: "#fff" }}>No</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Name</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Email</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Phone</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Role</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Date</TableCell>
               <TableCell sx={{ color: "#fff" }}>Earnings</TableCell>
               <TableCell sx={{ color: "#fff" }}>Status</TableCell>
-              <TableCell sx={{ color: "#fff" }}></TableCell>
+              <TableCell sx={{ color: "#fff" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {payrollData.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.invoiceNo}</TableCell>
-                <TableCell>{row.employeeName}</TableCell>
-                <TableCell>{row.employeeId}</TableCell>
-                <TableCell>{row.phone}</TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>{row.transactionId}</TableCell>
-                <TableCell>{row.earnings}</TableCell>
-                <TableCell
-                  sx={{
-                    color: row.status === "Completed" ? "#4CAF50" : "#F44336",
-                  }}
-                >
-                  {row.status}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{ backgroundColor: "#4CAF50" }}
+            {payrollData.length > 0 ? (
+              payrollData.map((row, index) => (
+                <TableRow key={row.payrollId}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{row.email}</TableCell>
+                  <TableCell>{row.phone}</TableCell>
+                  <TableCell>{row.role === 2 ? "Stylist" : "Other"}</TableCell>
+                  <TableCell>
+                    {format(new Date(row.payrollDate), "yyyy-MM-dd")}
+                  </TableCell>
+                  <TableCell>{row.earning.toLocaleString()} VNĐ</TableCell>
+                  <TableCell
+                    sx={{
+                      color: row.status ? "green" : "red",
+                      fontWeight: "bold",
+                    }}
                   >
-                    Update
-                  </Button>
+                    {row.status ? "Đã thanh toán" : "Chưa thanh toán"}
+                  </TableCell>
+
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color={row.status ? "error" : "success"}
+                      onClick={() => updateStatus(row.payrollId, !row.status)}
+                      sx={{ minWidth: "100px" }}
+                    >
+                      {row.status ? "Set Pending" : "Set Paid"}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={9} align="center">
+                  No data found.
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -187,3 +135,139 @@ const ManagerPayroll = () => {
 };
 
 export default ManagerPayroll;
+
+// /import React, { useState, useEffect } from "react";
+// import axios from "axios";
+// import {
+//   Box,
+//   Paper,
+//   Typography,
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableContainer,
+//   TableHead,
+//   TableRow,
+//   Button,
+// } from "@mui/material";
+// import { format } from "date-fns";
+
+// // URL của API
+// const API_URL = "http://localhost:8080/api/payroll/salon/1";
+
+// const ManagerPayroll = () => {
+//   const [payrollData, setPayrollData] = useState([]);
+
+//   // Lấy dữ liệu payroll từ API khi tải trang
+//   useEffect(() => {
+//     fetchPayrollData();
+//   }, []);
+
+//   // Hàm gọi API để lấy dữ liệu payroll
+//   const fetchPayrollData = async () => {
+//     try {
+//       const response = await axios.get(API_URL);
+//       setPayrollData(response.data);
+//     } catch (error) {
+//       console.error("Error fetching payroll data:", error);
+//     }
+//   };
+
+//   // Hàm cập nhật trạng thái status của payroll
+//   const updateStatus = async (payrollId, newStatus) => {
+//     try {
+//       // Gọi API PUT để cập nhật trạng thái của payroll
+//       await axios.put(`http://localhost:8080/api/payroll/${payrollId}`, {
+//         status: newStatus,
+//       });
+//       alert("Status updated successfully.");
+//       fetchPayrollData(); // Cập nhật lại dữ liệu sau khi thay đổi
+//     } catch (error) {
+//       console.error("Error updating status:", error);
+//     }
+//   };
+
+//   return (
+//     <Box
+//       sx={{
+//         padding: 4,
+//         backgroundColor: "#fff",
+//         minHeight: "100vh",
+//         color: "#333",
+//       }}
+//     >
+//       <Typography
+//         variant="h4"
+//         fontWeight="bold"
+//         sx={{ mb: 2, color: "#4CAF50" }}
+//       >
+//         Payments Details
+//       </Typography>
+
+//       {/* Bảng hiển thị payroll */}
+//       <TableContainer
+//         component={Paper}
+//         sx={{ backgroundColor: "#f5f5f5", borderRadius: "8px" }}
+//       >
+//         <Table>
+//           <TableHead>
+//             <TableRow sx={{ backgroundColor: "#4caf50", color: "#fff" }}>
+//               <TableCell sx={{ color: "#fff" }}>No</TableCell>
+//               <TableCell sx={{ color: "#fff" }}>Name</TableCell>
+//               <TableCell sx={{ color: "#fff" }}>Email</TableCell>
+//               <TableCell sx={{ color: "#fff" }}>Phone</TableCell>
+//               <TableCell sx={{ color: "#fff" }}>Role</TableCell>
+//               <TableCell sx={{ color: "#fff" }}>Date</TableCell>
+//               <TableCell sx={{ color: "#fff" }}>Earnings</TableCell>
+//               <TableCell sx={{ color: "#fff" }}>Status</TableCell>
+//               <TableCell sx={{ color: "#fff" }}>Actions</TableCell>
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {payrollData.length > 0 ? (
+//               payrollData.map((row, index) => (
+//                 <TableRow key={row.payrollId}>
+//                   <TableCell>{index + 1}</TableCell>
+//                   <TableCell>{row.name}</TableCell>
+//                   <TableCell>{row.email}</TableCell>
+//                   <TableCell>{row.phone}</TableCell>
+//                   <TableCell>{row.role === 2 ? "Stylist" : "Other"}</TableCell>
+//                   <TableCell>
+//                     {format(new Date(row.payrollDate), "yyyy-MM-dd")}
+//                   </TableCell>
+//                   <TableCell>{row.earning.toLocaleString()} VNĐ</TableCell>
+//                   <TableCell
+//                     sx={{
+//                       color: row.status ? "green" : "red",
+//                       fontWeight: "bold",
+//                     }}
+//                   >
+//                     {row.status ? "Đã thanh toán" : "Chưa thanh toán"}
+//                   </TableCell>
+//                   <TableCell>
+//                     <Button
+//                       variant="contained"
+//                       color={row.status ? "error" : "success"}
+//                       onClick={() => updateStatus(row.payrollId, !row.status)}
+//                       sx={{ minWidth: "100px" }}
+//                     >
+//                       {row.status ? "Set Pending" : "Set Paid"}
+//                     </Button>
+//                   </TableCell>
+//                 </TableRow>
+//               ))
+//             ) : (
+//               <TableRow>
+//                 <TableCell colSpan={9} align="center">
+//                   No data found.
+//                 </TableCell>
+//               </TableRow>
+//             )}
+//           </TableBody>
+//         </Table>
+//       </TableContainer>
+//     </Box>
+//   );
+// };
+
+// export default ManagerPayroll;

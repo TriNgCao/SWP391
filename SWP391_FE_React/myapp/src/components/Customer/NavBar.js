@@ -95,20 +95,13 @@ export default function Navbar() {
             </ul>
           </div>
 
-          <div>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginRight: "-40px" }}>
             <UserIconDropdown />
             {hasToken && (
               <>
                 <Tooltip title="Open notifications">
-                  <IconButton
-                    onClick={handleOpenNotificationMenu}
-                    sx={{ mr: 1 }}
-                  >
-                    <Badge
-                      color="error"
-                      variant="dot"
-                      invisible={unreadCount === 0}
-                    >
+                  <IconButton onClick={handleOpenNotificationMenu} sx={{ mr: 1 }}>
+                    <Badge color="error" variant="dot" invisible={unreadCount === 0}>
                       <NotificationsIcon />
                     </Badge>
                   </IconButton>

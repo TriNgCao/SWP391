@@ -53,16 +53,16 @@ public class LikeController {
     }
 
     @PostMapping
-    public ResponseEntity<String> likeBlog(@RequestBody LikeRequestDTO likerRequestDTO) {
-        Likes like = new Likes(iBlogService.getBlogById(likerRequestDTO.getBlogId()),
-                iAccountService.getAccountById(likerRequestDTO.getAccountId()));
-        try {
-            like = iLikeService.updateLikes(like);
-            return ResponseEntity.ok("Like created");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+public ResponseEntity<?> likeBlog(@RequestBody LikeRequestDTO likerRequestDTO) {
+    Likes like = new Likes(iBlogService.getBlogById(likerRequestDTO.getBlogId()),
+                           iAccountService.getAccountById(likerRequestDTO.getAccountId()));
+    try {
+        like = iLikeService.updateLikes(like);
+        return ResponseEntity.ok(new LikeResponseDTO(like.getLikeId(), like.getAccount().getId(), like.getBlog().getBlogId())); // Trả về likeId của like mới tạo
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().build();
     }
+}
 
     @DeleteMapping("{likeId}")
     public ResponseEntity<String> deleteLike(@PathVariable int likeId) {

@@ -58,10 +58,12 @@ const CustomerRegisterModal = () => {
     setIsLoading(true);
   
     try {
-      const response = await axios.post(`https://example.com/api/send-email/${encodeURIComponent(email)}`);
+      const response = await axios.post(`http://localhost:8080/api/email/send-code/${encodeURIComponent(email)}`);
       
       if (response.status === 200) {
         setStep(2);
+        setIsLoading(false);
+
         toast.success("OTP sent to your email");
       }
     } catch (error) {
@@ -74,20 +76,19 @@ const CustomerRegisterModal = () => {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
+  
     try {
-      const response = await axios.post("https://example.com/api/verify-otp", {
-        email,
-        otp,
-      });
+      const response = await axios.post(`http://localhost:8080/api/email/verify-code/${encodeURIComponent(email)}/${encodeURIComponent(otp)}`);
+      
       if (response.status === 200) {
         setStep(3);
+      setIsLoading(false);
+
         toast.success("OTP verified successfully");
       } else {
         setError("Invalid OTP, please try again.");
       }
     } catch (error) {
-      setIsLoading(false);
       setError("An error occurred while verifying OTP.");
     }
   };
@@ -109,7 +110,7 @@ const CustomerRegisterModal = () => {
       setIsLoading(true);
 
       try {
-        const response = await axios.post("https://example.com/api/register", {
+        const response = await axios.post("http://localhost:8080/auth/register", {
           name: fullName,
           email: email,
           phone: phoneNumber,
