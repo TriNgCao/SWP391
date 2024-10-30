@@ -64,11 +64,7 @@ export default function Navbar() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link
-                  to="/about"
-                  className="nav-link"
-                  style={{ whiteSpace: "nowrap" }}
-                >
+                <Link to="/about" className="nav-link" style={{ whiteSpace: "nowrap" }}>
                   About Us
                 </Link>
               </li>
@@ -95,10 +91,20 @@ export default function Navbar() {
             </ul>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginRight: "-30px" }}>
-            <UserIconDropdown />
-            {hasToken && (
+          {/* User Icon and Notifications or Login Placeholder */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              marginRight: "10px",
+              minWidth: "120px",  // Adjust to match the combined width of UserIconDropdown and notifications
+              justifyContent: hasToken ? "flex-end" : "center",
+            }}
+          >
+            {hasToken ? (
               <>
+                <UserIconDropdown />
                 <Tooltip title="Open notifications">
                   <IconButton onClick={handleOpenNotificationMenu} sx={{ mr: 1 }}>
                     <Badge color="error" variant="dot" invisible={unreadCount === 0}>
@@ -112,13 +118,14 @@ export default function Navbar() {
                   setUnreadCount={setUnreadCount}
                 />
               </>
+            ) : (
+              <LoginButton />
             )}
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginRight: "35px", marginLeft: "35px" }}>
-            <LoginButton/>
           </div>
         </div>
       </nav>
+
+
 
       {/* <!-- Login Selection Modal --> */}
       <div

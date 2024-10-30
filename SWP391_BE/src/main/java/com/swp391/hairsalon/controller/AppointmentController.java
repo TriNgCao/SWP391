@@ -211,7 +211,7 @@ public class AppointmentController {
                         existAppointment.getStylist().getAccount());
             }
 
-            if ("Cancel".equals(existAppointment.getStatus())) {
+            if ("Cancelled".equals(existAppointment.getStatus())) {
                 String msgCustomerCancel = "Your appointment at "
                         + existAppointment.getBranch().getSalonName() + " on "
                         + existAppointment.getDate() + " at "

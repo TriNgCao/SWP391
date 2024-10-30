@@ -419,6 +419,7 @@ const Booking = () => {
 
         await axios.post("http://localhost:8080/book-schedule", additionalData);
       }
+      toast.success("Booking Successfully!");
     } catch (error) {
       toast.error(error.message || "Send booking fail!");
     }
