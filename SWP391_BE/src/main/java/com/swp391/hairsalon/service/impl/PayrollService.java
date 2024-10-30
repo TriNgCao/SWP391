@@ -90,7 +90,7 @@ public class PayrollService implements IPayrollService {
         }
     }
 
-    private double calculateTotalRevenue(int stylistId) {
+    public double calculateTotalRevenue(int stylistId) {
     // Giả sử bạn có một phương thức trong service để lấy danh sách các dịch vụ hoàn thành của stylist
     List<Appointment> completedAppointments = appointmentService.getCompletedAppointmentsByStylist(stylistId);
     

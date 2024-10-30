@@ -1,8 +1,10 @@
 package com.swp391.hairsalon.controller;
 
 import com.swp391.hairsalon.dto.BookScheduleRequestDto;
+import com.swp391.hairsalon.dto.BookedScheduleCancelRequestDto;
 import com.swp391.hairsalon.dto.ScheduleTableDto;
 import com.swp391.hairsalon.pojo.BookedSchedule;
+import com.swp391.hairsalon.service.definitions.IAccountService;
 import com.swp391.hairsalon.service.definitions.IBookedScheduleService;
 import com.swp391.hairsalon.service.definitions.ISalonServiceService;
 import com.swp391.hairsalon.service.definitions.IScheduleService;
@@ -20,6 +22,9 @@ public class BookedScheduleController {
 
     @Autowired
     private IBookedScheduleService iBookedScheduleService;
+
+    @Autowired
+    private IAccountService iAccountService;
 
     @Autowired
     private IScheduleService iScheduleService;
@@ -41,15 +46,36 @@ public class BookedScheduleController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createBookedSchedule(@RequestBody BookScheduleRequestDto bookScheduleRequestDto) {
         Date date = bookScheduleRequestDto.getDate();
-        int stylistId = bookScheduleRequestDto.getStylistId();
-        int scheduleId = iScheduleService.getScheduleByStylistIdAndDate(stylistId, date);
         int duration = iSalonServiceService.getTotalDurationBySalonId(bookScheduleRequestDto.getServiceId());
+        int stylistId = bookScheduleRequestDto.getStylistId();
+        if (stylistId == 0) {
+            stylistId = iBookedScheduleService.chooseRandomAvailableStylist((bookScheduleRequestDto.getBookedTime()), duration, bookScheduleRequestDto.getSalonId(), date);
+        }
+        int scheduleId = 0;
+
+            scheduleId = iScheduleService.getScheduleByStylistIdAndDate(stylistId, date);
+
+
+
         BookedSchedule bookedSchedule = new BookedSchedule();
-       bookedSchedule.setBooked(true);
-       bookedSchedule.setDuration(duration);
-       bookedSchedule.setBookedTime(bookScheduleRequestDto.getBookedTime());
-       bookedSchedule.setSchedule(iScheduleService.getScheduleById(scheduleId));
-       iBookedScheduleService.addBookedSchedule(bookedSchedule);
+        bookedSchedule.setBooked(true);
+        bookedSchedule.setDuration(duration);
+        bookedSchedule.setBookedTime(bookScheduleRequestDto.getBookedTime());
+        bookedSchedule.setSchedule(iScheduleService.getScheduleById(scheduleId));
+        iBookedScheduleService.addBookedSchedule(bookedSchedule);
+
+    }
+
+    @PutMapping("/cancel")
+    public void cancelBookedSchedule(@RequestBody BookedScheduleCancelRequestDto b) {
+
+
+        int scheduleId = iScheduleService.getScheduleByStylistIdAndDate(b.getStylistId(), b.getDate());
+
+        System.out.println(scheduleId);
+
+        int id = iBookedScheduleService.getBookedId(b.getBookedTime().getHour(), scheduleId);
+        iBookedScheduleService.updateStatusBookedSchedule(id);
     }
 
 

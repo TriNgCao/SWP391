@@ -21,7 +21,7 @@ public interface IScheduleRepository extends JpaRepository<Schedule, Integer> {
             "left join Schedule s2 on s1.stylistId = s2.stylist.stylistId " +
             "where s2.date = :date and s1.salon.salonId = " +
             "(select m.salon.salonId from Manager m where m.account.id = :id) ")
-    List<ScheduleViewAllDto> getSchedule(@Param("id") String id, @Param("date") java.util.Date date);
+    List<ScheduleViewAllDto> getSchedule(@Param("id") String id, @Param("date") Date date);
 
 
 }

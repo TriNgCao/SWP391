@@ -1,6 +1,5 @@
 package com.swp391.hairsalon.service.definitions;
 
-import com.swp391.hairsalon.dto.BookScheduleRequestDto;
 import com.swp391.hairsalon.dto.ScheduleTableDto;
 import com.swp391.hairsalon.pojo.BookedSchedule;
 
@@ -12,5 +11,7 @@ public interface IBookedScheduleService {
     List<ScheduleTableDto> getAllBookedSchedule(Date date);
     public Integer chooseRandomAvailableStylist(int startBookedTime, int duration, int salonId, Date date);
     void addBookedSchedule(BookedSchedule bookedSchedule);
+    void updateStatusBookedSchedule(int id);
+    int getBookedId(int bookedTime, int scheduleId);
 
 }

@@ -14,4 +14,5 @@ public interface IStylistservice {
 //    public Stylist updateSalary(int stylistId, int salary, double commission);
     public Stylist getStylistById(int id);
     List<StylistListDto> getStylistLists(String id);
+
 }

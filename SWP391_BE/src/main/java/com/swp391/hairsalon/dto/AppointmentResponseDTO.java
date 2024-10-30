@@ -19,7 +19,9 @@ import lombok.ToString;
 @ToString
 public class AppointmentResponseDTO {
     private int appointmentId;
+    private int customerId;
     private String customerName;
+    private int stylistId;
     private String stylistName;
     private Date date;
     private LocalTime startTime;

@@ -16,7 +16,6 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public Customer getCustomerById(int id) {
-        // TODO Auto-generated method stub
         return iCustomerRepository.getReferenceById(id);
     }
 

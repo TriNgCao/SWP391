@@ -13,12 +13,17 @@ import com.swp391.hairsalon.login.MyUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -72,13 +77,26 @@ public class AuthController {
         iAccountService.addAccount(newAccount);
         String token = this.helper.generateToken(newAccount.getEmail());
         JwtResponse response = JwtResponse.builder().token(token)
-                .userID(newAccount.getEmail())
+                .userID(newAccount.getId())
                 .userRole(1)
                         .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @GetMapping("/token") // Endpoint để lấy idToken
+    public String getIdToken(Authentication authentication) {
+        // Kiểm tra xem người dùng đã đăng nhập hay chưa
+        if (authentication == null || !(authentication.getPrincipal() instanceof OidcUser)) {
+            return "{\"error\": \"User not authenticated\"}"; // Trả về thông báo lỗi nếu không xác thực
+        }
 
+        // Lấy OidcUser từ Authentication
+        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
+        String idToken = oidcUser.getIdToken().getTokenValue(); // Lấy idToken
+
+        // Trả về idToken dưới dạng JSON
+        return "{\"idToken\": \"" + idToken + "\"}";
+    }
 
     @PostMapping("/auth/google")
     public ResponseEntity<JwtResponse> authenticateGoogleUser(@RequestBody GoogleAuthRequest request) {

@@ -40,12 +40,12 @@ public class SecurityCofig {
 //                            auth.requestMatchers("/auth/login", "/home").permitAll();
 ////                            auth.anyRequest().authenticated();
 ////                        })
-//                .oauth2Login(
-//                        oauth -> {
-//                            Customizer.withDefaults();
-//                            oauth.successHandler(handler);
-//                        }
-//                )
+                .oauth2Login(
+                        oauth -> {
+                            Customizer.withDefaults();
+                            oauth.successHandler(handler);
+                        }
+                )
 //
 
 
