@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { FaStar } from "react-icons/fa";
 
 const ViewAppointment = () => {
@@ -22,6 +22,7 @@ const ViewAppointment = () => {
           `http://localhost:8080/api/appointment/customer/${accountId}`
         );
         setAppointments(response.data);
+        console.log(response.data);
       } catch (error) {
         toast.error("Failed to fetch appointments");
       }
@@ -35,8 +36,8 @@ const ViewAppointment = () => {
     );
     const filtered = selectedStatus
       ? sortedAppointments.filter(
-        (appointment) => appointment.status === selectedStatus
-      )
+          (appointment) => appointment.status === selectedStatus
+        )
       : sortedAppointments;
 
     setFilteredAppointments(filtered);
@@ -63,28 +64,59 @@ const ViewAppointment = () => {
     setModalContent(null);
   };
 
-  const handleCancelAppointment = async (appointment) => {
+  const handleCancelAppointment = async (appointmentId, stylistId, date, bookedTime) => {
     try {
-      const [updateResponse, additionalResponse] = await Promise.all([
-        axios.put(`http://localhost:8080/api/appointment/${appointment.id}`, {
-          status: "Cancelled",
-        }),
-        axios.put(`http://localhost:8080/api/additional-endpoint`, {
-          accountID: sessionStorage.getItem("userID"),
-          date: appointment.date,
-          bookedTime: appointment.startTime,
-        }),
+      // API 1: Cancel the appointment
+      const cancelAppointmentRequest = axios.put(
+        `http://localhost:8080/api/appointment/${appointmentId}`,
+        { status: "Cancelled" }
+      );
+  
+      // API 2: Send additional info with stylistID, date, startTime
+      const additionalInfoRequest = axios.put(
+        `http://localhost:8080/book-schedule/cancel`,
+        { stylistId, date, bookedTime }
+      );
+  
+      // Run both APIs in parallel
+      const [cancelResponse, additionalInfoResponse] = await Promise.all([
+        cancelAppointmentRequest,
+        additionalInfoRequest,
       ]);
-      if (updateResponse.status === 200 && additionalResponse.status === 200) {
-        toast.success("Appointment cancel successfully");
+  
+      if (cancelResponse.status === 200 && additionalInfoResponse.status === 200) {
+        toast.success("Appointment status updated successfully");
+        
+        // Re-fetch appointments to update the list
+        const response = await axios.get(
+          `http://localhost:8080/api/appointment/customer/${accountId}`
+        );
+        setAppointments(response.data);
       }
     } catch (error) {
-      toast.error("Failed to cancel appointment please try again");
+      toast.error("Failed to update appointment status");
     }
-
+  
     closeModal();
   };
+  
 
+  // const handleCancelAppointment = async (appointmentId) => {
+  //   try {
+  //     const response = await axios.put(
+  //       `http://localhost:8080/api/appointment/${appointmentId}`,
+  //       { status: "Cancelled" }
+  //     );
+
+  //     if (response.status === 200) {
+  //       toast.success("Appointment status updated successfully");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Failed to update appointment status");
+  //   }
+
+  //   closeModal();
+  // };
   const handleFeedbackSubmit = async () => {
     const { appointmentId, rating, feedback } = modalContent;
 
@@ -184,13 +216,16 @@ const ViewAppointment = () => {
                 </td>
                 <td style={styles.cell}>
                   {appointment.status === "Pending" ||
-                    appointment.status === "Ready" ? (
+                  appointment.status === "Ready" ? (
                     <button
                       style={styles.cancelBtn}
                       onClick={() =>
                         openModal({
                           type: "cancel",
                           appointmentId: appointment.appointmentId,
+                          stylistId: appointment.stylistId,
+                          date: appointment.date,
+                          bookedTime: appointment.startTime,
                         })
                       }
                     >
@@ -231,7 +266,6 @@ const ViewAppointment = () => {
               </tr>
             ))}
         </tbody>
-
       </table>
       <div style={styles.pagination}>
         <button
@@ -273,7 +307,12 @@ const ViewAppointment = () => {
                 <button
                   style={{ ...styles.modalButton, ...styles.confirmButton }}
                   onClick={() =>
-                    handleCancelAppointment(modalContent.appointmentId)
+                    handleCancelAppointment(
+                      modalContent.appointmentId,
+                      modalContent.stylistId,
+                      modalContent.date,
+                      modalContent.bookedTime
+                    )
                   }
                 >
                   Yes
@@ -356,7 +395,6 @@ const ViewAppointment = () => {
     </div>
   );
 };
-
 
 const StarRating = ({ rating, onRatingChange, disabled }) => (
   <div style={styles.starRatingContainer}>
