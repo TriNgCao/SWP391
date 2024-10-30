@@ -52,7 +52,7 @@ function CustomerNotificationMenu({ anchorEl, handleClose, setUnreadCount }) {
       try {
         const accountID = sessionStorage.getItem("userID");
         const response = await axios.get(
-          `http://localhost:8080/api/noti/4b41e126-c34e-4313-ac5b-f6a3c6c54798`
+          `http://localhost:8080/api/noti/${accountID}`
         );
         console.log(response);
         setNotifications(response.data);
