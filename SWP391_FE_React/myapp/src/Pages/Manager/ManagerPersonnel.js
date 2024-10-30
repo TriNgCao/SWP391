@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import {
@@ -23,7 +21,6 @@ import {
   TextField,
 } from "@mui/material";
 
-
 const ManagerPersonnel = () => {
   const [employees, setEmployees] = useState([]);
   const [roleFilter, setRoleFilter] = useState("3");
@@ -36,12 +33,13 @@ const ManagerPersonnel = () => {
   const [tempSalary, setTempSalary] = useState("");
   const tempSalaryRef = useRef(selectedEmployee?.salary || "");
   const tempCommissionRef = useRef(selectedEmployee?.commission || "");
-  // Fetch employees data
+  const accountID = sessionStorage.getItem("userID");
+  
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
         const employeeResponse = await axios.get(
-          "http://localhost:8080/user/fetchEmployees/MAN1"
+          `http://localhost:8080/user/fetchEmployees/${accountID}`
         );
         setEmployees(employeeResponse.data);
       } catch (error) {
@@ -49,11 +47,9 @@ const ManagerPersonnel = () => {
       }
     };
 
-
     fetchEmployees();
   }, []);
   // Đóng modal và đặt lại nhân viên được chọn
-
 
   // -----------------------------------------------------------------------------------------
   // Filter employees based on role
@@ -61,17 +57,14 @@ const ManagerPersonnel = () => {
     return employee.role === parseInt(roleFilter);
   });
 
-
   // Calculate total pages for pagination
   const totalPages = Math.ceil(filteredEmployees.length / employeesPerPage);
-
 
   // Get employees for the current page
   const paginatedEmployees = filteredEmployees.slice(
     (currentPage - 1) * employeesPerPage,
     currentPage * employeesPerPage
   );
-
 
   // Handle edit button click
   // Xử lý khi nhấn nút Edit
@@ -93,14 +86,13 @@ const ManagerPersonnel = () => {
   const refreshData = async () => {
     try {
       const employeeResponse = await axios.get(
-        "http://localhost:8080/user/fetchEmployees/MAN1"
+        `http://localhost:8080/user/fetchEmployees/${accountID}`
       );
       setEmployees(employeeResponse.data);
     } catch (error) {
       console.error("Error refreshing data:", error);
     }
   };
-
 
   //----------------------------------------------------------------------------
   const EditStaffModal = () => (
@@ -169,7 +161,6 @@ const ManagerPersonnel = () => {
       </Box>
     </Modal>
   );
-
 
   const EditStylistModal = () => (
     <Modal open={editStylistModalOpen} onClose={handleCloseModal}>
@@ -265,7 +256,6 @@ const ManagerPersonnel = () => {
     </Modal>
   );
 
-
   // ---------------------------------------------------------------------
   return (
     <Box
@@ -279,7 +269,6 @@ const ManagerPersonnel = () => {
       <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
         Personnel
       </Typography>
-
 
       {/* Filter Section */}
       <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -300,7 +289,6 @@ const ManagerPersonnel = () => {
           </FormControl>
         </Grid>
       </Grid>
-
 
       {/* Personnel Table */}
       <TableContainer component={Paper} sx={{ backgroundColor: "#f5f5f5" }}>
@@ -352,7 +340,6 @@ const ManagerPersonnel = () => {
         </Table>
       </TableContainer>
 
-
       {/* Pagination */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
         <Pagination
@@ -363,7 +350,6 @@ const ManagerPersonnel = () => {
         />
       </Box>
 
-
       {/* Edit Modal */}
       <EditStaffModal />
       <EditStylistModal />
@@ -371,10 +357,4 @@ const ManagerPersonnel = () => {
   );
 };
 
-
 export default ManagerPersonnel;
-
-
-
-
-

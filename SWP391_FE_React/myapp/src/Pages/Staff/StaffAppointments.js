@@ -14,22 +14,33 @@ import {
   Button,
   Modal,
   IconButton,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
+
 // Hàm render nhãn trạng thái
 const renderStatusChip = (status) => {
   switch (status) {
     case "Pending":
-      return <Chip label="Pending" sx={{ bgcolor: "#FFEB3B", color: "#333" }} />;
+      return (
+        <Chip label="Pending" sx={{ bgcolor: "#FFEB3B", color: "#333" }} />
+      );
     case "Ready":
       return <Chip label="Ready" sx={{ bgcolor: "#2196F3", color: "#fff" }} />;
     case "Cancelled":
-      return <Chip label="Cancelled" sx={{ bgcolor: "#F44336", color: "#fff" }} />;
+      return (
+        <Chip label="Cancelled" sx={{ bgcolor: "#F44336", color: "#fff" }} />
+      );
     case "Processing":
-      return <Chip label="Processing" sx={{ bgcolor: "#FFA500", color: "#fff" }} />;
+      return (
+        <Chip label="Processing" sx={{ bgcolor: "#FFA500", color: "#fff" }} />
+      );
     case "Completed":
-      return <Chip label="Completed" sx={{ bgcolor: "#4CAF50", color: "#fff" }} />;
+      return (
+        <Chip label="Completed" sx={{ bgcolor: "#4CAF50", color: "#fff" }} />
+      );
     default:
       return <Chip label={status} sx={{ bgcolor: "#9E9E9E", color: "#fff" }} />;
   }
@@ -38,13 +49,30 @@ const renderStatusChip = (status) => {
 const StaffAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [openPaymentConfirmation, setOpenPaymentConfirmation] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-
+  const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false);
+  const [loyaltyPoint, setLoyaltyPoint] = useState(0); // Điểm loyalty của khách hàng
+  const [totalAfterDiscount, setTotalAfterDiscount] = useState(0); // Tổng tiền sau khi trừ điểm
+  const [useLoyaltyPoint, setUseLoyaltyPoint] = useState(false); // Biến để quản lý việc sử dụng loyaltyPoint
+  const accountID = sessionStorage.getItem("userID");
   // Fetch dữ liệu từ API
+  const fetchAppointments = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/appointment/staff/${accountID}`
+      );
+      setAppointments(response.data);
+    } catch (error) {
+      console.error("Failed to fetch appointments:", error);
+    }
+  };
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/appointment/staff/staff");
+        const response = await axios.get(
+          `http://localhost:8080/api/appointment/staff/${accountID}`
+        );
         setAppointments(response.data);
       } catch (error) {
         console.error("Failed to fetch appointments:", error);
@@ -53,34 +81,39 @@ const StaffAppointments = () => {
 
     fetchAppointments();
   }, []);
-
+  const handleClosePaymentConfirmation = () => {
+    setOpenPaymentConfirmation(false); // Đóng modal xác nhận thanh toán
+    setUseLoyaltyPoint(false); // Đặt lại trạng thái sử dụng loyaltyPoint
+  };
   // Xử lý mở modal
-  const handleOpenModal = (appointment) => {
+  const handleOpenModal = async (appointment) => {
     setSelectedAppointment(appointment);
+    try {
+      // Giả sử API trả về loyaltyPoint của khách hàng
+      const response = await axios.get(
+        `http://localhost:8080/user/customer/point/${appointment.customerId}`
+      );
+      const loyaltyPoints = response.data || 0; // Lấy loyaltyPoint từ API
+      setLoyaltyPoint(loyaltyPoints);
+      setTotalAfterDiscount(appointment.totalPrice); // Khởi tạo tổng tiền là totalPrice gốc
+    } catch (error) {
+      console.error("Failed to fetch loyalty point:", error);
+      setLoyaltyPoint(0); // Nếu có lỗi, đặt loyaltyPoint là 0
+    }
     setOpenModal(true);
   };
 
-  // Xử lý đóng modal
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setSelectedAppointment(null);
-  };
-
-  // Xử lý cập nhật trạng thái
   const handleUpdateStatus = async (newStatus) => {
     if (!selectedAppointment) return;
 
-    // Xác nhận thay đổi trạng thái với nút Cancel
-    const confirmUpdate = window.confirm(
-      `Are you sure you want to change the status to "${newStatus}"?`
-    );
-
-    if (!confirmUpdate) {
-      return; // Nếu người dùng chọn Cancel, không làm gì thêm
-    }
-
     try {
-      // Cập nhật trạng thái cục bộ ngay lập tức
+      // Gọi API để cập nhật trạng thái mới
+      await axios.put(
+        `http://localhost:8080/api/appointment/${selectedAppointment.appointmentId}`,
+        { status: newStatus }
+      );
+
+      // Cập nhật lại danh sách cuộc hẹn từ cơ sở dữ liệu
       setAppointments((prevAppointments) =>
         prevAppointments.map((appointment) =>
           appointment.appointmentId === selectedAppointment.appointmentId
@@ -89,22 +122,206 @@ const StaffAppointments = () => {
         )
       );
 
-      // Đóng modal ngay lập tức
-      handleCloseModal();
+      // Đóng modal nếu trạng thái được cập nhật là "Pending" sang "Ready"
+      if (
+        newStatus === "Ready" ||
+        newStatus === "Cancelled" ||
+        newStatus === "Processing"
+      ) {
+        setOpenModal(false);
+      }
 
-      // Gửi yêu cầu cập nhật trạng thái đến API
-      const response = await axios.put(
-        `http://localhost:8080/api/appointment/${selectedAppointment.appointmentId}`,
-        { status: newStatus }
-      );
-
-      if (response.status === 200) {
-        console.log("Good");
+      // Mở modal thanh toán nếu trạng thái là "Processing"
+      if (newStatus === "Completed") {
+        setOpenPaymentConfirmation(true);
       }
     } catch (error) {
-      console.error("Failed to update appointment status:", error);
+      console.error("Failed to update status:", error);
     }
   };
+  // Xử lý đóng modal
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  const handleOpenPaymentConfirmation = () => {
+    setOpenModal(false);
+
+    // Tính tổng tiền sau khi trừ điểm loyalty
+    const total = useLoyaltyPoint
+      ? selectedAppointment.totalPrice - loyaltyPoint
+      : selectedAppointment.totalPrice;
+
+    setTotalAfterDiscount(total); // Cập nhật tổng tiền sau giảm
+    setOpenPaymentConfirmation(true);
+  };
+
+  const fetchLoyaltyPoint = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/loyalty/${selectedAppointment.customerId}`
+      );
+      setLoyaltyPoint(response.data.loyaltyPoint);
+    } catch (error) {
+      console.error("Failed to fetch loyalty points:", error);
+    }
+  };
+
+  // Gọi API lấy điểm loyalty khi mở modal thanh toán
+  useEffect(() => {
+    if (openModal && selectedAppointment) {
+      fetchLoyaltyPoint();
+    }
+  }, [openModal, selectedAppointment]);
+
+  const handleConfirmCashPayment = async () => {
+    try {
+      // Gọi API để cập nhật trạng thái thành "Completed"
+      await axios.put(
+        `http://localhost:8080/api/appointment/${selectedAppointment.appointmentId}`,
+        { status: "Completed" }
+      );
+
+      // Cập nhật trạng thái cuộc hẹn trong UI
+
+      setAppointments((prevAppointments) =>
+        prevAppointments.map((appointment) =>
+          appointment.appointmentId === selectedAppointment.appointmentId
+            ? { ...appointment, status: "Completed" }
+            : appointment
+        )
+      );
+
+      // Nếu sử dụng điểm loyalty, gọi API để trừ điểm loyalty
+      if (useLoyaltyPoint) {
+        await axios.post(`http://localhost:8080/api/loyalty/redeem`, {
+          customerId: selectedAppointment.customerId,
+          points: loyaltyPoint,
+        });
+      }
+
+      setShowSuccessSnackbar(true);
+      // LƯU Ý CHỖ NÀY SỬA CHỖ NÀY
+      fetchAppointments(); // FETCH LẠI KHI ĐÃ BẤM XÁC NHẬN
+    } catch (error) {
+      console.error("Failed to complete payment:", error);
+    }
+
+    setOpenPaymentConfirmation(false);
+  };
+  // -------------------------------------------
+  // API REJECT
+  const handleReject = async () => {
+    if (!selectedAppointment) return;
+
+    try {
+      // Gọi API để cập nhật trạng thái thành "Cancelled"
+      // API GỌI REJECT
+      await axios.put(
+        `http://localhost:8080/api/appointment/${selectedAppointment.appointmentId}`,
+        { status: "Cancelled" }
+      );
+
+      // Cập nhật trạng thái cuộc hẹn trong UI
+      setAppointments((prevAppointments) =>
+        prevAppointments.map((appointment) =>
+          appointment.appointmentId === selectedAppointment.appointmentId
+            ? { ...appointment, status: "Cancelled" }
+            : appointment
+        )
+      );
+
+      setOpenModal(false); // Đóng modal
+    } catch (error) {
+      console.error("Failed to update status to Cancelled:", error);
+    }
+  };
+
+  // -------------------------------------------
+
+  const handleBankTransfer = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/payment/vn-pay", {
+        params: {
+          amount: selectedAppointment.totalPrice,
+        },
+      });
+
+      const paymentUrl = response.data.data.paymentUrl;
+      const paymentWindow = window.open(paymentUrl, "_blank");
+
+      // Thiết lập một listener để theo dõi tab thanh toán
+      const interval = setInterval(async () => {
+        try {
+          // Kiểm tra URL của paymentWindow
+          if (paymentWindow.closed) {
+            clearInterval(interval);
+            return; // Dừng kiểm tra nếu tab đã đóng
+          }
+
+          const params = new URLSearchParams(paymentWindow.location.search);
+          const responseCode = params.get("vnp_ResponseCode");
+
+          if (responseCode) {
+            const callbackResponse = await axios.get(
+              `http://localhost:8080/vn-pay-callback?vnp_ResponseCode=${responseCode}`
+            );
+
+            // Kiểm tra phản hồi từ server
+            if (callbackResponse.data.data.code === "00") {
+              paymentWindow.close(); // Đóng tab thanh toán
+              handleUpdateStatus("Completed"); // Cập nhật trạng thái
+              setShowSuccessSnackbar(true); // Hiện thông báo thành công
+              clearInterval(interval); // Dừng kiểm tra
+            } else {
+              console.error("Payment failed:", callbackResponse.data.message);
+            }
+          }
+        } catch (error) {
+          console.error("Error during payment callback:", error);
+        }
+      }, 1000); // Kiểm tra mỗi giây
+    } catch (error) {
+      console.error("Failed to initiate payment:", error);
+    }
+  };
+
+  const renderPaymentModal = () => (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <Typography variant="h5" sx={{ mb: 2, textAlign: "center" }}>
+        Select Payment Method
+      </Typography>
+      {loyaltyPoint > 0 && (
+        <Typography variant="body1" sx={{ mb: 1, textAlign: "center" }}>
+          Điểm LoyaltyPoint hiện tại: {loyaltyPoint}
+        </Typography>
+      )}
+
+      {/* Tùy chọn sử dụng LoyaltyPoint */}
+      <Button
+        variant="outlined"
+        sx={{ mb: 2 }}
+        onClick={() => setUseLoyaltyPoint(!useLoyaltyPoint)}
+      >
+        {useLoyaltyPoint ? "Bỏ dùng LoyaltyPoint" : "Dùng LoyaltyPoint"}
+      </Button>
+
+      <Button
+        variant="contained"
+        sx={{ backgroundColor: "#4CAF50", color: "#fff" }}
+        onClick={handleOpenPaymentConfirmation}
+      >
+        Cash
+      </Button>
+      <Button
+        variant="contained"
+        sx={{ backgroundColor: "#2196F3", color: "#fff" }}
+        onClick={handleBankTransfer}
+      >
+        Bank Transfer
+      </Button>
+    </Box>
+  );
 
   // Hiển thị các nút tùy chọn cho trạng thái mới
   const renderStatusButtons = () => {
@@ -129,6 +346,13 @@ const StaffAppointments = () => {
           >
             Reject
           </Button>
+          {/* <Button
+            variant="contained"
+            sx={{ backgroundColor: "#F44336", color: "#fff" }}
+            onClick={() => handleUpdateStatus("Cancelled")}
+          >
+            Reject
+          </Button> */}
         </Box>
       );
     }
@@ -154,30 +378,11 @@ const StaffAppointments = () => {
       );
     }
 
-    if (status === "Processing") {
-      return (
-        <Button
-          variant="contained"
-          sx={{ backgroundColor: "#4CAF50", color: "#fff" }}
-          onClick={() => handleUpdateStatus("Completed")}
-        >
-          Complete
-        </Button>
-      );
-    }
-
     return null;
   };
 
   return (
-    <Box
-      sx={{
-        padding: 4,
-        backgroundColor: "#fff",
-        minHeight: "100vh",
-        color: "#333",
-      }}
-    >
+    <Box sx={{ padding: 4, backgroundColor: "#fff", minHeight: "100vh" }}>
       <Typography
         variant="h4"
         fontWeight="bold"
@@ -190,18 +395,14 @@ const StaffAppointments = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Paper
-            sx={{
-              padding: 2,
-              backgroundColor: "#f5f5f5",
-              borderRadius: "8px",
-            }}
+            sx={{ padding: 2, backgroundColor: "#f5f5f5", borderRadius: "8px" }}
           >
             <TableContainer>
               <Table>
                 <TableHead>
                   <TableRow
                     sx={{
-                      backgroundColor: "#4caf50",
+                      backgroundColor: "#4CAF50",
                       color: "#fff",
                       fontWeight: "bold",
                     }}
@@ -226,22 +427,34 @@ const StaffAppointments = () => {
                       <TableCell>{appointment.stylistName}</TableCell>
                       <TableCell>{appointment.date}</TableCell>
                       <TableCell>{appointment.startTime}</TableCell>
-                      <TableCell>{`${appointment.totalPrice} VNĐ`}</TableCell>
-                      <TableCell>{appointment.serviceName.join(", ")}</TableCell>
-                      <TableCell>{renderStatusChip(appointment.status)}</TableCell>
+                      <TableCell>{`${appointment.totalPrice} USD`}</TableCell>
+                      <TableCell>
+                        {appointment.serviceName.join(", ")}
+                      </TableCell>
+                      <TableCell>
+                        {renderStatusChip(appointment.status)}
+                      </TableCell>
 
                       <TableCell>
-                        {!["Cancelled", "Completed"].includes(appointment.status) ? (
+                        {!["Cancelled", "Completed"].includes(
+                          appointment.status
+                        ) ? (
                           <Button
                             variant="contained"
                             color="primary"
                             sx={{ backgroundColor: "#4CAF50" }}
                             onClick={() => handleOpenModal(appointment)}
                           >
-                            Edit
+                            {appointment.status === "Processing"
+                              ? "Thanh toán"
+                              : "Edit"}
                           </Button>
                         ) : (
-                          <Button variant="contained" disabled sx={{ backgroundColor: "#9E9E9E" }}>
+                          <Button
+                            variant="contained"
+                            disabled
+                            sx={{ backgroundColor: "#9E9E9E" }}
+                          >
                             Edit
                           </Button>
                         )}
@@ -255,7 +468,7 @@ const StaffAppointments = () => {
         </Grid>
       </Grid>
 
-      {/* Modal chỉnh sửa trạng thái */}
+      {/* Modal chỉnh sửa trạng thái hoặc thanh toán */}
       <Modal open={openModal} onClose={handleCloseModal}>
         <Box
           sx={{
@@ -263,17 +476,13 @@ const StaffAppointments = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 500,
+            width: 400,
             bgcolor: "background.paper",
             boxShadow: 24,
             p: 4,
             borderRadius: 2,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
           }}
         >
-          {/* Nút X để tắt modal */}
           <IconButton
             onClick={handleCloseModal}
             sx={{ position: "absolute", top: 8, right: 8 }}
@@ -281,17 +490,79 @@ const StaffAppointments = () => {
             <CloseIcon />
           </IconButton>
 
-          <Typography
-            variant="h5"
-            fontWeight="bold"
-            sx={{ mb: 2, color: "#4CAF50", textAlign: "center" }}
-          >
-            Edit Appointment Status
-          </Typography>
-
-          {renderStatusButtons()}
+          {selectedAppointment?.status === "Processing" ? (
+            renderPaymentModal()
+          ) : (
+            <>
+              <Typography
+                variant="h5"
+                fontWeight="bold"
+                sx={{ mb: 2, color: "#4CAF50" }}
+              >
+                Edit Appointment Status
+              </Typography>
+              {renderStatusButtons()}
+            </>
+          )}
         </Box>
       </Modal>
+
+      <Modal
+        open={openPaymentConfirmation}
+        onClose={handleClosePaymentConfirmation}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}
+        >
+          <Typography variant="h5" sx={{ mb: 2, textAlign: "center" }}>
+            Xác nhận thanh toán
+          </Typography>
+
+          {/* Hiển thị tổng tiền sau khi trừ LoyaltyPoint */}
+          <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
+            Tổng tiền: {totalAfterDiscount} USD
+          </Typography>
+
+          <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: "#4CAF50", color: "#fff" }}
+              onClick={handleConfirmCashPayment}
+            >
+              Xác nhận
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: "#F44336", color: "#fff" }}
+              onClick={handleClosePaymentConfirmation}
+            >
+              Hủy
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+
+      {/* Snackbar thông báo thành công */}
+      <Snackbar
+        open={showSuccessSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setShowSuccessSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={() => setShowSuccessSnackbar(false)} severity="success">
+          Thanh toán thành công!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

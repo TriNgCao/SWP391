@@ -34,7 +34,7 @@ public interface IAccountRepository extends JpaRepository<Account, String> {
             "left join Stylist s2 on a.id = s2.account.id " +
             "left join Manager m on a.id = m.account.id " +
             "join Salon s3 on s3.salonId = COALESCE(s1.salon.salonId, s2.salon.salonId, m.salon.salonId) " +
-            "where a.role <> 1")
+            "where a.role <> 1 and a.role <> 5")
     List<EmployeeInfoDto> getAllEmployees();
 
     @Query("select new com.swp391.hairsalon.dto.PersonnelBySalonDto(a.id, a.name, a.role, COALESCE(s1.salary, s2.salary), COALESCE(s2.commission, 0)) " +

@@ -1,85 +1,173 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Grid,
   Paper,
   Typography,
+  TextField,
+  Button,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Button,
 } from "@mui/material";
-import DownloadIcon from "@mui/icons-material/Download";
-import { Line, Doughnut } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
   Title,
-} from "chart.js";
-import ManagerTransaction from "./ManagerTransaction";
-
-// Register necessary elements for Chart.js
-ChartJS.register(
-  ArcElement,
   Tooltip,
   Legend,
+} from "chart.js";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import axios from "axios";
+
+// Register Chart.js components
+ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
-  Title
+  Title,
+  Tooltip,
+  Legend
 );
 
 const ManageRevenuePage = () => {
-  const salesData = [
-    { id: 1, product: "Product A", quantity: 150, price: "$300" },
-    { id: 2, product: "Product B", quantity: 200, price: "$400" },
-    { id: 3, product: "Product C", quantity: 100, price: "$150" },
-    { id: 4, product: "Product D", quantity: 250, price: "$500" },
-    { id: 5, product: "Product E", quantity: 300, price: "$600" },
-  ];
-  // Sample data for the line chart (Revenue)
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [totalProfit, setTotalProfit] = useState(0);
+  const [dailyRevenue, setDailyRevenue] = useState([]);
+  const [dailyProfit, setDailyProfit] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [days, setDays] = useState(10);
+  const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+
+  const formatVietnamDate = (date) => {
+    return new Intl.DateTimeFormat("vi-VN", {
+      timeZone: "Asia/Ho_Chi_Minh",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date(date));
+  };
+
+  const fetchTotalRevenue = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/revenue/total-revenue"
+      );
+      setTotalRevenue(response.data);
+    } catch (error) {
+      console.error("Error fetching total revenue:", error);
+    }
+  };
+
+  const fetchTotalProfit = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/revenue/total-profit"
+      );
+      setTotalProfit(response.data);
+    } catch (error) {
+      console.error("Error fetching total profit:", error);
+    }
+  };
+
+  const fetchDailyRevenue = async (date) => {
+    if (date) {
+      const dateOnly = date.toLocaleDateString("en-CA");
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/revenue/daily-revenue?date=${dateOnly}`
+        );
+        setDailyRevenue([{ date: dateOnly, total: response.data }]);
+      } catch (error) {
+        console.error("Error fetching daily revenue:", error);
+      }
+    }
+  };
+
+  const fetchDailyProfit = async (date) => {
+    if (date) {
+      const dateOnly = date.toLocaleDateString("en-CA");
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/revenue/daily-profit?date=${dateOnly}`
+        );
+        setDailyProfit([{ date: dateOnly, profit: response.data }]);
+      } catch (error) {
+        console.error("Error fetching daily profit:", error);
+      }
+    }
+  };
+
+  const fetchLastXDaysData = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/revenue/last-x-days/${days}`
+      );
+      const data = response.data || {};
+
+      const labels = Object.keys(data).reverse();
+      const revenueData = labels.map((date) => data[date]?.revenue || 0);
+      const profitData = labels.map((date) => data[date]?.profit || 0);
+
+      setChartData({
+        labels,
+        datasets: [
+          {
+            label: "Revenue",
+            data: revenueData,
+            borderColor: "#007BFF",
+            backgroundColor: "rgba(0, 123, 255, 0.1)",
+            fill: true,
+          },
+          {
+            label: "Profit",
+            data: profitData,
+            borderColor: "#28a745",
+            backgroundColor: "rgba(40, 167, 69, 0.1)",
+            fill: true,
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTotalRevenue();
+    fetchTotalProfit();
+    fetchLastXDaysData();
+    if (selectedDate) {
+      fetchDailyRevenue(selectedDate);
+      fetchDailyProfit(selectedDate);
+    }
+  }, [selectedDate, days]);
+
   const lineChartData = {
-    labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-    ],
+    labels: dailyRevenue.map((item) => formatVietnamDate(item.date)),
     datasets: [
       {
-        label: "Revenue Generated",
-        data: [12000, 19000, 3000, 5000, 2000, 30000, 4000, 35000, 5000, 6000],
+        label: "Revenue",
+        data: dailyRevenue.map((item) => item.total),
         fill: false,
         backgroundColor: "#007BFF",
         borderColor: "#007BFF",
       },
-    ],
-  };
-
-  // Sample data for the doughnut chart (Campaign Data)
-  const doughnutChartData = {
-    labels: ["Campaign 1", "Campaign 2", "Campaign 3"],
-    datasets: [
       {
-        data: [300, 50, 100],
-        backgroundColor: ["#36A2EB", "#FF6384", "#FFCE56"],
-        hoverBackgroundColor: ["#36A2EB", "#FF6384", "#FFCE56"],
+        label: "Profit",
+        data: dailyProfit.map((item) => item.profit),
+        fill: false,
+        backgroundColor: "#28a745",
+        borderColor: "#28a745",
       },
     ],
   };
@@ -93,129 +181,107 @@ const ManageRevenuePage = () => {
         color: "#333",
       }}
     >
-      <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
+      <Typography
+        variant="h4"
+        fontWeight="bold"
+        sx={{ mb: 2, color: "#4CAF50" }}
+      >
         Revenue Management
       </Typography>
 
+      {/* Date Filter for Daily Revenue & Profit */}
+      <Grid container spacing={2} sx={{ mb: 4 }}>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Grid item xs={12} sm={6} md={3}>
+            <DatePicker
+              label="Daily Revenue & Profit"
+              value={selectedDate}
+              onChange={(newValue) => setSelectedDate(newValue)}
+              renderInput={(params) => <TextField {...params} fullWidth />}
+            />
+          </Grid>
+        </LocalizationProvider>
+        <Grid item xs={12} sm={6} md={3}>
+          <TextField
+            label="Number of Days"
+            type="number"
+            value={days}
+            onChange={(e) => setDays(Number(e.target.value))}
+            fullWidth
+          />
+        </Grid>
+      </Grid>
+
       {/* Key Metrics Section */}
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={6}>
           <Paper
             sx={{ padding: 2, backgroundColor: "#f5f5f5", borderRadius: "8px" }}
           >
             <Typography variant="h6" color="primary">
-              12,361
+              {totalRevenue.toLocaleString()} USD
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Emails Sent
+              Total Revenue
             </Typography>
           </Paper>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={6}>
           <Paper
             sx={{ padding: 2, backgroundColor: "#f5f5f5", borderRadius: "8px" }}
           >
             <Typography variant="h6" color="primary">
-              43,225
+              {totalProfit.toLocaleString()} USD
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Sales Obtained
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper
-            sx={{ padding: 2, backgroundColor: "#f5f5f5", borderRadius: "8px" }}
-          >
-            <Typography variant="h6" color="primary">
-              32,441
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              New Clients
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper
-            sx={{ padding: 2, backgroundColor: "#f5f5f5", borderRadius: "8px" }}
-          >
-            <Typography variant="h6" color="primary">
-              1,335,134
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              Traffic Received
+              Total Profit
             </Typography>
           </Paper>
         </Grid>
       </Grid>
 
-      {/* Revenue Chart and Recent Transactions Section */}
+      {/* Line Chart for Revenue and Profit */}
       <Grid container spacing={2} sx={{ mt: 4 }}>
-        {/* Revenue Line Chart */}
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12}>
           <Paper
             sx={{ padding: 2, backgroundColor: "#f5f5f5", borderRadius: "8px" }}
           >
             <Typography variant="h6" color="primary">
-              Revenue Generated
+              Revenue & Profit Over the Last {days} Days
             </Typography>
-            <Line data={lineChartData} />
-          </Paper>
-        </Grid>
-
-        {/* Recent Transactions Section */}
-        <Grid item xs={12} md={4}>
-          <Paper
-            sx={{ padding: 2, backgroundColor: "#f5f5f5", borderRadius: "8px" }}
-          >
-            <Typography variant="h6" color="primary">
-              Recent Transactions
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <TransactionItem id="#34562" date="2023-10-04" amount="$320" />
-              <TransactionItem id="#12478" date="2023-09-21" amount="$1,200" />
-              <TransactionItem id="#89732" date="2023-09-14" amount="$830" />
-            </Box>
+            <Line data={chartData} />
           </Paper>
         </Grid>
       </Grid>
 
-      {/* Campaign and Sales Quantity Section */}
+      {/* Daily Revenue and Profit Table */}
       <Grid container spacing={2} sx={{ mt: 4 }}>
-        {/* Doughnut Chart for Campaigns */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <Paper
             sx={{ padding: 2, backgroundColor: "#f5f5f5", borderRadius: "8px" }}
           >
             <Typography variant="h6" color="primary">
-              Campaign
-            </Typography>
-            <Doughnut data={doughnutChartData} />
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <Paper
-            sx={{ padding: 2, backgroundColor: "#f5f5f5", borderRadius: "8px" }}
-          >
-            <Typography variant="h6" color="primary">
-              Sales Quantity
+              Daily Revenue & Profit
             </Typography>
             <TableContainer>
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Product</TableCell>
-                    <TableCell align="right">Quantity</TableCell>
-                    <TableCell align="right">Price</TableCell>
+                    <TableCell>Date</TableCell>
+                    <TableCell align="right">Daily Revenue</TableCell>
+                    <TableCell align="right">Daily Profit</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {salesData.map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell>{row.product}</TableCell>
-                      <TableCell align="right">{row.quantity}</TableCell>
-                      <TableCell align="right">{row.price}</TableCell>
+                  {dailyRevenue.map((item, index) => (
+                    <TableRow key={item.date}>
+                      <TableCell>{formatVietnamDate(item.date)}</TableCell>
+                      <TableCell align="right">
+                        {item.total.toLocaleString()} USD
+                      </TableCell>
+                      <TableCell align="right">
+                        {(dailyProfit[index]?.profit || 0).toLocaleString()} USD
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -224,34 +290,8 @@ const ManageRevenuePage = () => {
           </Paper>
         </Grid>
       </Grid>
-
-      <ManagerTransaction />
-      <Box sx={{ mt: 4, textAlign: "center" }}>
-        <Button
-          variant="contained"
-          startIcon={<DownloadIcon />}
-          sx={{ backgroundColor: "#007BFF" }}
-        >
-          Download Reports
-        </Button>
-      </Box>
     </Box>
   );
 };
-
-// Reusable component for recent transaction item
-const TransactionItem = ({ id, date, amount }) => (
-  <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-    <Typography variant="body2" color="textSecondary">
-      {id}
-    </Typography>
-    <Typography variant="body2" color="textSecondary">
-      {date}
-    </Typography>
-    <Typography variant="body2" fontWeight="bold" color="#333">
-      {amount}
-    </Typography>
-  </Box>
-);
 
 export default ManageRevenuePage;

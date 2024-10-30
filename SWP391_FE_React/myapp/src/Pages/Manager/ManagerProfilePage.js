@@ -19,7 +19,7 @@ const ManagerProfilePage = () => {
   const [profileImage, setProfileImage] = useState(
     "https://img.freepik.com/free-vector/elegant-businessman-office-scene_24877-57719.jpg?t=st=1728840469~exp=1728844069~hmac=84913255acd309d8247d0267f01afc6ac8b4f1f826c30cc4b4f1d7cfce135819&w=740"
   );
-
+  const accountId = sessionStorage.getItem("userID");
   // Handle background image upload
   const handleBackgroundUpload = (e) => {
     const file = e.target.files[0];
