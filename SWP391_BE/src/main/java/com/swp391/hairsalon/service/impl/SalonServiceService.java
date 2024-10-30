@@ -39,7 +39,7 @@ public class SalonServiceService implements ISalonServiceService {
     }
 
     @Override
-    public SalonService updateCombo(Long serviceId, SalonService service) {
+    public SalonService updateCombo (int serviceId, SalonService service) {
         Optional<SalonService> existingService = salonServiceRepository.findById(serviceId);
         if (existingService.isPresent()) {
             SalonService updatedService = existingService.get();
@@ -57,13 +57,13 @@ public class SalonServiceService implements ISalonServiceService {
     public int getTotalDurationBySalonId(List<Integer> serviceId) {
         int duration = 0;
         for(Integer i : serviceId) {
-            duration += salonServiceRepository.getById((long) i).getMaxTime();
+            duration += salonServiceRepository.getById((int) i).getMaxTime();
         }
         return duration;
     }
 
     @Override
-    public SalonService getServiceById(Long serviceId) {
+    public SalonService getServiceById(int serviceId) {
         return salonServiceRepository.getReferenceById(serviceId);
     }
 

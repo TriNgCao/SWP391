@@ -11,13 +11,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ISalonServiceRepository extends JpaRepository<SalonService, Long> {
+public interface ISalonServiceRepository extends JpaRepository<SalonService, Integer> {
 
     List<SalonService> findByServiceNameContaining(String serviceName);
     List<SalonService> findByServicePriceBetween(double minPrice, double maxPrice);
 
     @Query("SELECT s FROM SalonService s WHERE s.serviceId = :serviceId")
-    SalonService searchById(@Param("serviceId") Long serviceId);
+    SalonService searchById(@Param("serviceId") int serviceId);
 
     @Query("SELECT s FROM SalonService s WHERE s.serviceName = :serviceName")
     SalonService searchByName(@Param("serviceName") String serviceName);
@@ -26,7 +26,7 @@ public interface ISalonServiceRepository extends JpaRepository<SalonService, Lon
     @Modifying
     @Transactional
     @Query("DELETE FROM SalonService s WHERE s.serviceId = :serviceId")
-    void deleteById(@Param("serviceId") Long serviceId);
+    void deleteById(@Param("serviceId") int serviceId);
 
     @Modifying
     @Transactional

@@ -58,11 +58,11 @@ public class ServiceController {
 
     @PostMapping("image/upload/{serviceId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public SalonService createNewService(@RequestParam("image") MultipartFile image, @PathVariable long serviceId) throws IOException {
+    public SalonService createNewService(@RequestParam("image") MultipartFile image, @PathVariable int serviceId) throws IOException {
         String fileName = iFileService.uploadImage(path, image);
         SalonService service = salonServiceService.getServiceById(serviceId);
         service.setImageName(fileName);
-        return salonServiceService.updateCombo((long) serviceId, service);
+        return salonServiceService.updateCombo((int) serviceId, service);
 
     }
 
@@ -74,7 +74,7 @@ public class ServiceController {
     }
 
     @PutMapping("/{serviceId}")
-    public SalonService updateService(@PathVariable Long serviceId, @RequestBody SalonService service) {
+    public SalonService updateService(@PathVariable int serviceId, @RequestBody SalonService service) {
         return salonServiceService.updateCombo(serviceId, service);
     }
 }

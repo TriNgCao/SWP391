@@ -22,4 +22,10 @@ public class Revenue {
         private LocalDate date;
         private BigDecimal dailyTotal;
     }
+    public Revenue(BigDecimal totalRevenue, BigDecimal totalProfit) {
+        this.totalRevenue = totalRevenue;
+        this.totalProfit = totalProfit;
+    }
+
+    
 }
