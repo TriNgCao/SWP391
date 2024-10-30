@@ -29,7 +29,7 @@ public class SupportTicketController {
     public ResponseEntity<SupportTicket> createSupportTicket(@Valid @RequestBody SupportTicket supportTicket) {
         supportTicket.setStatus(false);
         SupportTicket createdTicket = supportTicketService.createSupportTicket(supportTicket);
-        List<Staff> staffList = iStaffService.getAllStaffS();
+        List<Staff> staffList = iStaffService.getAllStaffs();
         for(Staff staff:staffList){
             iNotificationService.addNewNotification("Bạn có thông báo mới", "Một phiếu hỗ trợ vừa được tạo",staff.getAccount() );
         }
