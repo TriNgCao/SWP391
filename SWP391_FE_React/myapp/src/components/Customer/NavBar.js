@@ -95,7 +95,7 @@ export default function Navbar() {
             </ul>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginRight: "-40px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginRight: "-35px" }}>
             <UserIconDropdown />
             {hasToken && (
               <>
@@ -106,7 +106,6 @@ export default function Navbar() {
                     </Badge>
                   </IconButton>
                 </Tooltip>
-                {/* Menu thông báo */}
                 <CustomerNotificationMenu
                   anchorEl={anchorElNotification}
                   handleClose={handleCloseNotificationMenu}
@@ -114,7 +113,7 @@ export default function Navbar() {
                 />
               </>
             )}
-            <LoginButton />
+            <LoginButton/>
           </div>
         </div>
       </nav>

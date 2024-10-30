@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
@@ -38,26 +36,22 @@ const BlogPost = () => {
           imageUrl: response.data.imageName ?
             `http://localhost:8080/api/blog/image/${encodeURIComponent(response.data.imageName)}` : null
         });
-        // Update state for likes and likeId based on fetched data
         setLiked(response.data.likeByAccount);
-        setLikeId(response.data.likeId); // Set likeId from response
+        setLikeId(response.data.likeId);
       } catch (error) {
         console.error("Error fetching blog data:", error);
       } finally {
-        setLoading(false); // Set loading to false when data fetching is done
+        setLoading(false);
       }
     };
 
     const fetchComments = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/cmt/${blogId}`);
-
-        // Sort comments by createDate in descending order (latest first)
         const sortedComments = response.data.sort((a, b) => {
-          // Convert createDate strings to Date objects
-          const dateA = new Date(a.createDate.replace(" ", "T")); // Replace space with 'T' for ISO format
+          const dateA = new Date(a.createDate.replace(" ", "T"));
           const dateB = new Date(b.createDate.replace(" ", "T"));
-          return dateB.getTime() - dateA.getTime(); // Compare timestamps
+          return dateB.getTime() - dateA.getTime();
         });
 
         setComments(sortedComments);
@@ -104,18 +98,16 @@ const BlogPost = () => {
     });
     
     if (response.status === 200) {
-      // Create a new comment object
       const newCommentData = {
-        commentId: response.data.commentId, // Assuming the response returns the new comment's ID
+        commentId: response.data.commentId,
         accountName: "You",
         createDate: new Date().toLocaleString(),
         content: newComment,
       };
 
-      // Prepend the new comment to the existing comments array
       setComments((prevComments) => [newCommentData, ...prevComments]);
       setNewComment("");
-      setCommentCount(prevCount => prevCount + 1); // Update comment count
+      setCommentCount(prevCount => prevCount + 1);
     }
   } catch (error) {
     console.error("Error submitting comment:", error);
@@ -125,22 +117,19 @@ const BlogPost = () => {
   const handleLikeToggle = async () => {
     try {
       if (liked) {
-        // If user has liked the post, delete the like
         if (likeId) {
           await axios.delete(`http://localhost:8080/api/like/${likeId}`);
-          setLikes((prevLikes) => prevLikes - 1); // Decrement likes
-          setLiked(false); // Update liked status
-          setLikeId(null); // Reset likeId
+          setLikes((prevLikes) => prevLikes - 1);
+          setLikeId(null);
         }
       } else {
-        // If user hasn't liked yet, add a like
         const response = await axios.post("http://localhost:8080/api/like", {
           blogId,
           accountId,
         });
-        setLikes((prevLikes) => prevLikes + 1); // Increment likes
-        setLiked(true); // Update liked status
-        setLikeId(response.data.likeId); // Save new likeId
+        setLikes((prevLikes) => prevLikes + 1);
+        setLiked(true);
+        setLikeId(response.data.likeId);
       }
     } catch (error) {
       console.error("Error toggling like:", error);
