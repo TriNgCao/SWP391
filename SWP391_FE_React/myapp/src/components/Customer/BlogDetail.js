@@ -8,6 +8,7 @@ const BlogPost = () => {
   const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [likeId, setLikeId] = useState(null);
   const [commentCount, setCommentCount] = useState(0);
 
   const accountId = sessionStorage.getItem("userID");
@@ -21,12 +22,14 @@ const BlogPost = () => {
   useEffect(() => {
     const fetchBlogDetail = async () => {
       try {
-        // API to fetch blog details by blogId
-        // GET http://localhost:8080/api/blog/{blogId}
-        const response = await axios.get(`http://localhost:8080/api/blog/${blogId}`);
+        const response = await axios.get(
+          `http://localhost:8080/api/blog/${blogId}`
+        );
         setPostData({
           ...response.data,
-          imageUrl: `http://localhost:8080/api/blog/image/${encodeURIComponent(response.data.imageName)}`,
+          imageUrl: `http://localhost:8080/api/blog/image/${encodeURIComponent(
+            response.data.imageName
+          )}`,
         });
       } catch (error) {
         console.error("Error fetching blog data:", error);
@@ -35,9 +38,9 @@ const BlogPost = () => {
 
     const fetchComments = async () => {
       try {
-        // API to fetch comments for a specific blog post by blogId
-        // GET http://localhost:8080/api/cmt/{blogId}
-        const response = await axios.get(`http://localhost:8080/api/cmt/${blogId}`);
+        const response = await axios.get(
+          `http://localhost:8080/api/cmt/${blogId}`
+        );
         setComments(response.data);
       } catch (error) {
         console.error("Error fetching comments:", error);
@@ -46,9 +49,9 @@ const BlogPost = () => {
 
     const fetchCommentCount = async () => {
       try {
-        // API to fetch the total count of comments for a specific blog post
-        // GET http://localhost:8080/api/cmt/count/{blogId}
-        const response = await axios.get(`http://localhost:8080/api/cmt/count/${blogId}`);
+        const response = await axios.get(
+          `http://localhost:8080/api/cmt/count/${blogId}`
+        );
         setCommentCount(response.data);
       } catch (error) {
         console.error("Error fetching comment count:", error);
@@ -57,9 +60,9 @@ const BlogPost = () => {
 
     const fetchLikeCount = async () => {
       try {
-        // API to fetch the total like count for a specific blog post
-        // GET http://localhost:8080/api/like/{blogId}
-        const response = await axios.get(`http://localhost:8080/api/like/${blogId}`);
+        const response = await axios.get(
+          `http://localhost:8080/api/like/${blogId}`
+        );
         setLikes(response.data);
       } catch (error) {
         console.error("Error fetching like count:", error);
@@ -68,12 +71,16 @@ const BlogPost = () => {
 
     const checkIfLiked = async () => {
       try {
-        // API to check if the current user has already liked this blog post
-        // GET http://localhost:8080/api/like with parameters { blogId, accountId }
         const response = await axios.get("http://localhost:8080/api/like", {
-          params: { blogId, accountId }
+          params: { blogId, accountId },
         });
-        setLiked(response.data !== null);
+        if (response.data) {
+          setLiked(true);
+          setLikeId(response.data.likeId); // Store the likeId if it exists
+        } else {
+          setLiked(false);
+          setLikeId(null); // Reset likeId if no like exists
+        }
       } catch (error) {
         console.error("Error checking like status:", error);
       }
@@ -93,8 +100,6 @@ const BlogPost = () => {
     if (newComment.trim() === "") return;
 
     try {
-      // API to submit a new comment
-      // POST http://localhost:8080/api/cmt with payload { blogId, accountId, content }
       const response = await axios.post("http://localhost:8080/api/cmt", {
         blogId,
         accountId,
@@ -103,7 +108,12 @@ const BlogPost = () => {
       if (response.status === 200) {
         setComments([
           ...comments,
-          { commentId: comments.length + 1, accountName: "You", createDate: new Date().toLocaleString(), content: newComment },
+          {
+            commentId: comments.length + 1,
+            accountName: "You",
+            createDate: new Date().toLocaleString(),
+            content: newComment,
+          },
         ]);
         setNewComment("");
         setCommentCount(commentCount + 1);
@@ -116,22 +126,20 @@ const BlogPost = () => {
   const handleLikeToggle = async () => {
     try {
       if (liked) {
-        // API to check for existing like and delete it if the user clicks 'unlike'
-        // GET http://localhost:8080/api/like with parameters { blogId, accountId }
-        const response = await axios.get("http://localhost:8080/api/like", { params: { blogId, accountId } });
-        if (response.data) {
-          // API to delete like by likeId if it exists
-          // DELETE http://localhost:8080/api/like/{likeId}
-          await axios.delete(`http://localhost:8080/api/like/${response.data.likeId}`);
+        if (likeId) {
+          await axios.delete(`http://localhost:8080/api/like/${likeId}`);
           setLikes(likes - 1);
           setLiked(false);
+          setLikeId(null); // Clear likeId after unliking
         }
       } else {
-        // API to add a like when the user clicks 'like'
-        // POST http://localhost:8080/api/like with payload { blogId, accountId }
-        await axios.post("http://localhost:8080/api/like", { blogId, accountId });
+        const response = await axios.post("http://localhost:8080/api/like", {
+          blogId,
+          accountId,
+        });
         setLikes(likes + 1);
         setLiked(true);
+        setLikeId(response.data.likeId); // Store the new likeId after liking
       }
     } catch (error) {
       console.error("Error toggling like:", error);
@@ -157,11 +165,16 @@ const BlogPost = () => {
         <div style={styles.likeCommentCounts}>
           {isLoggedIn && (
             <span onClick={handleLikeToggle} style={styles.likeCount}>
-              <i className={`fa ${liked ? "fa-thumbs-up" : "fa-thumbs-o-up"}`} aria-hidden="true"></i> {likes}
+              <i
+                className={`fa ${liked ? "fa-thumbs-up" : "fa-thumbs-o-up"}`}
+                aria-hidden="true"
+              ></i>{" "}
+              {likes}
             </span>
           )}
           <span style={styles.commentCount}>
-            <i className="fa fa-commenting-o" aria-hidden="true"></i> {commentCount} Comments
+            <i className="fa fa-commenting-o" aria-hidden="true"></i>{" "}
+            {commentCount} Comments
           </span>
         </div>
 
@@ -185,7 +198,11 @@ const BlogPost = () => {
             {comments.map((comment) => (
               <li key={comment.commentId} style={styles.comment}>
                 <div style={styles.vcard}>
-                  <img src="images/person_1.jpg" alt="Person" style={styles.commentImage} />
+                  <img
+                    src="images/person_1.jpg"
+                    alt="Person"
+                    style={styles.commentImage}
+                  />
                 </div>
                 <div style={styles.commentBody}>
                   <h4>{comment.accountName}</h4>
