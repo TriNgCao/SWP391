@@ -1,6 +1,7 @@
 package com.swp391.hairsalon.service.impl;
 
 import java.sql.Date;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.swp391.hairsalon.pojo.Appointment;
+import com.swp391.hairsalon.pojo.Salon;
 import com.swp391.hairsalon.repository.IAppointmentRepository;
 import com.swp391.hairsalon.service.definitions.IAppointmentService;
 
@@ -68,6 +70,26 @@ public class AppointmentService implements IAppointmentService {
             return Collections.emptyList();  // Return empty list instead of null
         }
         return appointments;
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByBranch(Salon bracnh) {
+        return appointmentRepo.findByBranch(bracnh);
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByStylistId(int id) {
+        return appointmentRepo.findByStylist_StylistId(id);
+    }
+
+    @Override
+    public List<Appointment> getCompletedAppointmentsByStylist(int stylistId) {
+        return appointmentRepo.getCompletedAppointmentsByStylist(stylistId);
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByCustomerAccountId(String accountId) {
+        return appointmentRepo.findByCustomer_Account_Id(accountId);
     }
 
 }

@@ -1,3 +1,5 @@
+
+
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -10,101 +12,75 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Chip,
+  Divider,
   Button,
+  Modal,
 } from "@mui/material";
+import { Star, StarOutline } from "@mui/icons-material";
 import axios from "axios";
 
-// Sample data for team members
-const appointmentData = [
-  {
-    appointmentId: 1,
-    customerName: "John Doe",
-    stylistName: "Amit Singh",
-    date: "2024-10-15",
-    services: "Haircut, Styling",
-    status: "Complete",
-  },
-  {
-    appointmentId: 2,
-    customerName: "Jane Smith",
-    stylistName: "Rahul Bhat",
-    date: "2024-10-16",
-    services: "Coloring",
-    status: "Pending",
-  },
-  {
-    appointmentId: 3,
-    customerName: "Emily Johnson",
-    stylistName: "Harsha TL",
-    date: "2024-10-17",
-    services: "Manicure, Pedicure",
-    status: "Complete",
-  },
-  {
-    appointmentId: 4,
-    customerName: "Michael Brown",
-    stylistName: "Sandeep Roy",
-    date: "2024-10-18",
-    services: "Haircut",
-    status: "Process",
-  },
-  {
-    appointmentId: 5,
-    customerName: "Sarah Wilson",
-    stylistName: "Arjun Raj",
-    date: "2024-10-19",
-    services: "Facial",
-    status: "Cancel",
-  },
-  {
-    appointmentId: 6,
-    customerName: "David Garcia",
-    stylistName: "Priya Sharma",
-    date: "2024-10-20",
-    services: "Hair Treatment",
-    status: "Pending",
-  },
-  {
-    appointmentId: 7,
-    customerName: "Linda Martinez",
-    stylistName: "Neha Gupta",
-    date: "2024-10-21",
-    services: "Haircut, Coloring",
-    status: "Complete",
-  },
-  {
-    appointmentId: 8,
-    customerName: "Robert Rodriguez",
-    stylistName: "Ravi Kumar",
-    date: "2024-10-22",
-    services: "Styling",
-    status: "Pending",
-  },
-  {
-    appointmentId: 9,
-    customerName: "Jennifer Lee",
-    stylistName: "Sita Devi",
-    date: "2024-10-23",
-    services: "Manicure",
-    status: "Complete",
-  },
-  {
-    appointmentId: 10,
-    customerName: "William Smith",
-    stylistName: "Vikram Singh",
-    date: "2024-10-24",
-    services: "Pedicure",
-    status: "Complete",
-  },
-];
+// Hàm render nhãn trạng thái
+const renderStatusChip = (status) => {
+  switch (status) {
+    case "Pending":
+      return <Chip label="Pending" sx={{ bgcolor: "#FFEB3B", color: "#333" }} />;
+    case "Ready":
+      return <Chip label="Ready" sx={{ bgcolor: "#2196F3", color: "#fff" }} />;
+    case "Cancelled":
+      return <Chip label="Cancelled" sx={{ bgcolor: "#F44336", color: "#fff" }} />;
+    case "Processing":
+      return <Chip label="Processing" sx={{ bgcolor: "#FFA500", color: "#fff" }} />;
+    case "Completed":
+      return <Chip label="Completed" sx={{ bgcolor: "#4CAF50", color: "#fff" }} />;
+    default:
+      return <Chip label={status} sx={{ bgcolor: "#9E9E9E", color: "#fff" }} />;
+  }
+};
+
+// Hàm render sao dựa trên rating, làm tròn lên
+const renderStars = (rating, size = 24) => {
+  const roundedRating = Math.ceil(rating); // Làm tròn lên số sao
+  const stars = [];
+
+  for (let i = 1; i <= 5; i++) {
+    if (i <= roundedRating) {
+      stars.push(<Star key={i} sx={{ color: "#FFD700", fontSize: size }} />);
+    } else {
+      stars.push(<StarOutline key={i} sx={{ color: "#FFD700", fontSize: size }} />);
+    }
+  }
+  return stars;
+};
 
 const ManagerAppointments = () => {
-  const [accounts, setAccount] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const accountID = sessionStorage.getItem("accountId")
+  // Fetch dữ liệu từ API
   useEffect(() => {
-    axios.get("https://jsonplaceholder.typicode.com/users").then((response) => {
-      setAccount(response.data);
-    });
+    const fetchAppointments = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/appointment/manage/MAN1`);
+        setAppointments(response.data);
+      } catch (error) {
+        console.error("Failed to fetch appointments:", error);
+      }
+    };
+
+    fetchAppointments();
   }, []);
+
+  const handleViewAppointment = (appointment) => {
+    setSelectedAppointment(appointment);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedAppointment(null);
+  };
 
   return (
     <Box
@@ -115,14 +91,18 @@ const ManagerAppointments = () => {
         color: "#333",
       }}
     >
-      <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
+      <Typography
+        variant="h4"
+        fontWeight="bold"
+        sx={{ mb: 2, color: "#4CAF50" }}
+      >
         Appointments Management
       </Typography>
-      <Typography variant="subtitle1" sx={{ mb: 4 }}>
-        Managing the Team Members
+      <Typography variant="subtitle1" sx={{ mb: 4, color: "#4CAF50" }}>
+        Managing the Appointments
       </Typography>
 
-      {/* Team Table */}
+      {/* Table của danh sách cuộc hẹn */}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Paper
@@ -142,34 +122,39 @@ const ManagerAppointments = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    <TableCell sx={{ color: "#fff" }}>Appointment ID</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>No</TableCell>
                     <TableCell sx={{ color: "#fff" }}>Customer Name</TableCell>
                     <TableCell sx={{ color: "#fff" }}>Stylist Name</TableCell>
                     <TableCell sx={{ color: "#fff" }}>Date</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Time</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Total</TableCell>
                     <TableCell sx={{ color: "#fff" }}>Services</TableCell>
                     <TableCell sx={{ color: "#fff" }}>Status</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Feedback</TableCell>
                   </TableRow>
                 </TableHead>
 
                 <TableBody>
-                  {appointmentData.map((appointment) => (
+                  {appointments.map((appointment, index) => (
                     <TableRow key={appointment.appointmentId}>
-                      <TableCell>{appointment.appointmentId}</TableCell>
+                      <TableCell>{index + 1}</TableCell>
                       <TableCell>{appointment.customerName}</TableCell>
                       <TableCell>{appointment.stylistName}</TableCell>
                       <TableCell>{appointment.date}</TableCell>
-                      <TableCell>{appointment.services}</TableCell>
-                      <TableCell
-                        sx={{
-                          color:
-                            appointment.status === "Complete"
-                              ? "#4CAF50"
-                              : appointment.status === "Process"
-                              ? "#FFCC00"
-                              : "#F44336",
-                        }}
-                      >
-                        {appointment.status}
+                      <TableCell>{`${appointment.startTime} - ${appointment.endTime}`}</TableCell>
+                      <TableCell>{`${appointment.totalPrice} VNĐ`}</TableCell>
+                      <TableCell>{appointment.serviceName.join(", ")}</TableCell>
+                      <TableCell>{renderStatusChip(appointment.status)}</TableCell>
+
+                      <TableCell>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          sx={{ backgroundColor: "#4CAF50" }}
+                          onClick={() => handleViewAppointment(appointment)}
+                        >
+                          View
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -179,6 +164,73 @@ const ManagerAppointments = () => {
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Modal hiển thị thông tin chi tiết */}
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+            outline: "none",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            sx={{ mb: 2, color: "#4CAF50", textAlign: "center" }}
+          >
+            Appointment's feedback
+          </Typography>
+          <Divider sx={{ mb: 2, width: "100%" }} />
+
+          {selectedAppointment && (
+            <>
+              {/* Kiểm tra nếu rating là -1 và feedback là null */}
+              {selectedAppointment.rating === -1 && !selectedAppointment.feedback ? (
+                <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 2 }}>
+                  User has not rated this appointment.
+                </Typography>
+              ) : (
+                <>
+                  <Box sx={{ mb: 2, textAlign: "center" }}>
+                    <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
+                      {renderStars(selectedAppointment.rating, 40)}
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ mb: 2, textAlign: "center" }}>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Feedback:
+                    </Typography>
+                    <Typography>{selectedAppointment.feedback || "No feedback"}</Typography>
+                  </Box>
+                </>
+              )}
+
+              <Box sx={{ textAlign: "center", mt: 4 }}>
+                <Button
+                  variant="contained"
+                  sx={{ backgroundColor: "#4CAF50", color: "#fff" }}
+                  onClick={handleCloseModal}
+                >
+                  Close
+                </Button>
+              </Box>
+            </>
+          )}
+        </Box>
+      </Modal>
+
     </Box>
   );
 };

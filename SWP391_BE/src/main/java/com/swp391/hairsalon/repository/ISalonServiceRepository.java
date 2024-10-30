@@ -22,6 +22,7 @@ public interface ISalonServiceRepository extends JpaRepository<SalonService, Lon
     @Query("SELECT s FROM SalonService s WHERE s.serviceName = :serviceName")
     SalonService searchByName(@Param("serviceName") String serviceName);
 
+
     @Modifying
     @Transactional
     @Query("DELETE FROM SalonService s WHERE s.serviceId = :serviceId")

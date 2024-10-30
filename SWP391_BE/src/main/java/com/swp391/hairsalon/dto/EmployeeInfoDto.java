@@ -8,9 +8,11 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class EmployeeInfoDTO {
+public class EmployeeInfoDto {
+    private String id;
     private String name;
+    private String email;
     private int role;
-    private int salary;
     private boolean status;
+    private String salonName;
 }

@@ -31,6 +31,8 @@ public class SalonServiceService implements ISalonServiceService {
         return salonServiceRepository.findAll();
     }
 
+    
+
     @Override
     public SalonService addService(SalonService service) {
         return salonServiceRepository.save(service);
@@ -44,6 +46,7 @@ public class SalonServiceService implements ISalonServiceService {
             updatedService.setServiceName(service.getServiceName());
             updatedService.setServiceDescription(service.getServiceDescription());
             updatedService.setServicePrice(service.getServicePrice());
+            updatedService.setCategory(service.getCategory());
             updatedService.setMaxTime(service.getMaxTime());
             return salonServiceRepository.save(updatedService);
         }
@@ -51,7 +54,18 @@ public class SalonServiceService implements ISalonServiceService {
     }
 
     @Override
+    public int getTotalDurationBySalonId(List<Integer> serviceId) {
+        int duration = 0;
+        for(Integer i : serviceId) {
+            duration += salonServiceRepository.getById((long) i).getMaxTime();
+        }
+        return duration;
+    }
+
+    @Override
     public SalonService getServiceById(Long serviceId) {
         return salonServiceRepository.getReferenceById(serviceId);
     }
+
+    
 }

@@ -16,7 +16,6 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public Customer getCustomerById(int id) {
-        // TODO Auto-generated method stub
         return iCustomerRepository.getReferenceById(id);
     }
 
@@ -27,5 +26,6 @@ public class CustomerService implements ICustomerService {
         customer.setLoyaltyPoints(customer.getLoyaltyPoints()+bonusPoint);
         iCustomerRepository.save(customer);
     }
+
 
 }

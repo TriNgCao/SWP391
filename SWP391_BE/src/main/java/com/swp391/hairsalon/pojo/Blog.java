@@ -6,6 +6,8 @@ import lombok.Setter;
 import java.sql.Date;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Getter
 @Setter
@@ -27,6 +29,7 @@ public class Blog {
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
+    @JsonIgnore
     private Account account;  
 
     @Column(nullable = false)

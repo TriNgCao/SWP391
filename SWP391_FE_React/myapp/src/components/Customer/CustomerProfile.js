@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-
-const validateEmail = (email) => {
-  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailPattern.test(email);
-};
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const validatePhoneNumber = (phoneNumber) => {
   const phonePattern = /^(03|05|07|08|09)\d{8}$/;
@@ -18,17 +16,42 @@ const validateFullName = (fullName) => {
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({
-    fullName: "John Doe",
-    email: "john.doe@example.com",
-    phone: "0912345678",
-    loyalPoints: 1200,
-  });
-
-  const [errors, setErrors] = useState({
     fullName: "",
     email: "",
     phone: "",
+    loyaltyPoints: 0,
   });
+  const [initialUser, setInitialUser] = useState(null);
+  const [errors, setErrors] = useState({
+    fullName: "",
+    phone: "",
+  });
+
+  useEffect(() => {
+    const userId = sessionStorage.getItem("userID");
+    if (userId) {
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8080/profile/customer/${userId}`);
+          if (response.status === 200) {
+            const { name, email, phone, loyaltyPoints } = response.data;
+            const userData = {
+              fullName: name,
+              email: email,
+              phone: phone,
+              loyaltyPoints: loyaltyPoints,
+            };
+            setUser(userData);
+            setInitialUser(userData);
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+
+      fetchUserData();
+    }
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -37,23 +60,35 @@ const UserProfile = () => {
       [name]: value,
     }));
 
-    // Validate inputs
     let errorMsg = "";
     if (name === "fullName" && !validateFullName(value)) {
       errorMsg = "Full name can only contain letters and spaces.";
-    } else if (name === "email" && !validateEmail(value)) {
-      errorMsg = "Please enter a valid email address.";
     } else if (name === "phone" && !validatePhoneNumber(value)) {
       errorMsg = "Please enter a valid phone number.";
     }
     setErrors((prevErrors) => ({ ...prevErrors, [name]: errorMsg }));
   };
 
-  const toggleEditMode = () => {
+  const toggleEditMode = async () => {
     if (isEditing) {
-      if (!errors.fullName && !errors.email && !errors.phone) {
-        setIsEditing(false);
+      if (JSON.stringify(user) !== JSON.stringify(initialUser)) {
+        try {
+          const userId = sessionStorage.getItem("userID");
+          const response = await axios.put(`http://localhost:8080/user/update/${userId}`, {
+            name: user.fullName,
+            email: user.email,
+            phone: user.phone,
+          });
+          if (response.status === 200) {
+            toast.success("Profile updated successfully!");
+            setInitialUser(user);
+          }
+        } catch (error) {
+          console.error("Error updating user data:", error);
+          toast.error("Failed to update profile!");
+        }
       }
+      setIsEditing(false);
     } else {
       setIsEditing(true);
     }
@@ -105,20 +140,19 @@ const UserProfile = () => {
           type="email"
           name="email"
           value={user.email}
-          onChange={handleInputChange}
-          disabled={!isEditing}
+          disabled
           style={{
             width: "100%",
             padding: "12px",
             fontSize: "16px",
             margin: "8px 0",
             borderRadius: "8px",
-            border: errors.email ? "2px solid red" : "2px solid #ccc",
-            backgroundColor: isEditing ? "#fff" : "#e9ecef",
+            border: "2px solid #ccc",
+            backgroundColor: "#f1f3f5",
+            color: "#777",
             outline: "none"
           }}
         />
-        {errors.email && <span style={{ color: "red", fontSize: "14px" }}>{errors.email}</span>}
       </div>
 
       <div style={{ marginBottom: "20px" }}>
@@ -148,7 +182,7 @@ const UserProfile = () => {
         <input
           type="text"
           name="loyalPoints"
-          value={user.loyalPoints}
+          value={user.loyaltyPoints}
           disabled
           style={{
             width: "100%",

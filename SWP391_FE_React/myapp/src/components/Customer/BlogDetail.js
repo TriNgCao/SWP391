@@ -1,58 +1,139 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { Link, useLocation } from "react-router-dom";
 
 const BlogPost = () => {
   const [postData, setPostData] = useState({});
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      date: "April 7, 2020 at 10:05pm",
-      comment:
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem.",
-    },
-  ]);
+  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState(0);
-  const [liked, setLiked] = useState(false); // Track like status
+  const [liked, setLiked] = useState(false);
+  const [likeId, setLikeId] = useState(null);
+  const [commentCount, setCommentCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  const accountId = sessionStorage.getItem("userID");
+  const token = sessionStorage.getItem("token");
+  const userRole = sessionStorage.getItem("userRole");
+  const isLoggedIn = token && accountId && userRole;
+
+  const location = useLocation();
+  const blogId = location.state?.blogId;
 
   useEffect(() => {
-    const fetchData = async () => {
-      const mockData = {
-        blogId: 1,
-        managerName: "Cong Tuong",
-        imageName: "images/image_1.jpg",
-        title: "Title of post",
-        content:
-          "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis, eius mollitia suscipit, quisquam doloremque distinctio perferendis.",
-        createDate: "2024-10-23",
-        status: false,
+    const fetchAllData = async () => {
+      await fetchBlogDetail();
+      await fetchComments();
+      await fetchCommentCount();
+      await fetchLikeCount();
+    };
+
+    const fetchBlogDetail = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/blog/${blogId}/${accountId}`);
+        setPostData({
+          ...response.data,
+          imageUrl: response.data.imageName ?
+            `http://localhost:8080/api/blog/image/${encodeURIComponent(response.data.imageName)}` : null
+        });
+        setLiked(response.data.likeByAccount);
+        setLikeId(response.data.likeId);
+      } catch (error) {
+        console.error("Error fetching blog data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/cmt/${blogId}`);
+        const sortedComments = response.data.sort((a, b) => {
+          const dateA = new Date(a.createDate.replace(" ", "T"));
+          const dateB = new Date(b.createDate.replace(" ", "T"));
+          return dateB.getTime() - dateA.getTime();
+        });
+
+        setComments(sortedComments);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+
+
+
+    const fetchCommentCount = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/cmt/count/${blogId}`);
+        setCommentCount(response.data);
+      } catch (error) {
+        console.error("Error fetching comment count:", error);
+      }
+    };
+
+    const fetchLikeCount = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/like/${blogId}`);
+        setLikes(response.data);
+      } catch (error) {
+        console.error("Error fetching like count:", error);
+      }
+    };
+
+    if (blogId && isLoggedIn) {
+      fetchAllData();
+    }
+  }, [blogId, accountId, isLoggedIn]);
+
+  const handleCommentSubmit = async (e) => {
+  e.preventDefault();
+  if (newComment.trim() === "") return;
+
+  try {
+    const response = await axios.post("http://localhost:8080/api/cmt", {
+      blogId,
+      accountId,
+      content: newComment,
+    });
+    
+    if (response.status === 200) {
+      const newCommentData = {
+        commentId: response.data.commentId,
+        accountName: "You",
+        createDate: new Date().toLocaleString(),
+        content: newComment,
       };
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setPostData(mockData);
-    };
 
-    fetchData();
-  }, []);
+      setComments((prevComments) => [newCommentData, ...prevComments]);
+      setNewComment("");
+      setCommentCount(prevCount => prevCount + 1);
+    }
+  } catch (error) {
+    console.error("Error submitting comment:", error);
+  }
+};
 
-  const handleCommentSubmit = (e) => {
-    e.preventDefault();
-    if (newComment.trim() === "") return;
-
-    const newCommentData = {
-      id: comments.length + 1,
-      name: "Anonymous",
-      date: new Date().toLocaleString(),
-      comment: newComment,
-    };
-
-    setComments([...comments, newCommentData]);
-    setNewComment("");
-  };
-
-  const handleLike = () => {
-    setLikes((prevLikes) => (liked ? prevLikes - 1 : prevLikes + 1));
-    setLiked(!liked);
+  const handleLikeToggle = async () => {
+    try {
+      if (liked) {
+        if (likeId) {
+          await axios.delete(`http://localhost:8080/api/like/${likeId}`);
+          setLikes((prevLikes) => prevLikes - 1);
+          setLikeId(null);
+        }
+      } else {
+        const response = await axios.post("http://localhost:8080/api/like", {
+          blogId,
+          accountId,
+        });
+        setLikes((prevLikes) => prevLikes + 1);
+        setLiked(true);
+        setLikeId(response.data.likeId);
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
   };
 
   return (
@@ -64,50 +145,49 @@ const BlogPost = () => {
         <p style={styles.meta}>
           Posted on: {postData.createDate} | Posted by: {postData.managerName}
         </p>
-        <p>
-          <img src={postData.imageName} alt="Blog" style={styles.image} />
-        </p>
+        {postData.imageUrl && (
+          <p>
+            <img src={postData.imageUrl} alt="Blog" style={styles.image} />
+          </p>
+        )}
         <p style={styles.content}>{postData.content}</p>
+
         <div style={styles.likeCommentCounts}>
-          <span onClick={handleLike} style={styles.likeCount}>
-            <i
-              className={`fa ${liked ? "fa-thumbs-up" : "fa-thumbs-o-up"}`}
-              aria-hidden="true"
-            ></i>{" "}
-            {likes}
-          </span>
+          {isLoggedIn && !loading && (
+            <span onClick={handleLikeToggle} style={styles.likeCount}>
+              <i className={`fa ${liked ? "fa-thumbs-up" : "fa-thumbs-o-up"}`} aria-hidden="true"></i> {likes}
+            </span>
+          )}
           <span style={styles.commentCount}>
-            <i className="fa fa-commenting-o" aria-hidden="true"></i>{" "}
-            {comments.length} Comments
+            <i className="fa fa-commenting-o" aria-hidden="true"></i> {commentCount} Comments
           </span>
         </div>
+
         <div style={styles.commentsSection}>
           <h3>Comments</h3>
-          <form onSubmit={handleCommentSubmit} style={styles.commentForm}>
-            <textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Add a comment..."
-              style={styles.textarea}
-            ></textarea>
-            <button type="submit" style={styles.button}>
-              Submit Comment
-            </button>
-          </form>
+          {isLoggedIn && (
+            <form onSubmit={handleCommentSubmit} style={styles.commentForm}>
+              <textarea
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Add a comment..."
+                style={styles.textarea}
+              ></textarea>
+              <button type="submit" style={styles.button}>
+                Submit Comment
+              </button>
+            </form>
+          )}
           <ul style={styles.commentList}>
             {comments.map((comment) => (
-              <li key={comment.id} style={styles.comment}>
+              <li key={comment.commentId} style={styles.comment}>
                 <div style={styles.vcard}>
-                  <img
-                    src="images/person_1.jpg"
-                    alt="Person"
-                    style={styles.commentImage}
-                  />
+                  <img src="images/person_1.jpg" alt="Person" style={styles.commentImage} />
                 </div>
                 <div style={styles.commentBody}>
-                  <h4>{comment.name}</h4>
-                  <div style={styles.meta}>{comment.date}</div>
-                  <p>{comment.comment}</p>
+                  <h4>{comment.accountName}</h4>
+                  <div style={styles.meta}>{comment.createDate}</div>
+                  <p>{comment.content}</p>
                   <p>
                     <Link to="#" style={styles.reply}>
                       Reply
@@ -117,6 +197,7 @@ const BlogPost = () => {
               </li>
             ))}
           </ul>
+
         </div>
       </div>
     </section>

@@ -11,4 +11,5 @@ public interface ISalonServiceService {
     SalonService addService(SalonService service);
     SalonService updateCombo(Long serviceId, SalonService service);
     SalonService getServiceById(Long serviceId);
+    int getTotalDurationBySalonId(List<Integer> serviceId);
 }

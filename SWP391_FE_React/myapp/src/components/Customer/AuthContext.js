@@ -7,12 +7,11 @@
 
     useEffect(() => {
         const token = sessionStorage.getItem("token");
-        setHasToken(!!token); // Cập nhật trạng thái có token
+        setHasToken(!!token);
 
-        // Lắng nghe sự kiện "storage"
         const handleStorageChange = () => {
         const updatedToken = sessionStorage.getItem("token");
-        setHasToken(!!updatedToken); // Cập nhật token
+        setHasToken(!!updatedToken);
         };
 
         window.addEventListener("storage", handleStorageChange);

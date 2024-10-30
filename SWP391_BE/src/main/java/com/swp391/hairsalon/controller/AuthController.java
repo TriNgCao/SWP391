@@ -4,6 +4,8 @@ import com.swp391.hairsalon.login.GoogleAuthRequest;
 import com.swp391.hairsalon.login.JwtRequest;
 import com.swp391.hairsalon.login.JwtResponse;
 import com.swp391.hairsalon.login.MyUserDetails;
+import com.swp391.hairsalon.pojo.Account;
+import com.swp391.hairsalon.repository.IAccountRepository;
 import com.swp391.hairsalon.security.JwtHelper;
 import com.swp391.hairsalon.service.definitions.IAccountService;
 import com.swp391.hairsalon.login.GoogleTokenVerifierService;
@@ -11,12 +13,17 @@ import com.swp391.hairsalon.login.MyUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -44,14 +51,51 @@ public class AuthController {
 
         this.doAuthenticate(request.getEmail(), request.getPassword());
 
-        MyUserDetails myUserDetails = myUserDetailsService.loadUserByUsername(request.getEmail());
+        if(!iAccountService.isActive(request.getEmail())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-        String token = this.helper.generateToken(request.getEmail());
 
-        JwtResponse response = JwtResponse.builder()
-                .jwtToken(token)
-                .userName(myUserDetails.getUsername()).build();
+            MyUserDetails myUserDetails = myUserDetailsService.loadUserByUsername(request.getEmail());
+
+            String token = this.helper.generateToken(request.getEmail());
+
+            JwtResponse response = JwtResponse.builder()
+                    .token(token)
+                    .userID(myUserDetails.getUsername())
+                    .userRole(myUserDetails.getRoleAsInt())
+                    .build();
+
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<JwtResponse> register(@RequestBody Account newAccount) {
+        if(iAccountService.isEmailExist(newAccount.getEmail())) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        iAccountService.addAccount(newAccount);
+        String token = this.helper.generateToken(newAccount.getEmail());
+        JwtResponse response = JwtResponse.builder().token(token)
+                .userID(newAccount.getId())
+                .userRole(1)
+                        .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @GetMapping("/token") // Endpoint để lấy idToken
+    public String getIdToken(Authentication authentication) {
+        // Kiểm tra xem người dùng đã đăng nhập hay chưa
+        if (authentication == null || !(authentication.getPrincipal() instanceof OidcUser)) {
+            return "{\"error\": \"User not authenticated\"}"; // Trả về thông báo lỗi nếu không xác thực
+        }
+
+        // Lấy OidcUser từ Authentication
+        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
+        String idToken = oidcUser.getIdToken().getTokenValue(); // Lấy idToken
+
+        // Trả về idToken dưới dạng JSON
+        return "{\"idToken\": \"" + idToken + "\"}";
     }
 
     @PostMapping("/auth/google")
@@ -66,8 +110,9 @@ public class AuthController {
                 String token = this.helper.generateToken(email);
 
                 JwtResponse response = JwtResponse.builder()
-                        .jwtToken(token)
-                        .userName(email)
+                        .token(token)
+                        .userID(email)
+                        .userRole(1)
                         .build();
             return new ResponseEntity<>(response, HttpStatus.OK);
 

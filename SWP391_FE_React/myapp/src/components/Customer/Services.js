@@ -9,82 +9,24 @@ export default function Services() {
   const [searchTreatmentTerm, setSearchTreatmentTerm] = useState("");
   const [searchSpaSkinTerm, setSearchSpaSkinTerm] = useState("");
 
-  // useEffect(() => {
-  //   const fetchServices = async () => {
-  //     try {
-  //       const response = await new Promise((resolve) =>
-  //         setTimeout(() => {
-  //           resolve({
-  //             data: [
-  //               {
-  //                 id: 1,
-  //                 title: "Haircut Basic",
-  //                 description:
-  //                   "A simple yet stylish haircut to keep you looking fresh.",
-  //                 price: "$37",
-  //                 image: "images/image_1.jpg",
-  //                 category: "Hair Styling",
-  //                 time: "1 Hours",
-  //               },
-  //               {
-  //                 id: 2,
-  //                 title: "Hair Color Vivid",
-  //                 description: "Bold hair color to express yourself.",
-  //                 price: "$50",
-  //                 image: "images/image_2.jpg",
-  //                 category: "Hair Coloring",
-  //                 time: "1 Hours",
-  //               },
-  //               {
-  //                 id: 3,
-  //                 title: "Deep Conditioning",
-  //                 description: "Nourishing treatment for healthy hair.",
-  //                 price: "$40",
-  //                 image: "images/image_3.jpg",
-  //                 category: "Hair Treatment",
-  //                 time: "2 Hours",
-  //               },
-  //               {
-  //                 id: 4,
-  //                 title: "Classic Hair Styling",
-  //                 description: "Elegant hair styling for any occasion.",
-  //                 price: "$60",
-  //                 image: "images/image_4.jpg",
-  //                 category: "Hair Styling",
-  //                 time: "1 Hours",
-  //               },
-  //               {
-  //                 id: 5,
-  //                 title: "Luxury Spa Skin Treatment",
-  //                 description:
-  //                   "Rejuvenating spa treatments to restore your skin's glow.",
-  //                 price: "$70",
-  //                 image: "images/image_5.jpg",
-  //                 category: "Spa Skin",
-  //                 time: "1 Hours",
-  //               },
-  //             ],
-  //           });
-  //         }, 1000)
-  //       );
-  //       setServices(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching services:", error);
-  //     }
-  //   };
-
-  //   fetchServices();
-  // }, []);
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get("URL_API_CỦA_BẠN");
-        setServices(response.data);
+        const response = await axios.get("http://localhost:8080/services/fetchAll");
+
+        const updatedServices = response.data.map((service) => ({
+          ...service,
+          imageUrl: `http://localhost:8080/services/image/${encodeURIComponent(
+            service.imageName
+          )}`,
+        }));
+
+        setServices(updatedServices);
       } catch (error) {
         console.error("Error fetching services:", error);
       }
     };
-  
+
     fetchServices();
   }, []);
 
@@ -98,34 +40,34 @@ export default function Services() {
     (service) => service.category === "Hair Treatment"
   );
   const spaSkinServices = services.filter(
-    (service) => service.category === "Spa Skin"
+    (service) => service.category === "Spa Skin Treatment"
   );
 
   const renderServices = (services) =>
     services.map((service) => (
-      <div className="col-md-4 mb-4" key={service.id}>
+      <div className="col-md-4 mb-4" key={service.serviceId}>
         <div
           className="card text-center"
           style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            height: "100%", // Set card height to 100% for equal height
+            height: "100%",
           }}
         >
           <img
-            src={service.image}
+            src={service.imageUrl}
             className="card-img-top"
-            alt={service.title}
+            alt={service.serviceName}
             style={{ objectFit: "cover", height: "150px" }}
           />
           <div className="card-body d-flex flex-column">
-            <h5 className="card-title">{service.title}</h5>
+            <h5 className="card-title">{service.serviceName}</h5>
             <p className="card-text" style={{ flexGrow: 1 }}>
-              {service.description}
+              {service.serviceDescription}
             </p>
             <p className="card-text" style={{ flexGrow: 1 }}>
-              Duration: {service.time}
+              Duration: {service.maxTime}
             </p>
             <p
               className="card-price"
@@ -135,7 +77,7 @@ export default function Services() {
                 color: "#d9534f",
               }}
             >
-              Price: {service.price}
+              Price: {service.servicePrice}
             </p>
             <button className="btn btn-primary mt-auto">Book Now</button>
           </div>
@@ -144,19 +86,21 @@ export default function Services() {
     ));
 
   const filteredStylingServices = hairStylingServices.filter((service) =>
-    service.title.toLowerCase().includes(searchStylingTerm.toLowerCase())
+    service.serviceName.toLowerCase().includes(searchStylingTerm.toLowerCase())
   );
 
   const filteredColoringServices = hairColoringServices.filter((service) =>
-    service.title.toLowerCase().includes(searchColoringTerm.toLowerCase())
+    service.serviceName.toLowerCase().includes(searchColoringTerm.toLowerCase())
   );
 
   const filteredTreatmentServices = hairTreatmentServices.filter((service) =>
-    service.title.toLowerCase().includes(searchTreatmentTerm.toLowerCase())
+    service.serviceName
+      .toLowerCase()
+      .includes(searchTreatmentTerm.toLowerCase())
   );
 
   const filteredSpaSkinServices = spaSkinServices.filter((service) =>
-    service.title.toLowerCase().includes(searchSpaSkinTerm.toLowerCase())
+    service.serviceName.toLowerCase().includes(searchSpaSkinTerm.toLowerCase())
   );
 
   return (
@@ -274,7 +218,7 @@ export default function Services() {
               <div className="d-block services text-center">
                 <div className="icon d-flex align-items-center justify-content-center">
                   <img
-                    src="images/skin-care.png"
+                    src="images/hair-care.png"
                     alt="Spa Skin"
                     style={{
                       width: "50px",
@@ -346,6 +290,15 @@ export default function Services() {
                     {renderServices(filteredStylingServices)}
                   </div>
                 </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -391,6 +344,15 @@ export default function Services() {
                   <div className="row">
                     {renderServices(filteredColoringServices)}
                   </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
                 </div>
               </div>
             </div>
@@ -438,6 +400,15 @@ export default function Services() {
                     {renderServices(filteredTreatmentServices)}
                   </div>
                 </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -482,6 +453,15 @@ export default function Services() {
                   <div className="row">
                     {renderServices(filteredSpaSkinServices)}
                   </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
                 </div>
               </div>
             </div>

@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
     email: "",
     phone: "",
     subject: "",
@@ -25,11 +26,11 @@ const Contact = () => {
   };
 
   useEffect(() => {
-    const { name, email, subject, message } = formData;
+    const { fullName, email, subject, message } = formData;
     if (
       subject.trim() !== "" &&
       isValidEmail(email) &&
-      name.trim() !== "" &&
+      fullName.trim() !== "" &&
       message.trim() !== ""
     ) {
       setIsSubmitEnabled(true);
@@ -52,7 +53,7 @@ const Contact = () => {
     }
 
     setFormData({
-      name: "",
+      fullName: "",
       email: "",
       phone: "",
       subject: "",
@@ -84,17 +85,17 @@ const Contact = () => {
                       <div className="row">
                         <div className="col-md-6">
                           <div className="form-group">
-                            <label className="label" htmlFor="name">
+                            <label className="label" htmlFor="fullName">
                               Full Name
                               <span style={{ color: "red", marginLeft:'5px' }}>*</span>
                             </label>
                             <input
                               type="text"
                               className="form-control"
-                              name="name"
-                              id="name"
-                              placeholder="Name"
-                              value={formData.name}
+                              name="fullName"
+                              id="fullName"
+                              placeholder="Full Name"
+                              value={formData.fullName}
                               onChange={handleChange}
                               required
                             />

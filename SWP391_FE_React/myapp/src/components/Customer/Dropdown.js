@@ -23,7 +23,7 @@ const UserIconDropdown = () => {
     sessionStorage.removeItem("userID");
     sessionStorage.removeItem("userRole");
     setHasToken(false);
-    setIsDropdownOpen(false); // Đảm bảo dropdown được đóng khi logout
+    setIsDropdownOpen(false);
     navigate("/");
   };
 

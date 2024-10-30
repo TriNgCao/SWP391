@@ -7,35 +7,39 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.ArrayList;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Getter
+@Setter
 public class Stylist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    @Setter
+
     private int stylistId;
-    @Getter
-    @Setter
+
     private int salary;
-    @Getter
-    @Setter
+
     private double commission;
+    private String imageName;
 
     @OneToOne()
     @JoinColumn(name = "account_id")
-    @Getter
-    @Setter
+
     private Account account;
 
     @ManyToOne
     @JoinColumn(name = "salonId")
-    @Getter
-    @Setter
+
     private Salon salon;
 
     @OneToMany(mappedBy = "stylist", cascade = CascadeType.ALL)
     private List<Appointment> appointments;
+
+    @OneToMany(mappedBy = "stylist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedules = new ArrayList<>();
 }
