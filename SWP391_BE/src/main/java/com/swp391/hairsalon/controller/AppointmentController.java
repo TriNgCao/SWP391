@@ -2,6 +2,7 @@ package com.swp391.hairsalon.controller;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class AppointmentController {
     @Autowired
     private ICustomerService iCustomerService;
+    @Autowired
+    private IAccountService iAccountService;
     @Autowired
     private IAppointmentService appointmentService;
     @Autowired
@@ -125,7 +128,7 @@ public class AppointmentController {
 
     @GetMapping("/customer/{accountId}")
     public List<AppointmentResponseDTO> getAppointmentsByCustomerName(@PathVariable String accountId) {
-        
+
         List<Appointment> list = appointmentService.getAppointmentsByCustomerAccountId(accountId);
         List<AppointmentResponseDTO> finalList = new ArrayList<>();
         for (Appointment appointment : list) {
@@ -133,7 +136,7 @@ public class AppointmentController {
             double totalPrice = 0;
             for (SalonService service : appointment.getServices()) {
                 serviceName.add(service.getServiceName());
-                totalPrice = totalPrice + service.getServicePrice();    
+                totalPrice = totalPrice + service.getServicePrice();
             }
             finalList.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getAccount().getName(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback(), appointment.getBranch().getSalonName()));
         }
@@ -144,22 +147,22 @@ public class AppointmentController {
     public ResponseEntity<String> addAppointment(@RequestBody AppointmentRequestDTO appointmentRequest) {
         if (appointmentRequest.getStylistId() == 0){
             int duration = calculateTotalDuration(appointmentRequest);
-            appointmentRequest.setStylistId(iBookedScheduleService.chooseRandomAvailableStylist(appointmentRequest.getStartTime().getHour(),duration , appointmentRequest.getSalonId(), appointmentRequest.getDate()));
+            appointmentRequest.setStylistId(iBookedScheduleService.chooseRandomAvailableStylist(appointmentRequest.getStartTime(),duration , appointmentRequest.getSalonId(), appointmentRequest.getDate()));
         }
         Appointment appointment = new Appointment();
-        appointment.setCustomer(iCustomerService.getCustomerById(appointmentRequest.getCusId()));
+        appointment.setCustomer(iCustomerService.getCustomerById(iAccountService.getCustomerIdByAccountID(appointmentRequest.getUserID())));
         appointment.setBranch(iSalonService.getSalonById(appointmentRequest.getSalonId()));
         appointment.setDate(appointmentRequest.getDate());
         appointment.setFeedback(null);
         appointment.setRating(-1);
         appointment.setServices(getSalonServicesById(appointmentRequest));
         appointment.setStylist(iStylistservice.getStylistById(appointmentRequest.getStylistId()));
-        appointment.setStartTime(appointmentRequest.getStartTime());
+        appointment.setStartTime(convertToLocalTime(appointmentRequest.getStartTime()));
         appointment.setStatus("Pending");
         appointment = appointmentService.addAppointment(appointment);
-        String msgStaff = "A booking request has just been created by "
-                + iCustomerService.getCustomerById(appointmentRequest.getCusId()).getAccount().getName()
-                + ", please check and process it.";
+        String msgStaff = "A booking request has just been created by <b>"
+                + iCustomerService.getCustomerById(iAccountService.getCustomerIdByAccountID(appointmentRequest.getUserID())).getAccount().getName()
+                + "</b>, please check and process it.";
         List<Staff> staffList = iStaffService.getStaffsBySalonId(appointmentRequest.getSalonId());
         for (Staff staff : staffList) {
             iNotificationService.addNewNotification("Appointment Request Created", msgStaff, staff.getAccount());
@@ -167,7 +170,7 @@ public class AppointmentController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Add appointment successfully!");
     }
 
-    
+
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateAppointment(@PathVariable int id,
@@ -176,13 +179,13 @@ public class AppointmentController {
         if (appointmentRequest.getStatus() == null){
             existAppointment.setFeedback(appointmentRequest.getFeedback());
             existAppointment.setRating(appointmentRequest.getRating());
+           existAppointment = appointmentService.updateAppointment(existAppointment);
             return ResponseEntity.ok("Update feedback and rating success!");
         }
         if (existAppointment == null) {
             return ResponseEntity.notFound().build();
         } else {
             String previousStatus = existAppointment.getStatus();
-            
             
             existAppointment.setStatus(appointmentRequest.getStatus());
             existAppointment = appointmentService.updateAppointment(existAppointment);
@@ -239,7 +242,7 @@ public class AppointmentController {
             return ResponseEntity.ok(("Update appointment successfully!"));
         }
     }
-    
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAppointment(@PathVariable int id) {
         Appointment appointment = appointmentService.getAppointmentById(id);
@@ -282,6 +285,9 @@ public class AppointmentController {
             }
         } 
         return loyalPoint;
+    }
+    public LocalTime convertToLocalTime(int startTime) {
+        return LocalTime.of(startTime, 00);
     }
 
     private int calculateTotalDuration(AppointmentRequestDTO appointmentRequest) {

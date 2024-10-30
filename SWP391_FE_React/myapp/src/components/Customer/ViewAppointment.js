@@ -1,135 +1,36 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { FaStar } from "react-icons/fa";
 
 const ViewAppointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
   const itemsPerPage = 10;
 
+  const accountId = sessionStorage.getItem("userID");
+
   useEffect(() => {
-    const fetchData = async () => {
-      const fakeData = [
-        {
-          id: 1,
-          stylistName: "John Doe",
-          salonName: "Salon A",
-          date: "2024-10-25",
-          services: ["Haircut", "Color", "Shampoo", "Blowdry"],
-          status: "Pending",
-          total: 400,
-        },
-        {
-          id: 2,
-          stylistName: "Jane Smith",
-          salonName: "Salon B",
-          date: "2024-10-26",
-          services: ["Massage", "Facial", "Manicure", "Pedicure"],
-          status: "Completed",
-          total: 250,
-        },
-        {
-          id: 3,
-          stylistName: "Alex Johnson",
-          salonName: "Salon C",
-          date: "2024-10-27",
-          services: ["Haircut", "Style"],
-          status: "Ready",
-          total: 150,
-        },
-        {
-          id: 4,
-          stylistName: "Maria Garcia",
-          salonName: "Salon D",
-          date: "2024-10-24",
-          services: ["Color", "Shampoo"],
-          status: "On Process",
-          total: 200,
-        },
-        {
-          id: 5,
-          stylistName: "Linda Brown",
-          salonName: "Salon E",
-          date: "2024-10-23",
-          services: ["Massage"],
-          status: "Ready",
-          total: 180,
-        },
-        {
-          id: 6,
-          stylistName: "James Wilson",
-          salonName: "Salon F",
-          date: "2024-10-22",
-          services: ["Haircut"],
-          status: "Completed",
-          total: 90,
-        },
-        {
-          id: 7,
-          stylistName: "Emma Clark",
-          salonName: "Salon G",
-          date: "2024-10-21",
-          services: ["Color", "Style"],
-          status: "Pending",
-          total: 220,
-        },
-        {
-          id: 8,
-          stylistName: "Michael Lee",
-          salonName: "Salon H",
-          date: "2024-10-20",
-          services: ["Blowdry"],
-          status: "On Process",
-          total: 60,
-        },
-        {
-          id: 9,
-          stylistName: "Sophia Martinez",
-          salonName: "Salon I",
-          date: "2024-10-19",
-          services: ["Haircut", "Shampoo"],
-          status: "Ready",
-          total: 130,
-        },
-        {
-          id: 10,
-          stylistName: "William Harris",
-          salonName: "Salon J",
-          date: "2024-10-18",
-          services: ["Massage", "Facial"],
-          status: "Pending",
-          total: 270,
-        },
-        {
-          id: 11,
-          stylistName: "William Harris",
-          salonName: "Salon J",
-          date: "2024-10-18",
-          services: ["Massage", "Facial"],
-          status: "Pending",
-          total: 270,
-        },
-        {
-          id: 12,
-          stylistName: "William Harris",
-          salonName: "Salon J",
-          date: "2024-10-18",
-          services: ["Massage", "Facial"],
-          status: "Pending",
-          total: 270,
-        },
-      ];
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setAppointments(fakeData);
+    const fetchAppointments = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/appointment/customer/${accountId}`
+        );
+        setAppointments(response.data);
+      } catch (error) {
+        toast.error("Failed to fetch appointments");
+      }
     };
-
-    fetchData();
-  }, []);
+    fetchAppointments();
+  }, [accountId]);
 
   useEffect(() => {
     const sortedAppointments = [...appointments].sort(
-      (b, a) => new Date(a.date) - new Date(b.date)
+      (a, b) => new Date(b.date) - new Date(a.date)
     );
     const filtered = selectedStatus
       ? sortedAppointments.filter(
@@ -151,11 +52,97 @@ const ViewAppointment = () => {
     setCurrentPage(page);
   };
 
+  const openModal = (content) => {
+    setModalContent(content);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalContent(null);
+  };
+
+  // const handleCancelAppointment = async (appointmentId) => {
+  //   try {
+  //     const response = await axios.put(
+  //       `http://localhost:8080/api/appointment/${appointmentId}`,
+  //       { status: "Cancelled" }
+  //     );
+
+  //     if (response.status === 200) {
+  //       toast.success("Appointment status updated successfully");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Failed to update appointment status");
+  //   }
+
+  //   closeModal();
+  // };
+  const handleCancelAppointment = async (appointment) => {
+    try {
+      const [updateResponse, additionalResponse] = await Promise.all([
+        axios.put(`http://localhost:8080/api/appointment/${appointment.id}`, {
+          status: "Cancelled",
+        }),
+        axios.put(`http://localhost:8080/api/additional-endpoint`, {
+          accountID: sessionStorage.getItem("userID"),
+          date: appointment.date,
+          bookedTime: appointment.startTime,
+        }),
+      ]);
+      if (updateResponse.status === 200 && additionalResponse.status === 200) {
+        toast.success("Appointment cancel successfully");
+      }
+    } catch (error) {
+      toast.error("Failed to cancel appointment please try again");
+    }
+
+    closeModal();
+  };
+
+  const handleFeedbackSubmit = async () => {
+    const { appointmentId, rating, feedback } = modalContent;
+
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/api/appointment/${appointmentId}`,
+        { rating: rating, feedback }
+      );
+      if (response.status === 200) {
+        toast.success("Feedback submitted successfully");
+        setAppointments((prevAppointments) =>
+          prevAppointments.map((a) =>
+            a.appointmentId === appointmentId ? { ...a, rating, feedback } : a
+          )
+        );
+      }
+    } catch (error) {
+      toast.error("Failed to submit feedback");
+    }
+    closeModal();
+  };
+
   const paginatedAppointments = filteredAppointments.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case "Completed":
+        return { color: "green" };
+      case "Processing":
+        return { color: "blue" };
+      case "Cancelled":
+        return { color: "red" };
+      case "Ready":
+        return { color: "pink" };
+      case "Pending":
+        return { color: "orange" };
+      default:
+        return { color: "black" };
+    }
+  };
   return (
     <div style={styles.appointmentContainer}>
       <h1 style={styles.title}>Your Appointments</h1>
@@ -171,7 +158,7 @@ const ViewAppointment = () => {
           <option value="Ready">Ready</option>
           <option value="On Process">On Process</option>
           <option value="Completed">Completed</option>
-          <option value="Canceled">Canceled</option>
+          <option value="Cancelled">Cancelled</option>
         </select>
       </div>
       <table style={styles.appointmentTable}>
@@ -189,7 +176,7 @@ const ViewAppointment = () => {
         </thead>
         <tbody>
           {paginatedAppointments.map((appointment, index) => (
-            <tr key={appointment.id}>
+            <tr key={appointment.appointmentId}>
               <td style={styles.cell}>
                 {(currentPage - 1) * itemsPerPage + index + 1}
               </td>
@@ -197,37 +184,62 @@ const ViewAppointment = () => {
               <td style={styles.cell}>{appointment.salonName}</td>
               <td style={styles.cell}>{appointment.date}</td>
               <td style={{ ...styles.cell, ...styles.servicesCell }}>
-                {appointment.services.join(", ")}
+                {appointment.serviceName.join(", ")}
               </td>
-              <td style={styles.cell}>${appointment.total}</td>
+              <td style={styles.cell}>${appointment.totalPrice}</td>
               <td
                 style={{
                   ...styles.cell,
-                  color:
-                    appointment.status === "Pending"
-                      ? "orange"
-                      : appointment.status === "Ready"
-                      ? "blue"
-                      : appointment.status === "On Process"
-                      ? "purple"
-                      : appointment.status === "Completed"
-                      ? "green"
-                      : "red",
-                  fontWeight: "bold",
+                  ...getStatusStyle(appointment.status),
                 }}
               >
-                {appointment.status}
+                {" "}
+                <b>{appointment.status}</b>
               </td>
               <td style={styles.cell}>
                 {appointment.status === "Pending" ||
                 appointment.status === "Ready" ? (
-                  <button style={styles.cancelBtn}>
-                    <b>Cancel</b>
+                  <button
+                    style={styles.cancelBtn}
+                    onClick={() =>
+                      openModal({
+                        type: "cancel",
+                        appointmentId: appointment.appointmentId,
+                      })
+                    }
+                  >
+                    Cancel
                   </button>
                 ) : appointment.status === "Completed" ? (
-                  <button style={styles.feedbackBtn}>
-                    <b>Feedback</b>
-                  </button>
+                  appointment.rating > 0 ? (
+                    <button
+                      style={styles.feedbackBtn}
+                      onClick={() =>
+                        openModal({
+                          type: "viewFeedback",
+                          appointmentId: appointment.appointmentId,
+                          rating: appointment.rating,
+                          feedback: appointment.feedback,
+                        })
+                      }
+                    >
+                      View Feedback
+                    </button>
+                  ) : (
+                    <button
+                      style={styles.feedbackBtn}
+                      onClick={() =>
+                        openModal({
+                          type: "feedback",
+                          appointmentId: appointment.appointmentId,
+                          rating: appointment.rating,
+                          feedback: appointment.feedback,
+                        })
+                      }
+                    >
+                      Give Feedback
+                    </button>
+                  )
                 ) : null}
               </td>
             </tr>
@@ -261,9 +273,117 @@ const ViewAppointment = () => {
           Next
         </button>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div style={styles.overlay}>
+          <div style={styles.modal}>
+            {modalContent.type === "cancel" ? (
+              <>
+                <p style={{ fontSize: "30px" }}>
+                  <b>Are you sure you want to cancel this appointment?</b>
+                </p>
+                <button
+                  style={{ ...styles.modalButton, ...styles.confirmButton }}
+                  onClick={() =>
+                    handleCancelAppointment(modalContent.appointmentId)
+                  }
+                >
+                  Yes
+                </button>
+                <button
+                  style={{ ...styles.modalButton, ...styles.cancelButton }}
+                  onClick={closeModal}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : modalContent.type === "feedback" ? (
+              <>
+                <p style={{ fontSize: "20px" }}>
+                  <b>Provide feedback and rating:</b>
+                </p>
+                <StarRating
+                  rating={modalContent.rating}
+                  onRatingChange={(rating) =>
+                    setModalContent((prev) => ({ ...prev, rating }))
+                  }
+                />
+                <textarea
+                  value={modalContent.feedback || ""}
+                  onChange={(e) =>
+                    setModalContent((prev) => ({
+                      ...prev,
+                      feedback: e.target.value,
+                    }))
+                  }
+                  style={styles.feedbackInput}
+                />
+                <button
+                  style={{ ...styles.modalButton, ...styles.confirmButton }}
+                  onClick={handleFeedbackSubmit}
+                >
+                  Submit
+                </button>
+                <button
+                  style={{ ...styles.modalButton, ...styles.cancelButton }}
+                  onClick={closeModal}
+                >
+                  Close
+                </button>
+              </>
+            ) : modalContent.type === "viewFeedback" ? (
+              <>
+                <p style={{ fontSize: "20px" }}>
+                  <b>Feedback and Rating:</b>
+                </p>
+                <StarRating
+                  rating={modalContent.rating}
+                  onRatingChange={(rating) =>
+                    setModalContent((prev) => ({ ...prev, rating }))
+                  }
+                  disabled={modalContent.type === "viewFeedback"}
+                />
+                <textarea
+                  value={modalContent.feedback || ""}
+                  onChange={(e) =>
+                    setModalContent((prev) => ({
+                      ...prev,
+                      feedback: e.target.value,
+                    }))
+                  }
+                  style={styles.feedbackInput}
+                  disabled
+                />
+                <button
+                  style={{ ...styles.modalButton, ...styles.cancelButton }}
+                  onClick={closeModal}
+                >
+                  Close
+                </button>
+              </>
+            ) : null}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
+// Additional components and styling code
+const StarRating = ({ rating, onRatingChange, disabled }) => (
+  <div style={styles.starRatingContainer}>
+    {[...Array(5)].map((_, index) => (
+      <FaStar
+        key={index}
+        color={index < rating ? "#FFC107" : "#E4E5E9"}
+        size={50} // Larger size for the stars
+        onClick={() => !disabled && onRatingChange(index + 1)}
+        style={disabled ? { cursor: "not-allowed" } : { cursor: "pointer" }}
+      />
+    ))}
+  </div>
+);
 
 // Styles CSS directly in file
 const styles = {
@@ -329,7 +449,7 @@ const styles = {
   },
   feedbackBtn: {
     color: "white",
-    backgroundColor: "green",
+    backgroundColor: "#4caf50",
     padding: "5px 6px",
     border: "none",
     borderRadius: "5px",
@@ -358,6 +478,60 @@ const styles = {
   paginationButtonDisabled: {
     backgroundColor: "#cccccc",
     cursor: "not-allowed",
+  },
+  overlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
+  },
+  modalButton: {
+    padding: "8px 12px",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    marginTop: "15px",
+    float: "right",
+  },
+  confirmButton: {
+    backgroundColor: "#4caf50",
+    color: "white",
+    minWidth: "50px",
+  },
+  cancelButton: {
+    backgroundColor: "gray",
+    color: "white",
+    marginRight: "10px",
+  },
+  feedbackInput: {
+    width: "100%",
+    height: "150px",
+    padding: "10px",
+    marginTop: "10px",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    resize: "none",
+  },
+  modal: {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "500px",
+    backgroundColor: "white",
+    padding: "20px",
+    borderRadius: "8px",
+    zIndex: 1001,
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+    textAlign: "center",
+  },
+  starRatingContainer: {
+    display: "flex",
+    justifyContent: "center",
+    marginBottom: "15px",
   },
 };
 

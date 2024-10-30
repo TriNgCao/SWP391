@@ -11,7 +11,6 @@ import {
   CircularProgress,
 } from "@mui/material";
 
-// Style for Modal
 const modalStyle = {
   position: "fixed",
   top: "50%",
@@ -32,7 +31,6 @@ const modalStyle = {
   zIndex: 1300,
 };
 
-// Style for Menu
 const menuStyle = {
   maxWidth: "350px",
   maxHeight: "70vh",
@@ -48,16 +46,15 @@ function NotificationMenu({ anchorEl, handleClose, setUnreadCount }) {
   const [loading, setLoading] = React.useState(true);
   const [selectedNotification, setSelectedNotification] = React.useState(null);
   const [openModal, setOpenModal] = React.useState(false);
-  // Fetch notifications from API when component mounts
   React.useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/noti/3");
+        const accountID = sessionStorage.getItem("userID");
+        const response = await axios.get(
+          `http://localhost:8080/api/noti/${accountID}`
+        );
         console.log(response);
-        
         setNotifications(response.data);
-
-        // Cập nhật số thông báo chưa đọc
         const unreadNotifications = response.data.filter((n) => !n.read).length;
         setUnreadCount(unreadNotifications);
       } catch (error) {
@@ -69,11 +66,10 @@ function NotificationMenu({ anchorEl, handleClose, setUnreadCount }) {
 
     fetchNotifications();
   }, [setUnreadCount]);
-  // Handle marking notification as read
-  // Handle marking notification as read
+
   const markAsRead = async (notiId) => {
     if (!notiId) {
-      console.error("notiId is undefined!"); // Thêm log để kiểm tra nếu notiId là undefined
+      console.error("notiId is undefined!");
       return;
     }
     try {
@@ -81,14 +77,13 @@ function NotificationMenu({ anchorEl, handleClose, setUnreadCount }) {
       setNotifications((prev) =>
         prev.map((n) => (n.notiId === notiId ? { ...n, read: true } : n))
       );
-  
-      // Giảm số lượng thông báo chưa đọc
+
       setUnreadCount((prev) => Math.max(prev - 1, 0));
     } catch (error) {
       console.error("Failed to mark notification as read:", error);
     }
   };
-  // Open modal and mark notification as read
+
   const handleOpenModal = (notification) => {
     console.log(notification);
     setSelectedNotification(notification);
@@ -100,13 +95,11 @@ function NotificationMenu({ anchorEl, handleClose, setUnreadCount }) {
     }
   };
 
-  // Close modal
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedNotification(null);
   };
 
-  // Render loading indicator
   if (loading) {
     return <CircularProgress />;
   }
@@ -142,7 +135,7 @@ function NotificationMenu({ anchorEl, handleClose, setUnreadCount }) {
                   width: "100%",
                   backgroundColor: notification.read
                     ? "white"
-                    : "rgba(0, 255, 0, 0.1)", // Highlight unread notifications
+                    : "rgba(0, 255, 0, 0.1)",
                   "&:hover": {
                     backgroundColor: "rgba(0, 0, 0, 0.04)",
                   },

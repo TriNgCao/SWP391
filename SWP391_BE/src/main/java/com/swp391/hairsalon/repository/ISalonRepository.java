@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface ISalonRepository extends JpaRepository<Salon, Integer> {
 
+
+
     @Query("Select new com.swp391.hairsalon.dto.SalonDto(s.salonId, s.salonName)  from Salon s where s.salonStatus = true ")
     List<SalonDto> getSalonNameActive();
 

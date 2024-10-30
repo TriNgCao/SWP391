@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+
+
+import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import {
   Box,
   Grid,
@@ -16,98 +19,254 @@ import {
   FormControl,
   InputLabel,
   Pagination,
+  Modal,
+  TextField,
 } from "@mui/material";
 
-// Sample transactions data
-const employeeData = [
-  {
-    id: 1,
-    name: "Amit Singh",
-    role: "Stylist",
-    salary: "$50,000",
-    rank: "Senior Stylist",
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Rahul Bhat",
-    role: "Stylist",
-    salary: "$45,000",
-    rank: "Mid-Level Stylist",
-    status: "Active",
-  },
-  {
-    id: 3,
-    name: "Harsha TL",
-    role: "Staff",
-    salary: "$30,000",
-    rank: "Junior Staff",
-    status: "Inactive",
-  },
-  {
-    id: 4,
-    name: "Sandeep Roy",
-    role: "Staff",
-    salary: "$35,000",
-    rank: "Junior Staff",
-    status: "Active",
-  },
-  {
-    id: 5,
-    name: "Arjun Raj",
-    role: "Stylist",
-    salary: "$55,000",
-    rank: "Senior Stylist",
-    status: "Active",
-  },
-  {
-    id: 6,
-    name: "Priya Sharma",
-    role: "Stylist",
-    salary: "$48,000",
-    rank: "Mid-Level Stylist",
-    status: "Active",
-  },
-  {
-    id: 7,
-    name: "Neha Gupta",
-    role: "Staff",
-    salary: "$28,000",
-    rank: "Junior Staff",
-    status: "Active",
-  },
-  {
-    id: 8,
-    name: "Ravi Kumar",
-    role: "Staff",
-    salary: "$33,000",
-    rank: "Junior Staff",
-    status: "Inactive",
-  },
-  {
-    id: 9,
-    name: "Sita Devi",
-    role: "Stylist",
-    salary: "$52,000",
-    rank: "Senior Stylist",
-    status: "Active",
-  },
-  {
-    id: 10,
-    name: "Vikram Singh",
-    role: "Staff",
-    salary: "$32,000",
-    rank: "Junior Staff",
-    status: "Active",
-  },
-];
 
 const ManagerPersonnel = () => {
-  const [statusFilter, setStatusFilter] = useState("All");
-  const [typeFilter, setTypeFilter] = useState("All");
-  const [categoryFilter, setCategoryFilter] = useState("All");
-  const [accountFilter, setAccountFilter] = useState("All");
+  const [employees, setEmployees] = useState([]);
+  const [roleFilter, setRoleFilter] = useState("3");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const employeesPerPage = 5;
+  const [editStaffModalOpen, setEditStaffModalOpen] = useState(false);
+  const [editStylistModalOpen, setEditStylistModalOpen] = useState(false);
+  const [tempSalary, setTempSalary] = useState("");
+  const tempSalaryRef = useRef(selectedEmployee?.salary || "");
+  const tempCommissionRef = useRef(selectedEmployee?.commission || "");
+  // Fetch employees data
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const employeeResponse = await axios.get(
+          "http://localhost:8080/user/fetchEmployees/MAN1"
+        );
+        setEmployees(employeeResponse.data);
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+      }
+    };
 
+
+    fetchEmployees();
+  }, []);
+  // Đóng modal và đặt lại nhân viên được chọn
+
+
+  // -----------------------------------------------------------------------------------------
+  // Filter employees based on role
+  const filteredEmployees = employees.filter((employee) => {
+    return employee.role === parseInt(roleFilter);
+  });
+
+
+  // Calculate total pages for pagination
+  const totalPages = Math.ceil(filteredEmployees.length / employeesPerPage);
+
+
+  // Get employees for the current page
+  const paginatedEmployees = filteredEmployees.slice(
+    (currentPage - 1) * employeesPerPage,
+    currentPage * employeesPerPage
+  );
+
+
+  // Handle edit button click
+  // Xử lý khi nhấn nút Edit
+  const handleEditClick = (employee) => {
+    setSelectedEmployee(employee);
+    setTempSalary(employee.salary || ""); // Đặt giá trị cũ vào tempSalary
+    if (employee.role === 2) {
+      setEditStylistModalOpen(true);
+    } else if (employee.role === 3) {
+      setEditStaffModalOpen(true);
+    }
+  };
+  const handleCloseModal = () => {
+    setEditStaffModalOpen(false);
+    setEditStylistModalOpen(false);
+    setSelectedEmployee(null);
+  };
+  // Làm mới dữ liệu sau khi cập nhật
+  const refreshData = async () => {
+    try {
+      const employeeResponse = await axios.get(
+        "http://localhost:8080/user/fetchEmployees/MAN1"
+      );
+      setEmployees(employeeResponse.data);
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    }
+  };
+
+
+  //----------------------------------------------------------------------------
+  const EditStaffModal = () => (
+    <Modal open={editStaffModalOpen} onClose={handleCloseModal}>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
+          bgcolor: "background.paper",
+          border: "2px solid #000",
+          boxShadow: 24,
+          p: 4,
+        }}
+      >
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          Edit Salary for Staff
+        </Typography>
+        <TextField
+          fullWidth
+          label="Salary"
+          defaultValue={selectedEmployee?.salary || ""} // Giá trị ban đầu từ state chính
+          onChange={(e) => {
+            tempSalaryRef.current = e.target.value; // Lưu giá trị vào ref thay vì state
+          }}
+          sx={{ mb: 2 }}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={async () => {
+            // Lấy giá trị từ ref và chuyển đổi thành số
+            const updatedSalary = parseInt(tempSalaryRef.current, 10);
+
+            // Kiểm tra tính hợp lệ
+            if (isNaN(updatedSalary) || updatedSalary < 0) {
+              alert("Please enter a valid salary.");
+              return;
+            }
+
+            // Cập nhật state chính từ giá trị tạm trong ref
+            setSelectedEmployee((prev) => ({
+              ...prev,
+              salary: updatedSalary,
+            }));
+
+            // Gửi yêu cầu API để cập nhật salary
+            try {
+              await axios.put(
+                `http://localhost:8080/salary/staff/update/${selectedEmployee.id}`,
+                { salary: updatedSalary }
+              );
+              alert("Staff salary updated successfully");
+              handleCloseModal();
+              refreshData();
+            } catch (error) {
+              console.error("Error updating staff salary:", error);
+            }
+          }}
+          sx={{ mr: 2 }}
+        >
+          Save
+        </Button>
+      </Box>
+    </Modal>
+  );
+
+
+  const EditStylistModal = () => (
+    <Modal open={editStylistModalOpen} onClose={handleCloseModal}>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
+          bgcolor: "background.paper",
+          border: "2px solid #000",
+          boxShadow: 24,
+          p: 4,
+        }}
+      >
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          Edit Salary and Commission for Stylist
+        </Typography>
+
+        {/* Sử dụng ref cho Salary */}
+        <TextField
+          fullWidth
+          label="Salary"
+          type="text"
+          defaultValue={selectedEmployee?.salary || ""}
+          onChange={(e) => {
+            tempSalaryRef.current = e.target.value; // Lưu giá trị tạm thời vào ref
+          }}
+          inputProps={{ min: 0 }} // Giới hạn giá trị tối thiểu là 0
+          sx={{ mb: 2 }}
+        />
+
+        {/* Sử dụng ref cho Commission */}
+        <TextField
+          fullWidth
+          label="Commission"
+          type="text"
+          defaultValue={selectedEmployee?.commission || ""}
+          onChange={(e) => {
+            tempCommissionRef.current = e.target.value; // Lưu giá trị tạm thời vào ref
+          }}
+          inputProps={{ step: 0.1, min: 0.1, max: 1 }}
+          sx={{ mb: 2 }}
+        />
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={async () => {
+            const updatedSalary = parseFloat(tempSalaryRef.current);
+            const updatedCommission = parseFloat(tempCommissionRef.current);
+
+            // Kiểm tra tính hợp lệ của giá trị
+            if (isNaN(updatedSalary) || updatedSalary < 0) {
+              alert("Please enter a valid salary.");
+              return;
+            }
+
+            if (
+              isNaN(updatedCommission) ||
+              updatedCommission < 0.1 ||
+              updatedCommission > 1
+            ) {
+              alert("Please enter a valid commission (0.1 to 1).");
+              return;
+            }
+
+            try {
+              await axios.put(
+                `http://localhost:8080/salary/stylist/update/${selectedEmployee.id}`,
+                {
+                  salary: updatedSalary,
+                  commission: updatedCommission,
+                }
+              );
+              alert("Stylist salary and commission updated successfully");
+              handleCloseModal();
+              refreshData();
+            } catch (error) {
+              console.error("Error updating stylist:", error);
+            }
+          }}
+          sx={{ mr: 2 }}
+        >
+          Save
+        </Button>
+
+        <Button variant="outlined" onClick={handleCloseModal}>
+          Cancel
+        </Button>
+      </Box>
+    </Modal>
+  );
+
+
+  // ---------------------------------------------------------------------
   return (
     <Box
       sx={{
@@ -121,79 +280,29 @@ const ManagerPersonnel = () => {
         Personnel
       </Typography>
 
+
       {/* Filter Section */}
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid item xs={12} sm={3}>
           <FormControl fullWidth>
-            <InputLabel>Status</InputLabel>
+            <InputLabel>Role</InputLabel>
             <Select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              value={roleFilter}
+              onChange={(e) => {
+                setRoleFilter(e.target.value);
+                setCurrentPage(1); // Reset to page 1 after filter change
+              }}
             >
-              <MenuItem value="All">All</MenuItem>
-              <MenuItem value="Complete">Complete</MenuItem>
-              <MenuItem value="Pending">Pending</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={3}>
-          <FormControl fullWidth>
-            <InputLabel>Type</InputLabel>
-            <Select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-            >
-              <MenuItem value="All">All</MenuItem>
-              <MenuItem value="Income">Income</MenuItem>
-              <MenuItem value="Expense">Expense</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={3}>
-          <FormControl fullWidth>
-            <InputLabel>Category</InputLabel>
-            <Select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-            >
-              <MenuItem value="All">All</MenuItem>
-              <MenuItem value="Sales">Sales</MenuItem>
-              <MenuItem value="Income">Income</MenuItem>
-              <MenuItem value="Expense">Expense</MenuItem>
-              <MenuItem value="Uncategorized Income">
-                Uncategorized Income
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={3}>
-          <FormControl fullWidth>
-            <InputLabel>Account</InputLabel>
-            <Select
-              value={accountFilter}
-              onChange={(e) => setAccountFilter(e.target.value)}
-            >
-              <MenuItem value="All">All</MenuItem>
-              <MenuItem value="Savings">Savings</MenuItem>
-              <MenuItem value="Cash on Hand">Cash on Hand</MenuItem>
-              <MenuItem value="Cash Management">Cash Management</MenuItem>
+              {/* ------------------------------------------------------------------------------------------ */}
+              <MenuItem value="2">Stylist</MenuItem>
+              <MenuItem value="3">Staff</MenuItem>
             </Select>
           </FormControl>
         </Grid>
       </Grid>
 
-      {/* Add Income and Expense Buttons */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ backgroundColor: "#4CAF50" }}
-        >
-          Add
-        </Button>
-      </Box>
 
-      {/* Transactions Table */}
+      {/* Personnel Table */}
       <TableContainer component={Paper} sx={{ backgroundColor: "#f5f5f5" }}>
         <Table>
           <TableHead>
@@ -203,35 +312,36 @@ const ManagerPersonnel = () => {
                 color: "#fff",
               }}
             >
-              <TableCell sx={{ color: "#fff" }}>ID</TableCell>
+              <TableCell sx={{ color: "#fff" }}>No</TableCell>
               <TableCell sx={{ color: "#fff" }}>Name</TableCell>
               <TableCell sx={{ color: "#fff" }}>Role</TableCell>
               <TableCell sx={{ color: "#fff" }}>Salary</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Rank</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Status</TableCell>
+              {roleFilter === "2" && (
+                <TableCell sx={{ color: "#fff" }}>Commission</TableCell>
+              )}
               <TableCell sx={{ color: "#fff" }}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {employeeData.map((employee) => (
+            {paginatedEmployees.map((employee, index) => (
               <TableRow key={employee.id}>
-                <TableCell>{employee.id}</TableCell>
-                <TableCell>{employee.name}</TableCell>
-                <TableCell>{employee.role}</TableCell>
-                <TableCell>{employee.salary}</TableCell>
-                <TableCell>{employee.rank}</TableCell>
-                <TableCell
-                  sx={{
-                    color: employee.status === "Active" ? "#4CAF50" : "#F44336",
-                  }}
-                >
-                  {employee.status}
+                <TableCell>
+                  {(currentPage - 1) * employeesPerPage + index + 1}
                 </TableCell>
+                <TableCell>{employee.name}</TableCell>
+                <TableCell>
+                  {employee.role === 2 ? "Stylist" : "Staff"}
+                </TableCell>
+                <TableCell>{employee.salary}</TableCell>
+                {roleFilter === "2" && employee.role === 2 && (
+                  <TableCell>{`${employee.commission * 100}%`}</TableCell>
+                )}
                 <TableCell>
                   <Button
                     variant="contained"
                     color="primary"
                     sx={{ backgroundColor: "#4CAF50" }}
+                    onClick={() => handleEditClick(employee)}
                   >
                     Edit
                   </Button>
@@ -242,12 +352,29 @@ const ManagerPersonnel = () => {
         </Table>
       </TableContainer>
 
+
       {/* Pagination */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-        <Pagination count={10} color="primary" />
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={(event, value) => setCurrentPage(value)}
+          color="primary"
+        />
       </Box>
+
+
+      {/* Edit Modal */}
+      <EditStaffModal />
+      <EditStylistModal />
     </Box>
   );
 };
 
+
 export default ManagerPersonnel;
+
+
+
+
+

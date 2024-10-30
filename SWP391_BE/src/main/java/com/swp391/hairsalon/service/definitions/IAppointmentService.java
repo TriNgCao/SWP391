@@ -1,6 +1,7 @@
 package com.swp391.hairsalon.service.definitions;
 
 import java.sql.Date;
+import java.time.LocalTime;
 import java.util.List;
 
 import com.swp391.hairsalon.pojo.Appointment;

@@ -27,9 +27,15 @@ import Footer from "./components/Customer/Footer";
 import BlogSection from "./components/Customer/Blog";
 import BlogPost from "./components/Customer/BlogDetail";
 import UserProfile from "./components/Customer/CustomerProfile";
-import ViewAppointment from "./components/Customer/ViewAppointment";
+import ManageCustomer from "./Pages/Admin/ManagerCustomer";
+import ManagerSchedule from "./Pages/Manager/ManagerSchedule";
+import ManagerBlogs from "./Pages/Manager/ManagerBlogs";
+import StylistLayout from "./Layouts/Stylist/StylistLayout";
+import StylistProfilePage from "./Pages/Stylist/StylistProfilePage";
+import StylistSchedule from "./Pages/Stylist/StylistSchedule";
+import StylistSalary from "./Pages/Stylist/StylistSalary";
 import CustomerPrivateRoute from "./components/PrivateRoute/CustomerPrivateRoute";
-import ManagerBlog from "./Pages/Manager/ManagerBlog";
+import ViewAppointment from "./components/Customer/ViewAppointment";
 
 function App() {
   return (
@@ -141,15 +147,18 @@ function App() {
             <Route
               path="manager-transaction"
               element={<ManagerTransaction />}
+            /><Route
+              path="manager-blog"
+              element={<ManagerBlogs />}
             />
             <Route
-              path="manager-appointments"
+              path="view-appointments"
               element={<ManagerAppointments />}
+            /><Route
+              path="manager-schedule"
+              element={<ManagerSchedule />}
             />
-           <Route
-              path="manager-blog"
-              element={<ManagerBlog/>}
-            /> 
+
           </Route>
 
           {/* DASHBOARD ADMIN */}
@@ -157,6 +166,9 @@ function App() {
             <Route path="admin-profile" element={<AdminProfilePage />} />
             <Route path="admin-personnel" element={<AdminPersonnel />} />
             <Route path="admin-salon" element={<AdminSalon />} />
+            <Route path="admin-customer"
+              element={<ManageCustomer />}
+            />
           </Route>
 
           {/* DASHBOARD STAFF */}
@@ -164,6 +176,11 @@ function App() {
             <Route path="staff-profile" element={<StaffProfilePage />} />
             <Route path="staff-appointments" element={<StaffAppointments />} />
             <Route path="staff-salary" element={<StaffSalary />} />
+          </Route>
+          <Route path="/stylist" element={<StylistLayout />}>
+            <Route path="stylist-profile" element={<StylistProfilePage />} />
+            <Route path="stylist-salary" element={<StylistSalary />} />
+            <Route path="stylist-schedule" element={<StylistSchedule />} />
           </Route>
         </Routes>
       </AuthProvider>

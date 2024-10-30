@@ -57,12 +57,12 @@ const ManagerAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-const accountID = sessionStorage.getItem("accountId")
+  const accountID = sessionStorage.getItem("accountId")
   // Fetch dữ liệu từ API
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/appointment/manage/4`);
+        const response = await axios.get(`http://localhost:8080/api/appointment/manage/MAN1`);
         setAppointments(response.data);
       } catch (error) {
         console.error("Failed to fetch appointments:", error);
@@ -167,69 +167,69 @@ const accountID = sessionStorage.getItem("accountId")
 
       {/* Modal hiển thị thông tin chi tiết */}
       <Modal open={openModal} onClose={handleCloseModal}>
-  <Box
-    sx={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: 500,
-      bgcolor: "background.paper",
-      boxShadow: 24,
-      p: 4,
-      borderRadius: 2,
-      outline: "none",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    }}
-  >
-    <Typography
-      variant="h5"
-      fontWeight="bold"
-      sx={{ mb: 2, color: "#4CAF50", textAlign: "center" }}
-    >
-      Appointment's feedback
-    </Typography>
-    <Divider sx={{ mb: 2, width: "100%" }} />
-
-    {selectedAppointment && (
-      <>
-        {/* Kiểm tra nếu rating là -1 và feedback là null */}
-        {selectedAppointment.rating === -1 && !selectedAppointment.feedback ? (
-          <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 2 }}>
-            User has not rated this appointment.
-          </Typography>
-        ) : (
-          <>
-            <Box sx={{ mb: 2, textAlign: "center" }}>
-              <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
-                {renderStars(selectedAppointment.rating, 40)}
-              </Box>
-            </Box>
-
-            <Box sx={{ mb: 2, textAlign: "center" }}>
-              <Typography variant="subtitle1" fontWeight="bold">
-                Feedback:
-              </Typography>
-              <Typography>{selectedAppointment.feedback || "No feedback"}</Typography>
-            </Box>
-          </>
-        )}
-
-        <Box sx={{ textAlign: "center", mt: 4 }}>
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: "#4CAF50", color: "#fff" }}
-            onClick={handleCloseModal}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+            outline: "none",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            sx={{ mb: 2, color: "#4CAF50", textAlign: "center" }}
           >
-            Close
-          </Button>
+            Appointment's feedback
+          </Typography>
+          <Divider sx={{ mb: 2, width: "100%" }} />
+
+          {selectedAppointment && (
+            <>
+              {/* Kiểm tra nếu rating là -1 và feedback là null */}
+              {selectedAppointment.rating === -1 && !selectedAppointment.feedback ? (
+                <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 2 }}>
+                  User has not rated this appointment.
+                </Typography>
+              ) : (
+                <>
+                  <Box sx={{ mb: 2, textAlign: "center" }}>
+                    <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
+                      {renderStars(selectedAppointment.rating, 40)}
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ mb: 2, textAlign: "center" }}>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Feedback:
+                    </Typography>
+                    <Typography>{selectedAppointment.feedback || "No feedback"}</Typography>
+                  </Box>
+                </>
+              )}
+
+              <Box sx={{ textAlign: "center", mt: 4 }}>
+                <Button
+                  variant="contained"
+                  sx={{ backgroundColor: "#4CAF50", color: "#fff" }}
+                  onClick={handleCloseModal}
+                >
+                  Close
+                </Button>
+              </Box>
+            </>
+          )}
         </Box>
-      </>
-    )}
-  </Box>
-</Modal>
+      </Modal>
 
     </Box>
   );

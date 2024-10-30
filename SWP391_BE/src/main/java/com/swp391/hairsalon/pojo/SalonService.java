@@ -1,5 +1,6 @@
 package com.swp391.hairsalon.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,6 +37,7 @@ public class SalonService {
 
 
     @ManyToMany(mappedBy = "services")
+    @JsonIgnore
     private List<Appointment> appointments;
 
 

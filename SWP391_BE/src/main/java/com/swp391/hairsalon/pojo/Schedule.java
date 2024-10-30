@@ -31,8 +31,9 @@ public class Schedule {
     private int endTime;
 
     @ManyToOne
-    @JoinColumn(name = "stylist_id", referencedColumnName = "stylistId")
+    @JoinColumn(name = "stylist_id",referencedColumnName = "stylistId") // Sử dụng tên cột trong cơ sở dữ liệu
     private Stylist stylist;
+
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookedSchedule> bookedSchedules = new ArrayList<>();

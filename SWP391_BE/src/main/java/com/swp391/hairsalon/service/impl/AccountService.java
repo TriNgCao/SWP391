@@ -179,4 +179,9 @@ public class AccountService implements IAccountService {
     public boolean isActive(String email) {
         return iAccountRepository.searchByEmail(email).isActive();
     }
+
+    @Override
+    public int getCustomerIdByAccountID(String accountID) {
+        return iAccountRepository.getCusIdByAccountId(accountID);
+    }
 }

@@ -46,7 +46,7 @@ public class AuthController {
 
         this.doAuthenticate(request.getEmail(), request.getPassword());
 
-        if(iAccountService.isActive(request.getEmail())) {
+        if(!iAccountService.isActive(request.getEmail())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 

@@ -1,11 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import GroupIcon from "@mui/icons-material/Group";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import PaidIcon from "@mui/icons-material/Paid";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
+import GroupIcon from "@mui/icons-material/Group"; // Icon cho Profile
+import PeopleIcon from "@mui/icons-material/People"; // Icon cho Manage Personnel
+import StoreIcon from "@mui/icons-material/Store"; // Icon cho Manage Salon
+
 const AdminSidebar = () => {
   return (
     <div className="sidebar" style={sidebarStyle}>
@@ -17,12 +15,12 @@ const AdminSidebar = () => {
         </li>
         <li style={listItemStyle}>
           <Link to="admin-personnel" style={linkStyle}>
-            <AccountBalanceIcon /> Manage Personnel
+            <PeopleIcon /> Manage Personnel
           </Link>
         </li>
         <li style={listItemStyle}>
           <Link to="admin-salon" style={linkStyle}>
-            <AccountBalanceIcon /> Manage Salon
+            <StoreIcon /> Manage Salon
           </Link>
         </li>
       </ul>
@@ -34,13 +32,14 @@ const AdminSidebar = () => {
 const sidebarStyle = {
   width: "240px",
   backgroundColor: "#E8E8E8",
+  height: "100vh", // Đảm bảo sidebar phủ toàn bộ chiều cao
 };
 
 // List styling
 const listStyle = {
   listStyleType: "none",
   padding: 12,
-  color: "#333", // Changed to match the text color
+  color: "#4CAF50", // Chuyển màu chữ sang xanh lá cây
   backgroundColor: "#DFDFDF",
 };
 
@@ -53,10 +52,10 @@ const listItemStyle = {
   transition: "background 0.3s",
 };
 
-// Link styling - changed color to black
+// Link styling
 const linkStyle = {
-  textDecoration: "none", // Remove the underline
-  color: "#000", // Set the color to black
+  textDecoration: "none",
+  color: "#4CAF50", // Màu chữ chuyển sang xanh lá cây
   display: "flex",
   alignItems: "center",
   gap: "0.6rem",

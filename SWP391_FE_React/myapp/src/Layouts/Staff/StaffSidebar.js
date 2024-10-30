@@ -1,28 +1,26 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import GroupIcon from "@mui/icons-material/Group";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import PaidIcon from "@mui/icons-material/Paid";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle"; // Icon cho Profile
+import BarChartIcon from "@mui/icons-material/BarChart"; // Icon cho Manage Appointments
+import PaidIcon from "@mui/icons-material/Paid"; // Icon cho Salary
+
 const StaffSidebar = () => {
   return (
     <div className="sidebar" style={sidebarStyle}>
       <ul style={listStyle}>
         <li style={listItemStyle}>
           <Link to="staff-profile" style={linkStyle}>
-            <GroupIcon /> Profile
+            <AccountCircleIcon /> Profile
           </Link>
         </li>
         <li style={listItemStyle}>
           <Link to="staff-appointments" style={linkStyle}>
-            <AccountBalanceIcon /> Manage Appointments
+            <BarChartIcon /> Manage Appointments
           </Link>
         </li>
         <li style={listItemStyle}>
           <Link to="staff-salary" style={linkStyle}>
-            <AccountBalanceIcon /> Salary
+            <PaidIcon /> View Salary
           </Link>
         </li>
       </ul>
@@ -34,13 +32,14 @@ const StaffSidebar = () => {
 const sidebarStyle = {
   width: "240px",
   backgroundColor: "#E8E8E8",
+  height: "100vh", // Đảm bảo sidebar phủ toàn bộ chiều cao
 };
 
 // List styling
 const listStyle = {
   listStyleType: "none",
   padding: 12,
-  color: "#333", // Changed to match the text color
+  color: "#333",
   backgroundColor: "#DFDFDF",
 };
 
@@ -53,10 +52,10 @@ const listItemStyle = {
   transition: "background 0.3s",
 };
 
-// Link styling - changed color to black
+// Link styling
 const linkStyle = {
-  textDecoration: "none", // Remove the underline
-  color: "#000", // Set the color to black
+  textDecoration: "none",
+  color: "#4CAF50", // Màu chữ chuyển sang xanh lá cây
   display: "flex",
   alignItems: "center",
   gap: "0.6rem",

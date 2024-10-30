@@ -101,7 +101,6 @@ const welcomeTextStyle = {
   marginBottom: "10px",
   animation: "slideIn 1.5s ease-in-out",
 };
-
 const quoteTextStyle = {
   fontStyle: "italic",
   color: "#fff",
