@@ -62,7 +62,7 @@ const ManagerAppointments = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/appointment/manage/MAN1`);
+        const response = await axios.get(`http://localhost:8080/api/appointment/manage/manager`);
         setAppointments(response.data);
       } catch (error) {
         console.error("Failed to fetch appointments:", error);
