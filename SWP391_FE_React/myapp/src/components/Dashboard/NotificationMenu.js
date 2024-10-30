@@ -49,7 +49,7 @@ function NotificationMenu({ anchorEl, handleClose, setUnreadCount }) {
   React.useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const accountID = sessionStorage.getItem("accountID");
+        const accountID = sessionStorage.getItem("userID");
         const response = await axios.get(
           `http://localhost:8080/api/noti/${accountID}`
         );
