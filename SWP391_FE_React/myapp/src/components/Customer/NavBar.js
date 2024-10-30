@@ -95,7 +95,7 @@ export default function Navbar() {
             </ul>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginRight: "-35px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginRight: "-30px" }}>
             <UserIconDropdown />
             {hasToken && (
               <>
@@ -113,6 +113,8 @@ export default function Navbar() {
                 />
               </>
             )}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginRight: "35px", marginLeft: "35px" }}>
             <LoginButton/>
           </div>
         </div>
