@@ -98,7 +98,7 @@ export default function Navbar() {
               alignItems: "center",
               gap: "10px",
               marginRight: "10px",
-              minWidth: "120px",  // Adjust to match the combined width of UserIconDropdown and notifications
+              minWidth: "120px",
               justifyContent: hasToken ? "flex-end" : "center",
             }}
           >
