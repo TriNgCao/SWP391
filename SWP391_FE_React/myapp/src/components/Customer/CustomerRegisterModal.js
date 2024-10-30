@@ -56,11 +56,10 @@ const CustomerRegisterModal = () => {
     }
     setError("");
     setIsLoading(true);
-
+  
     try {
-      const response = await axios.post("https://example.com/api/send-email", {
-        email,
-      });
+      const response = await axios.post(`https://example.com/api/send-email/${encodeURIComponent(email)}`);
+      
       if (response.status === 200) {
         setStep(2);
         toast.success("OTP sent to your email");
@@ -70,6 +69,7 @@ const CustomerRegisterModal = () => {
       setError(error.response?.data?.error || "An error occurred");
     }
   };
+  
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
