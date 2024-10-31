@@ -1,12 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@mui/material"; // Nếu bạn sử dụng Material UI
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 export default function Success() {
     const navigate = useNavigate();
 
     const handleBackToHome = () => {
-        navigate("/"); // Điều hướng về trang chủ, thay đổi URL nếu cần
+        navigate("/");
     };
 
     return (
