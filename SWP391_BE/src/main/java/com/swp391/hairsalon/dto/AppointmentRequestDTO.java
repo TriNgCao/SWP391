@@ -21,7 +21,7 @@ public class AppointmentRequestDTO {
     private String userID;
     private int salonId;
     private int stylistId;
-    private List<Long> serviceId;
+    private List<Integer> serviceId;
     private Date date;
     private int startTime;
     private String status; 

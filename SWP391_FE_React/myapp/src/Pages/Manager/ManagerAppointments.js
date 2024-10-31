@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -24,15 +22,23 @@ import axios from "axios";
 const renderStatusChip = (status) => {
   switch (status) {
     case "Pending":
-      return <Chip label="Pending" sx={{ bgcolor: "#FFEB3B", color: "#333" }} />;
+      return (
+        <Chip label="Pending" sx={{ bgcolor: "#FFEB3B", color: "#333" }} />
+      );
     case "Ready":
       return <Chip label="Ready" sx={{ bgcolor: "#2196F3", color: "#fff" }} />;
     case "Cancelled":
-      return <Chip label="Cancelled" sx={{ bgcolor: "#F44336", color: "#fff" }} />;
+      return (
+        <Chip label="Cancelled" sx={{ bgcolor: "#F44336", color: "#fff" }} />
+      );
     case "Processing":
-      return <Chip label="Processing" sx={{ bgcolor: "#FFA500", color: "#fff" }} />;
+      return (
+        <Chip label="Processing" sx={{ bgcolor: "#FFA500", color: "#fff" }} />
+      );
     case "Completed":
-      return <Chip label="Completed" sx={{ bgcolor: "#4CAF50", color: "#fff" }} />;
+      return (
+        <Chip label="Completed" sx={{ bgcolor: "#4CAF50", color: "#fff" }} />
+      );
     default:
       return <Chip label={status} sx={{ bgcolor: "#9E9E9E", color: "#fff" }} />;
   }
@@ -47,7 +53,9 @@ const renderStars = (rating, size = 24) => {
     if (i <= roundedRating) {
       stars.push(<Star key={i} sx={{ color: "#FFD700", fontSize: size }} />);
     } else {
-      stars.push(<StarOutline key={i} sx={{ color: "#FFD700", fontSize: size }} />);
+      stars.push(
+        <StarOutline key={i} sx={{ color: "#FFD700", fontSize: size }} />
+      );
     }
   }
   return stars;
@@ -57,12 +65,14 @@ const ManagerAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const accountID = sessionStorage.getItem("accountId")
+  const accountID = sessionStorage.getItem("userID");
   // Fetch dữ liệu từ API
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/appointment/manage/MAN1`);
+        const response = await axios.get(
+          `http://localhost:8080/api/appointment/manage/${accountID}`
+        );
         setAppointments(response.data);
       } catch (error) {
         console.error("Failed to fetch appointments:", error);
@@ -143,8 +153,12 @@ const ManagerAppointments = () => {
                       <TableCell>{appointment.date}</TableCell>
                       <TableCell>{`${appointment.startTime} - ${appointment.endTime}`}</TableCell>
                       <TableCell>{`${appointment.totalPrice} VNĐ`}</TableCell>
-                      <TableCell>{appointment.serviceName.join(", ")}</TableCell>
-                      <TableCell>{renderStatusChip(appointment.status)}</TableCell>
+                      <TableCell>
+                        {appointment.serviceName.join(", ")}
+                      </TableCell>
+                      <TableCell>
+                        {renderStatusChip(appointment.status)}
+                      </TableCell>
 
                       <TableCell>
                         <Button
@@ -196,14 +210,21 @@ const ManagerAppointments = () => {
           {selectedAppointment && (
             <>
               {/* Kiểm tra nếu rating là -1 và feedback là null */}
-              {selectedAppointment.rating === -1 && !selectedAppointment.feedback ? (
-                <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 2 }}>
+              {selectedAppointment.rating === -1 &&
+              !selectedAppointment.feedback ? (
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                  sx={{ mt: 2 }}
+                >
                   User has not rated this appointment.
                 </Typography>
               ) : (
                 <>
                   <Box sx={{ mb: 2, textAlign: "center" }}>
-                    <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "center", gap: 1 }}
+                    >
                       {renderStars(selectedAppointment.rating, 40)}
                     </Box>
                   </Box>
@@ -212,7 +233,9 @@ const ManagerAppointments = () => {
                     <Typography variant="subtitle1" fontWeight="bold">
                       Feedback:
                     </Typography>
-                    <Typography>{selectedAppointment.feedback || "No feedback"}</Typography>
+                    <Typography>
+                      {selectedAppointment.feedback || "No feedback"}
+                    </Typography>
                   </Box>
                 </>
               )}
@@ -230,7 +253,6 @@ const ManagerAppointments = () => {
           )}
         </Box>
       </Modal>
-
     </Box>
   );
 };

@@ -177,6 +177,8 @@ function App() {
             <Route path="staff-appointments" element={<StaffAppointments />} />
             <Route path="staff-salary" element={<StaffSalary />} />
           </Route>
+
+          {/* DASHBOARD STYLIST */}
           <Route path="/stylist" element={<StylistLayout />}>
             <Route path="stylist-profile" element={<StylistProfilePage />} />
             <Route path="stylist-salary" element={<StylistSalary />} />

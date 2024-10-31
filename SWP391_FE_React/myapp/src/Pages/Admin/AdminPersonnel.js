@@ -35,7 +35,7 @@ const AdminPersonnel = () => {
   const [selectedId, setSelectedId] = useState(null);
   const [selected, setSelected] = useState({
     id: "",
-    name: ""
+    name: "",
   });
 
   // State cho modal thêm nhân viên
@@ -45,14 +45,15 @@ const AdminPersonnel = () => {
     name: "",
     email: "",
     password: "",
-    role: ""
+    role: "",
   });
-
 
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const employeeResponse = await axios.get("http://localhost:8080/user/fetchAllEmployees");
+        const employeeResponse = await axios.get(
+          "http://localhost:8080/user/fetchAllEmployees"
+        );
         setEmployees(employeeResponse.data);
       } catch (error) {
         console.error("Error fetching employee data:", error);
@@ -61,7 +62,9 @@ const AdminPersonnel = () => {
 
     const fetchSalons = async () => {
       try {
-        const salonResponse = await axios.get("http://localhost:8080/salon/salon-active");
+        const salonResponse = await axios.get(
+          "http://localhost:8080/salon/salon-active"
+        );
         setSalons(salonResponse.data);
       } catch (error) {
         console.error("Error fetching salon data:", error);
@@ -76,12 +79,16 @@ const AdminPersonnel = () => {
     try {
       // Gửi yêu cầu thêm nhân viên đến API Salon
 
-      // const salonResponse = await axios.post("http://localhost:8080/user/insert/${selectedId}");
-      const salonResponse = await axios.post(`http://localhost:8080/user/insert/${selectedId}`, newEmployee);
+      const salonResponse = await axios.post(
+        `http://localhost:8080/user/insert/${selectedId}`,
+        newEmployee
+      );
 
       if (salonResponse.status === 201) {
         // Sau khi thêm thành công vào Salon, lấy lại danh sách nhân viên từ API Employee
-        const employeeResponse = await axios.get("http://localhost:8080/user/fetchAllEmployees");
+        const employeeResponse = await axios.get(
+          "http://localhost:8080/user/fetchAllEmployees"
+        );
         setEmployees(employeeResponse.data);
         handleClose();
       }
@@ -92,14 +99,19 @@ const AdminPersonnel = () => {
 
   const updateEmployee = async () => {
     try {
-
-      const response = await axios.put(`http://localhost:8080/user/update-status/${newEmployee.id}`, null, {
-        params: {
-          status: newEmployee.status
+      const response = await axios.put(
+        `http://localhost:8080/user/update-status/${newEmployee.id}`,
+        null,
+        {
+          params: {
+            status: newEmployee.status,
+          },
         }
-      });
+      );
       if (response.status === 200) {
-        const employeeResponse = await axios.get("http://localhost:8080/user/fetchAllEmployees");
+        const employeeResponse = await axios.get(
+          "http://localhost:8080/user/fetchAllEmployees"
+        );
         setEmployees(employeeResponse.data);
         handleClose();
       }
@@ -107,8 +119,6 @@ const AdminPersonnel = () => {
       console.error("Error updating employee:", error);
     }
   };
-
-
 
   const handleOpenAddModal = () => setOpenAddModal(true);
   const handleOpenEditModal = () => setOpenEditModal(true);
@@ -130,7 +140,8 @@ const AdminPersonnel = () => {
   const totalPages = Math.ceil(
     employees.filter(
       (employee) =>
-        (statusFilter === "All" || employee.status === (statusFilter === "true")) &&
+        (statusFilter === "All" ||
+          employee.status === (statusFilter === "true")) &&
         (roleFilter === "All" || employee.role.toString() === roleFilter)
     ).length / employeesPerPage
   );
@@ -138,7 +149,8 @@ const AdminPersonnel = () => {
   const paginatedEmployees = employees
     .filter(
       (employee) =>
-        (statusFilter === "All" || employee.status === (statusFilter === "true")) &&
+        (statusFilter === "All" ||
+          employee.status === (statusFilter === "true")) &&
         (roleFilter === "All" || employee.role.toString() === roleFilter)
     )
     .slice(
@@ -231,10 +243,10 @@ const AdminPersonnel = () => {
                   {employee.role === 2
                     ? "Stylist"
                     : employee.role === 3
-                      ? "Staff"
-                      : employee.role === 4
-                        ? "Manager"
-                        : "Unknown"}
+                    ? "Staff"
+                    : employee.role === 4
+                    ? "Manager"
+                    : "Unknown"}
                 </TableCell>
                 <TableCell
                   sx={{
@@ -249,13 +261,13 @@ const AdminPersonnel = () => {
                     <Button
                       variant="contained"
                       color="primary"
-                      sx={{ backgroundColor: "#F44336" }}  // Nút Disable có màu đỏ
+                      sx={{ backgroundColor: "#F44336" }} // Nút Disable có màu đỏ
                       onClick={() => {
                         setNewEmployee({
                           id: employee.id,
-                          status: false  // Cập nhật trạng thái thành false khi disable
+                          status: false, // Cập nhật trạng thái thành false khi disable
                         });
-                        handleOpenEditModal();  // Mở modal xác nhận
+                        handleOpenEditModal(); // Mở modal xác nhận
                       }}
                     >
                       Disable
@@ -264,20 +276,19 @@ const AdminPersonnel = () => {
                     <Button
                       variant="contained"
                       color="primary"
-                      sx={{ backgroundColor: "#4CAF50" }}  // Nút Active có màu xanh
+                      sx={{ backgroundColor: "#4CAF50" }} // Nút Active có màu xanh
                       onClick={() => {
                         setNewEmployee({
                           id: employee.id,
-                          status: true  // Cập nhật trạng thái thành true khi active
+                          status: true, // Cập nhật trạng thái thành true khi active
                         });
-                        handleOpenEditModal();  // Mở modal xác nhận
+                        handleOpenEditModal(); // Mở modal xác nhận
                       }}
                     >
                       Active
                     </Button>
                   )}
                 </TableCell>
-
               </TableRow>
             ))}
           </TableBody>
@@ -289,12 +300,10 @@ const AdminPersonnel = () => {
         <Pagination
           count={totalPages}
           page={currentPage}
-          onChange={(event, value) => setCurrentPage
-            (value)}
+          onChange={(event, value) => setCurrentPage(value)}
           color="primary"
         />
       </Box>
-
 
       {/* Modal for Adding Employee */}
       <Modal open={openAddModal} onClose={handleClose}>
@@ -314,15 +323,7 @@ const AdminPersonnel = () => {
           <Typography variant="h6" mb={2}>
             Add New Employee
           </Typography>
-          {/* <TextField
-            label="ID"
-            fullWidth
-            value={newEmployee.id}
-            onChange={(e) =>
-              setNewEmployee({ ...newEmployee, id: e.target.value })
-            }
-            sx={{ mb: 2 }}
-          /> */}
+
           <TextField
             label="Name"
             fullWidth
@@ -367,19 +368,17 @@ const AdminPersonnel = () => {
           <FormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel>Salon</InputLabel>
             <Select
-              value={selectedId || ''}
+              value={selectedId || ""}
               onChange={(e) => {
                 const id = e.target.value; // Lấy id của salon đã chọn
                 const selectedSalon = salons.find((salon) => salon.id === id); // Tìm salon trong danh sách
                 setSelected({ ...selectedSalon }); // Cập nhật selected với salon đã chọn
                 setSelectedId(id); // Lưu selectedId là biến toàn cục
-                setSelected({ ...selected, name: e.target.value })
-
+                setSelected({ ...selected, name: e.target.value });
 
                 // const selectedSalon = salons.find((salon) => salon.id === selectedId);
                 // setSelected(selected);
-              }
-              }
+              }}
             >
               {salons.map((salon) => (
                 <MenuItem key={salon.id} value={salon.id}>
@@ -410,9 +409,23 @@ const AdminPersonnel = () => {
       </Modal>
       {/* Edit Modal */}
       <Modal open={openEditModal} onClose={handleClose}>
-        <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 400, bgcolor: "background.paper", borderRadius: 1, boxShadow: 24, p: 4 }}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            borderRadius: 1,
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
           <Typography variant="h6" mb={2}>
-            {newEmployee.status ? "Are you sure to activate this account?" : "Are you sure to disable this account?"}
+            {newEmployee.status
+              ? "Are you sure to activate this account?"
+              : "Are you sure to disable this account?"}
           </Typography>
           <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
             <Button

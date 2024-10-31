@@ -28,7 +28,7 @@ const InternalLoginModal = () => {
     }
 
     try {
-      const response = await axios.post('https://reqres.in/api/login', {
+      const response = await axios.post('http://localhost:8080/auth/login', {
         email: email,
         password: password,
       });

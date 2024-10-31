@@ -211,7 +211,7 @@ public class AppointmentController {
                         existAppointment.getStylist().getAccount());
             }
 
-            if ("Cancel".equals(existAppointment.getStatus())) {
+            if ("Cancelled".equals(existAppointment.getStatus())) {
                 String msgCustomerCancel = "Your appointment at "
                         + existAppointment.getBranch().getSalonName() + " on "
                         + existAppointment.getDate() + " at "
@@ -271,7 +271,7 @@ public class AppointmentController {
 
     private List<SalonService> getSalonServicesById(AppointmentRequestDTO appointmentRequest) {
         List<SalonService> services = new ArrayList<>();
-        for (Long serviceId : appointmentRequest.getServiceId()) {
+        for (int serviceId : appointmentRequest.getServiceId()) {
             SalonService service = iSalonServiceService.getServiceById(serviceId);
             if (service != null) {
                 services.add(service);
@@ -282,7 +282,7 @@ public class AppointmentController {
 
     private int getLoyalPoint(AppointmentRequestDTO appointmentRequest){
         int loyalPoint=0;
-        for (Long serviceId : appointmentRequest.getServiceId()) {
+        for (int serviceId : appointmentRequest.getServiceId()) {
             SalonService service = iSalonServiceService.getServiceById(serviceId);
             if (service != null) {
                 loyalPoint = loyalPoint +  (int) Math.ceil(service.getServicePrice());

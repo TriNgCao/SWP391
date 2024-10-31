@@ -4,7 +4,7 @@ import { Box, Typography, CircularProgress, Grid } from "@mui/material";
 export default function StylistSalary() {
   const [salary, setSalary] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const accountId = sessionStorage.getItem("userID");
   // Dữ liệu giả cho lương cá nhân stylist
   const fakeData = {
     name: "Nguyễn Văn A",

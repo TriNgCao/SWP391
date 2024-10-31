@@ -8,4 +8,8 @@ public interface IPayrollService {
     public void savePayroll(Payroll payroll);
 
     public List<Payroll> getPayrollBySalon(int salonId);
+
+    public Payroll findPayrollById (int payrollId);
+
+    public Payroll updatePayroll(Payroll payRoll);
 }

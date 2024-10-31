@@ -39,7 +39,7 @@ const ManagerBlogs = () => {
     const [selectedBlog, setSelectedBlog] = useState(null);
     const [comments, setComments] = useState([]);
     const [newBlog, setNewBlog] = useState({
-        accountId: "MAN1",
+        accountId: "manager",
         title: "",
         content: "",
         image: null,
@@ -309,7 +309,7 @@ const ManagerBlogs = () => {
 
 
         const commentData = {
-            accountId: "MAN1",
+            accountId: "manager",
             blogId: selectedBlog.blogId,
             content: newComment,
         };

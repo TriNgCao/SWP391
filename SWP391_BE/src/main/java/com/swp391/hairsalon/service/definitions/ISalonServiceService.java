@@ -9,7 +9,7 @@ public interface ISalonServiceService {
     List<SalonService> getServiceByName(String serviceName);
     List<SalonService> getAllServices();
     SalonService addService(SalonService service);
-    SalonService updateCombo(Long serviceId, SalonService service);
-    SalonService getServiceById(Long serviceId);
+    SalonService updateCombo(int serviceId, SalonService service);
+    SalonService getServiceById(int serviceId);
     int getTotalDurationBySalonId(List<Integer> serviceId);
 }
