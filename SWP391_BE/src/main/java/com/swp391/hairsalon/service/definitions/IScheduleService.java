@@ -9,12 +9,12 @@ import java.util.List;
 
 public interface IScheduleService {
     public Schedule addSchedule(Schedule schedule);
-    public Schedule updateSchedule(Schedule schedule);
-    public Schedule getSchedulesByStylistId(int stylistId);
+//    public Schedule updateSchedule(Schedule schedule);
+//    public Schedule getSchedulesByStylistId(int stylistId);
     public List<Schedule> getAllSchedules();
     public void bookSchedule(BookedSchedule bookedSchedule);
     public Schedule getScheduleById(int scheduleId);
-    int getScheduleByStylistIdAndDate(int stylistId, Date date);
+    Integer getScheduleByStylistIdAndDate(int stylistId, Date date);
     List<ScheduleViewAllDto> getAllSchedule(String id, Date date);
     void deleteSchedule(String name, Date date);
 

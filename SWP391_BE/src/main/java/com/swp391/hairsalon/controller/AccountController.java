@@ -90,6 +90,8 @@ public class AccountController {
         return iCustomerService.getCustomerById(id).getLoyaltyPoints();
     }
 
+
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable String id){
         iAccountService.deleteAccount(id);

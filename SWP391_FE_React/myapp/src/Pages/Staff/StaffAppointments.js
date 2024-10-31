@@ -55,12 +55,21 @@ const StaffAppointments = () => {
   const [loyaltyPoint, setLoyaltyPoint] = useState(0); // Điểm loyalty của khách hàng
   const [totalAfterDiscount, setTotalAfterDiscount] = useState(0); // Tổng tiền sau khi trừ điểm
   const [useLoyaltyPoint, setUseLoyaltyPoint] = useState(false); // Biến để quản lý việc sử dụng loyaltyPoint
-  const accountID = sessionStorage.getItem("userID");
   // Fetch dữ liệu từ API
+  const fetchAppointments1 = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/appointment/staff/STA1`
+      );
+      setAppointments(response.data);
+    } catch (error) {
+      console.error("Failed to fetch appointments:", error);
+    }
+  };
   const fetchAppointments = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/appointment/staff/${accountID}`
+        "http://localhost:8080/api/appointment/staff/STA1"
       );
       setAppointments(response.data);
     } catch (error) {
@@ -71,7 +80,7 @@ const StaffAppointments = () => {
     const fetchAppointments = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/appointment/staff/${accountID}`
+          "http://localhost:8080/api/appointment/staff/STA1"
         );
         setAppointments(response.data);
       } catch (error) {
@@ -82,10 +91,11 @@ const StaffAppointments = () => {
     fetchAppointments();
   }, []);
   const handleClosePaymentConfirmation = () => {
-    setOpenPaymentConfirmation(false); // Đóng modal xác nhận thanh toán
-    setUseLoyaltyPoint(false); // Đặt lại trạng thái sử dụng loyaltyPoint
+    setOpenPaymentConfirmation(false);
+    setUseLoyaltyPoint(false);
+    fetchAppointments1();
   };
-  // Xử lý mở modal
+
   const handleOpenModal = async (appointment) => {
     setSelectedAppointment(appointment);
     try {
@@ -123,11 +133,7 @@ const StaffAppointments = () => {
       );
 
       // Đóng modal nếu trạng thái được cập nhật là "Pending" sang "Ready"
-      if (
-        newStatus === "Ready" ||
-        newStatus === "Cancelled" ||
-        newStatus === "Processing"
-      ) {
+      if (newStatus === "Ready" || newStatus === "Cancelled" || newStatus === "Processing") {
         setOpenModal(false);
       }
 
@@ -154,6 +160,7 @@ const StaffAppointments = () => {
 
     setTotalAfterDiscount(total); // Cập nhật tổng tiền sau giảm
     setOpenPaymentConfirmation(true);
+
   };
 
   const fetchLoyaltyPoint = async () => {
@@ -176,13 +183,17 @@ const StaffAppointments = () => {
 
   const handleConfirmCashPayment = async () => {
     try {
-      // Gọi API để cập nhật trạng thái thành "Completed"
+      if (useLoyaltyPoint) {
+        console.log("hello");
+        await axios.put(`http://localhost:8080/payment/point/${selectedAppointment.customerId}`, {
+
+        });
+      }
+
       await axios.put(
         `http://localhost:8080/api/appointment/${selectedAppointment.appointmentId}`,
         { status: "Completed" }
       );
-
-      // Cập nhật trạng thái cuộc hẹn trong UI
 
       setAppointments((prevAppointments) =>
         prevAppointments.map((appointment) =>
@@ -192,110 +203,53 @@ const StaffAppointments = () => {
         )
       );
 
-      // Nếu sử dụng điểm loyalty, gọi API để trừ điểm loyalty
-      if (useLoyaltyPoint) {
-        await axios.post(`http://localhost:8080/api/loyalty/redeem`, {
-          customerId: selectedAppointment.customerId,
-          points: loyaltyPoint,
-        });
-      }
-
       setShowSuccessSnackbar(true);
-      // LƯU Ý CHỖ NÀY SỬA CHỖ NÀY
-      fetchAppointments(); // FETCH LẠI KHI ĐÃ BẤM XÁC NHẬN
+
     } catch (error) {
       console.error("Failed to complete payment:", error);
     }
 
     setOpenPaymentConfirmation(false);
+    fetchAppointments1();
   };
-  // -------------------------------------------
-  // API REJECT
-  const handleReject = async () => {
-    if (!selectedAppointment) return;
-
-    try {
-      // Gọi API để cập nhật trạng thái thành "Cancelled"
-      // API GỌI REJECT
-      await axios.put(
-        `http://localhost:8080/api/appointment/${selectedAppointment.appointmentId}`,
-        { status: "Cancelled" }
-      );
-
-      // Cập nhật trạng thái cuộc hẹn trong UI
-      setAppointments((prevAppointments) =>
-        prevAppointments.map((appointment) =>
-          appointment.appointmentId === selectedAppointment.appointmentId
-            ? { ...appointment, status: "Cancelled" }
-            : appointment
-        )
-      );
-
-      setOpenModal(false); // Đóng modal
-    } catch (error) {
-      console.error("Failed to update status to Cancelled:", error);
-    }
-  };
-
-  // -------------------------------------------
-
   const handleBankTransfer = async () => {
     try {
+
+      const amountToPay = useLoyaltyPoint ? selectedAppointment.totalPrice - loyaltyPoint : selectedAppointment.totalPrice;
       const response = await axios.get("http://localhost:8080/payment/vn-pay", {
         params: {
-          amount: selectedAppointment.totalPrice,
+          amount: amountToPay,
         },
       });
 
       const paymentUrl = response.data.data.paymentUrl;
-      const paymentWindow = window.open(paymentUrl, "_blank");
+      window.open(paymentUrl, '_blank')
 
-      // Thiết lập một listener để theo dõi tab thanh toán
-      const interval = setInterval(async () => {
-        try {
-          // Kiểm tra URL của paymentWindow
-          if (paymentWindow.closed) {
-            clearInterval(interval);
-            return; // Dừng kiểm tra nếu tab đã đóng
-          }
 
-          const params = new URLSearchParams(paymentWindow.location.search);
-          const responseCode = params.get("vnp_ResponseCode");
-
-          if (responseCode) {
-            const callbackResponse = await axios.get(
-              `http://localhost:8080/vn-pay-callback?vnp_ResponseCode=${responseCode}`
-            );
-
-            // Kiểm tra phản hồi từ server
-            if (callbackResponse.data.data.code === "00") {
-              paymentWindow.close(); // Đóng tab thanh toán
-              handleUpdateStatus("Completed"); // Cập nhật trạng thái
-              setShowSuccessSnackbar(true); // Hiện thông báo thành công
-              clearInterval(interval); // Dừng kiểm tra
-            } else {
-              console.error("Payment failed:", callbackResponse.data.message);
-            }
-          }
-        } catch (error) {
-          console.error("Error during payment callback:", error);
-        }
-      }, 1000); // Kiểm tra mỗi giây
     } catch (error) {
       console.error("Failed to initiate payment:", error);
     }
   };
+
+
+
+
+
+
+
 
   const renderPaymentModal = () => (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <Typography variant="h5" sx={{ mb: 2, textAlign: "center" }}>
         Select Payment Method
       </Typography>
-      {loyaltyPoint > 0 && (
-        <Typography variant="body1" sx={{ mb: 1, textAlign: "center" }}>
-          Điểm LoyaltyPoint hiện tại: {loyaltyPoint}
-        </Typography>
-      )}
+      {
+        loyaltyPoint > 0 && (
+          <Typography variant="body1" sx={{ mb: 1, textAlign: "center" }}>
+            Điểm LoyaltyPoint hiện tại: {loyaltyPoint}
+          </Typography>
+        )
+      }
 
       {/* Tùy chọn sử dụng LoyaltyPoint */}
       <Button
@@ -316,7 +270,8 @@ const StaffAppointments = () => {
       <Button
         variant="contained"
         sx={{ backgroundColor: "#2196F3", color: "#fff" }}
-        onClick={handleBankTransfer}
+        onClick={() => { handleOpenPaymentConfirmation(); handleBankTransfer(); }}
+
       >
         Bank Transfer
       </Button>
@@ -346,13 +301,6 @@ const StaffAppointments = () => {
           >
             Reject
           </Button>
-          {/* <Button
-            variant="contained"
-            sx={{ backgroundColor: "#F44336", color: "#fff" }}
-            onClick={() => handleUpdateStatus("Cancelled")}
-          >
-            Reject
-          </Button> */}
         </Box>
       );
     }

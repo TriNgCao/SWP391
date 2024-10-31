@@ -44,12 +44,13 @@ public class BookedScheduleService implements IBookedScheduleService {
     @Override
     public List<ScheduleTableDto> getAllBookedSchedule(Date date) {
 
-
-        List<Integer> lists = getAllBookedTime(date);
-        if (lists.isEmpty()) {
-            return null;
-        }
         List<ScheduleTableDto> listDto = new ArrayList<>();
+        List<Integer> lists = getAllBookedTime(date);
+        if (lists == null) {
+            listDto.add(new ScheduleTableDto(8, 22, 0, 0 ,0));
+            return listDto;
+        }
+
         for (Integer i : lists) {
             ScheduleTableDto scheduleTableDto = new ScheduleTableDto();
             scheduleTableDto.setScheduleId(0);

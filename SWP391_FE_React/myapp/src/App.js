@@ -137,6 +137,19 @@ function App() {
             }
           />
 
+          <Route
+            path="/payment/success"
+            element=
+            {< Success />}
+
+          />
+          <Route
+            path="/payment/fail"
+            element=
+            {< Fail />}
+
+          />
+
           {/* DASHBOARD MANAGER */}
           <Route path="/manager" element={<ManagerLayout />}>
             <Route path="manager-services" element={<ManagerServices />} />
