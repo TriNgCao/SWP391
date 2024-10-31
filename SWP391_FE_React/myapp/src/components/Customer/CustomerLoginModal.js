@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
-import {FaArrowCircleLeft, FaGoogle } from "react-icons/fa";
+import { FaArrowCircleLeft, FaGoogle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -124,7 +124,13 @@ const CustomerLoginModal = () => {
               alignItems: "center",
             }}
           >
-                      <div style={{ display: "flex",flexDirection: 'column', alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
               <FaArrowCircleLeft
                 onClick={() => {
                   navigate("/");
@@ -143,7 +149,11 @@ const CustomerLoginModal = () => {
                 }}
               />
               <span
-                style={{ fontSize: "12px", color: "#6dbe45", marginLeft: '-5px' }}
+                style={{
+                  fontSize: "12px",
+                  color: "#6dbe45",
+                  marginLeft: "-5px",
+                }}
               >
                 Back
               </span>
@@ -225,9 +235,13 @@ const CustomerLoginModal = () => {
             </div>
             {error && <p style={{ color: "red" }}>{error}</p>}
             <div className="d-flex justify-content-between">
-              <Link to="#" className="text-decoration-none" data-bs-toggle="modal"
-              data-bs-target="#forgotPasswordModal"
-              data-bs-dismiss="modal">
+              <Link
+                to="#"
+                className="text-decoration-none"
+                data-bs-toggle="modal"
+                data-bs-target="#forgotPasswordModal"
+                data-bs-dismiss="modal"
+              >
                 Forgot Password?
               </Link>
             </div>
