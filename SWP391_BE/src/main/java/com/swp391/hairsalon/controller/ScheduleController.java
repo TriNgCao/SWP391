@@ -30,7 +30,7 @@ public class ScheduleController {
 
         List<Integer> stylistIds = schedules.getStylistIds();
         for (Integer stylistId : stylistIds) {
-            if(iScheduleService.getSchedulesByStylistId(stylistId) != null) {
+            if(iScheduleService.getScheduleByStylistIdAndDate(stylistId, schedules.getDate()) == null ) {
                 Schedule schedule = new Schedule();
                 schedule.setStylist(iStylistservice.getStylistById(stylistId));
                 schedule.setEndTime(22);

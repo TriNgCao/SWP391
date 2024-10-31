@@ -48,9 +48,14 @@ public class BookedScheduleController {
         Date date = bookScheduleRequestDto.getDate();
         int duration = iSalonServiceService.getTotalDurationBySalonId(bookScheduleRequestDto.getServiceId());
         int stylistId = bookScheduleRequestDto.getStylistId();
+        System.out.println(stylistId);
+        System.out.println(duration);
+        System.out.println(date);
+        System.out.println(bookScheduleRequestDto.getSalonId());
         if (stylistId == 0) {
             stylistId = iBookedScheduleService.chooseRandomAvailableStylist((bookScheduleRequestDto.getBookedTime()), duration, bookScheduleRequestDto.getSalonId(), date);
         }
+        System.out.println(stylistId);
         int scheduleId = 0;
 
             scheduleId = iScheduleService.getScheduleByStylistIdAndDate(stylistId, date);

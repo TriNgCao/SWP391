@@ -30,15 +30,15 @@ public class ScheduleService implements IScheduleService {
 
     }
 
-    @Override
-    public Schedule updateSchedule(Schedule schedule) {
-        return null;
-    }
-
-    @Override
-    public Schedule getSchedulesByStylistId(int stylistId) {
-        return null;
-    }
+//    @Override
+//    public Schedule updateSchedule(Schedule schedule) {
+//        return null;
+//    }
+//
+//    @Override
+//    public Schedule getSchedulesByStylistId(int stylistId) {
+//        return null;
+//    }
 
     @Override
     public List<Schedule> getAllSchedules() {
@@ -58,7 +58,7 @@ public class ScheduleService implements IScheduleService {
     }
 
     @Override
-    public int getScheduleByStylistIdAndDate(int stylistId, Date date) {
+    public Integer getScheduleByStylistIdAndDate(int stylistId, Date date) {
         return iScheduleRepository.getScheduleId(stylistId, date);
     }
 
