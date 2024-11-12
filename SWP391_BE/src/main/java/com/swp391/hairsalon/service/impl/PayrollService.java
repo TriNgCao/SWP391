@@ -39,6 +39,12 @@ public class PayrollService implements IPayrollService {
         return iPayrollRepository.findBySalon_SalonId(salonId); 
     }
 
+    @Override
+    public List<Payroll> getPayrollByStylist(int stylistId) {
+        return iPayrollRepository.get(stylistId);
+    }
+
+
     // @Scheduled(cron = "0 * * * * ?") 
     @Scheduled(cron = "0 0 0 1 * ?")
     @Transactional
@@ -70,7 +76,7 @@ public class PayrollService implements IPayrollService {
             double earning = staff.getSalary(); 
 
             Payroll payroll = new Payroll();
-            payroll.setEmployeeId(staff.getSatffId());
+            payroll.setEmployeeId(staff.getStaffId());
             payroll.setEarning(earning);
             payroll.setPayrollDate(LocalDate.now());
             payroll.setStatus(false); 
@@ -115,5 +121,4 @@ public class PayrollService implements IPayrollService {
     public Payroll findPayrollById(int payrollId) {
         return iPayrollRepository.getReferenceById(payrollId);
     }
-    
 }
