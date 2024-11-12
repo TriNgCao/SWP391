@@ -10,10 +10,12 @@ import com.swp391.hairsalon.service.definitions.IAccountService;
 
 //import com.swp391.hairsalon.service.IManagerService;
 import com.swp391.hairsalon.service.definitions.ICustomerService;
+import com.swp391.hairsalon.service.definitions.IManagerService;
 import com.swp391.hairsalon.service.definitions.IStylistservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +32,9 @@ public class AccountController {
 
     @Autowired
     private IStylistservice iStylistservice;
+
+    @Autowired
+    private IManagerService iManagerService;
 
 ////    @Autowired
 //    private IManagerService iManagerService;
@@ -61,6 +66,7 @@ public class AccountController {
 //    }
 
     @GetMapping("/fetchAllEmployees")
+
     public ResponseEntity<List<EmployeeInfoDto>> getAllEmployees() {
         return ResponseEntity.ok(iAccountService.getAllEmployees());
     }
@@ -103,5 +109,10 @@ public class AccountController {
         return ResponseEntity.ok(iStylistservice.getStylists(salonId));
     }
 
+    @DeleteMapping("/delete/manager/{managerId}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable int managerId){
+        iManagerService.deleteManager(managerId);
+        return ResponseEntity.ok("Employee deleted");
+    }
 
 }
