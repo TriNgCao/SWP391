@@ -61,6 +61,7 @@ public class AppointmentController {
     @Autowired
     private IBookedScheduleService iBookedScheduleService;
 
+
     public AppointmentController(IAppointmentService appointmentService) {
         this.appointmentService = appointmentService;
     }
@@ -148,6 +149,10 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<String> addAppointment(@RequestBody AppointmentRequestDTO appointmentRequest) {
+        if (iBookedScheduleService.existsByStylistAndStartTime(appointmentRequest.getStylistId(), appointmentRequest.getStartTime())){
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                             .body("This time slot is already booked for the selected stylist.");
+        }
         if (appointmentRequest.getStylistId() == 0){
             int duration = calculateTotalDuration(appointmentRequest);
             appointmentRequest.setStylistId(iBookedScheduleService.chooseRandomAvailableStylist(appointmentRequest.getStartTime(),duration , appointmentRequest.getSalonId(), appointmentRequest.getDate()));
@@ -297,7 +302,7 @@ public class AppointmentController {
     private int calculateTotalDuration(AppointmentRequestDTO appointmentRequest) {
         List<SalonService> services = getSalonServicesById(appointmentRequest);
         return services.stream()
-                       .mapToInt(SalonService::getMaxTime)  // Lấy giá trị maxTime của từng dịch vụ
-                       .sum();                             // Tính tổng
+                       .mapToInt(SalonService::getMaxTime)  
+                       .sum();                             
     }
 }

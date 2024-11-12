@@ -204,6 +204,11 @@ public class BookedScheduleService implements IBookedScheduleService {
         return true;
     }
 
+    @Override
+    public boolean existsByStylistAndStartTime(int stylistId, int startTime) {
+        return iBookedScheduleRepository.existsByStylistAndStartTime(stylistId, startTime);
+    }
+
 
 }
 
