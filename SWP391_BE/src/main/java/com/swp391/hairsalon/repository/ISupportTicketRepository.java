@@ -18,5 +18,8 @@ public interface ISupportTicketRepository extends JpaRepository<SupportTicket, L
     @Transactional
     @Query("UPDATE SupportTicket st SET st.status = ?2 WHERE st.id = ?1")
     int updateStatusById(Long id, boolean status);
+
+    @Query("Select st FROM SupportTicket st WHERE st.id = :id")
+    SupportTicket getSupportTicketById(int id);
 }
 

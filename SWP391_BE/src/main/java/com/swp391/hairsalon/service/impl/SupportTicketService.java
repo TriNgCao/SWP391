@@ -30,8 +30,13 @@ public class SupportTicketService implements ISupportTicketService {
     }
 
     @Override
-    public List<SupportTicket> findSupportTicketsByStatus(boolean status) { // Changed status type to boolean
-        return supportTicketRepository.findByStatus(status);
+    public SupportTicket getSupportTicketById(int id) {
+        return supportTicketRepository.getSupportTicketById(id);
+    }
+
+    @Override
+    public SupportTicket updateSupportTicket(SupportTicket supportTicket) {
+        return supportTicketRepository.save(supportTicket);
     }
 }
 
