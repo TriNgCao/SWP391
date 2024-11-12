@@ -1,9 +1,6 @@
 package com.swp391.hairsalon.repository;
 
-import com.swp391.hairsalon.dto.CustomerInfoDto;
-import com.swp391.hairsalon.dto.CustomerProfileDto;
-import com.swp391.hairsalon.dto.EmployeeInfoDto;
-import com.swp391.hairsalon.dto.PersonnelBySalonDto;
+import com.swp391.hairsalon.dto.*;
 import com.swp391.hairsalon.pojo.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -56,6 +53,11 @@ public interface IAccountRepository extends JpaRepository<Account, String> {
             "left join Customer c on a.id = c.account.id " +
             "where a.id = :id ")
     CustomerProfileDto getCustomerProfileById(@Param("id") String id);
+
+    @Query("select new com.swp391.hairsalon.dto.AccountProfileDTO( a.name, a.email , a.phone ) " +
+            "from Account a " +
+            "where a.id = :id")
+    AccountProfileDTO getProfileById(@Param("id") String id);
 
     public List<Account> findByRole(int role);
 

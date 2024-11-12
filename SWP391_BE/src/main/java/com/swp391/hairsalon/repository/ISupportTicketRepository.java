@@ -11,6 +11,7 @@ import java.util.List;
 
 @Repository
 public interface ISupportTicketRepository extends JpaRepository<SupportTicket, Long> {
+    @Query("Select st FROM SupportTicket st WHERE st.status = :status")
     List<SupportTicket> findByStatus(boolean status);
 
     @Modifying

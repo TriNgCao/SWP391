@@ -28,4 +28,7 @@ public interface IStylistRepository extends JpaRepository<Stylist, Integer> {
             " = " +
             "(select m.salon.salonId from Manager m where m.account.id = :id) ")
     List<StylistListDto> getStylistList(@Param("id") String id);
+
+    @Query("Select s FROM Stylist s WHERE s.account.id = :account_id")
+    List<Stylist> getStylistByAccountId(@Param("account_id") String accountId);
 }

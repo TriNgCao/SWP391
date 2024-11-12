@@ -1,29 +1,34 @@
 package com.swp391.hairsalon.controller;
 
-import com.swp391.hairsalon.dto.CustomerInfoDto;
-import com.swp391.hairsalon.dto.EmployeeInfoDto;
-import com.swp391.hairsalon.dto.PersonnelBySalonDto;
-import com.swp391.hairsalon.dto.StylistInfoForBooking;
+import com.swp391.hairsalon.dto.*;
 import com.swp391.hairsalon.pojo.Account;
 import com.swp391.hairsalon.pojo.Manager;
+import com.swp391.hairsalon.pojo.SalonService;
 import com.swp391.hairsalon.service.definitions.IAccountService;
 
 //import com.swp391.hairsalon.service.IManagerService;
 import com.swp391.hairsalon.service.definitions.ICustomerService;
-import com.swp391.hairsalon.service.definitions.IManagerService;
+import com.swp391.hairsalon.service.definitions.IFileService;
 import com.swp391.hairsalon.service.definitions.IStylistservice;
+import com.swp391.hairsalon.service.impl.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/user")
 public class AccountController {
-
+    @Value("${project.image}")
+    private String path;
+    @Autowired
+    private IFileService iFileService;
     @Autowired
     private IAccountService iAccountService;
 
@@ -32,9 +37,6 @@ public class AccountController {
 
     @Autowired
     private IStylistservice iStylistservice;
-
-    @Autowired
-    private IManagerService iManagerService;
 
 ////    @Autowired
 //    private IManagerService iManagerService;
@@ -60,13 +62,18 @@ public class AccountController {
         return ResponseEntity.ok(iAccountService.getAccountById(id));
     }
 
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<AccountProfileDTO> getProfile(@PathVariable String id) {
+
+        return ResponseEntity.ok(iAccountService.getProfileById(id));
+    }
+
 //    @GetMapping("/fetchAllCustomer")
 //    public ResponseEntity<List<Account>> getAllCustomers() {
 //        return ResponseEntity.ok(iAccountService.getAllCustomer());
 //    }
 
     @GetMapping("/fetchAllEmployees")
-
     public ResponseEntity<List<EmployeeInfoDto>> getAllEmployees() {
         return ResponseEntity.ok(iAccountService.getAllEmployees());
     }
@@ -96,8 +103,6 @@ public class AccountController {
         return iCustomerService.getCustomerById(id).getLoyaltyPoints();
     }
 
-
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable String id){
         iAccountService.deleteAccount(id);
@@ -109,10 +114,12 @@ public class AccountController {
         return ResponseEntity.ok(iStylistservice.getStylists(salonId));
     }
 
-    @DeleteMapping("/delete/manager/{managerId}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable int managerId){
-        iManagerService.deleteManager(managerId);
-        return ResponseEntity.ok("Employee deleted");
+    @PostMapping("image/profile/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account createNewAccount(@RequestParam("image") MultipartFile image, @PathVariable String id) throws IOException {
+        String fileName = iFileService.uploadImage(path, image);
+        Account service = iAccountService.getAccountById(id);
+        service.setImageName(fileName);
+        return iAccountService.updateAccount(id, service);
     }
-
 }
