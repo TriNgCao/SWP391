@@ -15,4 +15,5 @@ public interface IStylistservice {
     public Stylist getStylistById(int id);
     List<StylistListDto> getStylistLists(String id);
 
+    List<Stylist> getStylistByAccountId(String accountId);
 }
