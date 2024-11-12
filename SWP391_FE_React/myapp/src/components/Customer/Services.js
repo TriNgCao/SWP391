@@ -12,7 +12,9 @@ export default function Services() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/services/fetchAll");
+        const response = await axios.get(
+          "http://localhost:8080/services/fetchAll"
+        );
 
         const updatedServices = response.data.map((service) => ({
           ...service,
@@ -109,15 +111,18 @@ export default function Services() {
         <div className="container">
           <div className="row mb-5 pb-5">
             {/* Hair Styling Service */}
-            <div className="col-md-4 d-flex align-self-stretch px-4">
-              <div className="d-block services text-center">
+            <div className="col-md-6 d-flex align-self-stretch px-4">
+              <div
+                className="d-block services text-center"
+                style={{ padding: "20px" }}
+              >
                 <div className="icon d-flex align-items-center justify-content-center">
                   <img
                     src="images/hair-cut-tool.png"
                     alt="Hair Styling"
                     style={{
-                      width: "50px",
-                      height: "50px",
+                      width: "70px",
+                      height: "70px",
                       filter: "brightness(0) invert(1)",
                     }}
                   />
@@ -143,15 +148,18 @@ export default function Services() {
             </div>
 
             {/* Hair Coloring Service */}
-            <div className="col-md-4 d-flex align-self-stretch px-4">
-              <div className="d-block services text-center">
+            <div className="col-md-6 d-flex align-self-stretch px-4">
+              <div
+                className="d-block services text-center"
+                style={{ padding: "20px" }}
+              >
                 <div className="icon d-flex align-items-center justify-content-center">
                   <img
                     src="images/hair-dye.png"
                     alt="Hair Coloring"
                     style={{
-                      width: "50px",
-                      height: "50px",
+                      width: "70px",
+                      height: "70px",
                       filter: "brightness(0) invert(1)",
                     }}
                   />
@@ -177,15 +185,21 @@ export default function Services() {
             </div>
 
             {/* Hair Treatment Service */}
-            <div className="col-md-4 d-flex align-self-stretch px-4">
-              <div className="d-block services text-center">
+            <div
+              className="col-md-6 d-flex align-self-stretch px-4"
+              style={{ marginTop: "90px" }}
+            >
+              <div
+                className="d-block services text-center"
+                style={{ padding: "20px" }}
+              >
                 <div className="icon d-flex align-items-center justify-content-center">
                   <img
                     src="images/hair-treatment.png"
                     alt="Hair Treatment"
                     style={{
-                      width: "50px",
-                      height: "50px",
+                      width: "70px",
+                      height: "70px",
                       filter: "brightness(0) invert(1)",
                     }}
                   />
@@ -212,17 +226,20 @@ export default function Services() {
 
             {/* Spa Skin Treatment Service */}
             <div
-              className="col-md-4 d-flex align-self-stretch px-4"
-              style={{ marginTop: "140px" }}
+              className="col-md-6 d-flex align-self-stretch px-4"
+              style={{ marginTop: "90px" }}
             >
-              <div className="d-block services text-center">
+              <div
+                className="d-block services text-center"
+                style={{ padding: "20px" }}
+              >
                 <div className="icon d-flex align-items-center justify-content-center">
                   <img
                     src="images/hair-care.png"
                     alt="Spa Skin"
                     style={{
-                      width: "50px",
-                      height: "50px",
+                      width: "70px",
+                      height: "70px",
                       filter: "brightness(0) invert(1)",
                     }}
                   />

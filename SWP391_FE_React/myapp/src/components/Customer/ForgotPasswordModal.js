@@ -41,7 +41,7 @@ const ForgotPasswordModal = () => {
   const handleSendEmail = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://example.com/api/send-email", {
+      const response = await axios.post("https://example.com/api/send-email/", {
         email,
       });
       if (response.status === 200) {

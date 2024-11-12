@@ -18,6 +18,7 @@
     "chart.js": "^4.4.4",
     "crypto-js": "^4.2.0",
     "date-fns": "^2.29.3",
+    "formik": "^2.4.6",
     "myapp": "file:",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
@@ -27,7 +28,8 @@
     "react-router-dom": "^6.26.2",
     "react-scripts": "5.0.1",
     "react-toastify": "^10.0.6",
-    "web-vitals": "^4.2.3"
+    "web-vitals": "^4.2.3",
+    "yub": "^0.11.1"
   },
   "scripts": {
     "start": "react-scripts start",
