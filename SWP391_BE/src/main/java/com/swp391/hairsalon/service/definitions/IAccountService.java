@@ -24,4 +24,6 @@ public interface IAccountService {
     CustomerProfileDto getCustomerProfile(String id);
     boolean isActive(String email);
     public int getCustomerIdByAccountID(String accountID);
+    public boolean emailExists(String email);
+
 }

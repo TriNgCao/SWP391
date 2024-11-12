@@ -69,4 +69,6 @@ public interface IAccountRepository extends JpaRepository<Account, String> {
     @Transactional
     @Query("DELETE FROM Account a WHERE a.id = :id")
     void deleteUserById(@Param("id") String id);
+
+    boolean existsByEmail(String email);
 }

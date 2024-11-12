@@ -184,4 +184,8 @@ public class AccountService implements IAccountService {
     public int getCustomerIdByAccountID(String accountID) {
         return iAccountRepository.getCusIdByAccountId(accountID);
     }
+    @Override
+    public boolean emailExists(String email) {
+        return iAccountRepository.existsByEmail(email);
+    }
 }
