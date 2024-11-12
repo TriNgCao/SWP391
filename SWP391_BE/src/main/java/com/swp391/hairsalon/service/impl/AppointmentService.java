@@ -92,4 +92,10 @@ public class AppointmentService implements IAppointmentService {
         return appointmentRepo.findByCustomer_Account_Id(accountId);
     }
 
+    @Override
+    public List<Appointment> getCompletedAppointmentsByStylistForMonth(int stylistId, int month, int year) {
+        return appointmentRepo.findCompletedAppointmentsByStylistForMonth(stylistId, month, year);
+    }
+    
+
 }
