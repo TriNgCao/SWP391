@@ -19,4 +19,11 @@ public class ManagerService implements IManagerService {
 public Manager findByAccountId(String id) {
     return iManagerRepository.findByAccount_Id(id);
 }
+
+
+
+@Override
+public void deleteManager(int id) {
+    iManagerRepository.deleteById(id);
+}
 }
