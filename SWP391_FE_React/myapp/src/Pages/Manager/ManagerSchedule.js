@@ -308,6 +308,7 @@ export default function ManagerSchedule() {
                     sx={{ width: 200 }}
                   />
                 )}
+                minDate={new Date(new Date().setDate(new Date().getDate() + 1))} // Prevents selection of today and past dates
               />
             </Box>
 

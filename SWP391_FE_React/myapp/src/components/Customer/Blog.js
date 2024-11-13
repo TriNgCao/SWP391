@@ -85,13 +85,13 @@ const BlogSection = () => {
 
   .blog-entry .block-20 {
     transition: opacity 0.3s ease;
-    height: 250px; /* Chiều cao cố định cho phần hình ảnh */
+    height: 250px;
     background-size: cover;
     background-position: center;
   }
 
   .blog-entry .text {
-    margin-top: 10px; /* Đảm bảo khoảng cách ngay dưới hình ảnh */
+    margin-top: 10px;
     transition: background-color 0.3s ease;
   }
 

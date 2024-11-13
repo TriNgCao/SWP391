@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   Box,
-  Grid,
   Paper,
   Typography,
   Table,
@@ -12,154 +11,116 @@ import {
   TableHead,
   TableRow,
   Button,
-  Modal,
-  TextField,
-  FormControl,
   Select,
   MenuItem,
-  Stack
+  FormControl,
+  InputLabel,
+  Pagination,
+  Modal,
+  TextField,
 } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
-const AdminSalon = () => {
-  const [openAddModal, setOpenAddModal] = useState(false);
+const ManageCustomer = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
-  const [salonList, setSalonList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [currentImageUrl, setCurrentImageUrl] = useState(""); // URL của ảnh hiện tại
-  const [formData, setFormData] = useState({
-    salonId: "",
-    salonName: "",
-    salonAddress: "",
-    salonStatus: "true",
+  const [customers, setCustomers] = useState([]); // Đảm bảo là mảng
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const customersPerPage = 5;
+  const [newCustomer, setNewCustomer] = useState({
+    id: "",
+    status: "",
   });
+  const [startDate, setStartDate] = useState(null); // Ngày bắt đầu cho lọc
+  const [endDate, setEndDate] = useState(null); // Ngày kết thúc cho lọc
 
+  // Fetch dữ liệu khách hàng
   useEffect(() => {
-    fetchSalonData();
+    const fetchCustomers = async () => {
+      try {
+        const customerResponse = await axios.get(
+          "http://localhost:8080/user/customers"
+        );
+        // Kiểm tra kết quả trả về có phải là một mảng hay không
+        if (Array.isArray(customerResponse.data)) {
+          setCustomers(customerResponse.data);
+        } else {
+          setCustomers([]); // Nếu không phải mảng, đặt thành mảng rỗng
+        }
+      } catch (error) {
+        console.error("Error fetching customer data:", error);
+        setCustomers([]); // Đặt thành mảng rỗng nếu có lỗi
+      }
+    };
+
+    fetchCustomers();
   }, []);
 
-  const fetchSalonData = async () => {
+  // Cập nhật trạng thái khách hàng
+  const updateCustomer = async () => {
     try {
-      setLoading(true);
-      const response = await axios.get("http://localhost:8080/salon/salons");
-      const updatedSalons = response.data.map((salon) => ({
-        ...salon,
-        imageUrl: `http://localhost:8080/salon/image/${encodeURIComponent(salon.imageName)}`,
-      }));
-      setSalonList(updatedSalons);
-    } catch (err) {
-      setError("Error fetching salon data");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleOpenAddModal = () => {
-    setFormData({
-      salonId: "",
-      salonName: "",
-      salonAddress: "",
-      salonStatus: "true",
-    });
-    setSelectedImage(null);
-    setCurrentImageUrl("");
-    setOpenAddModal(true);
-  };
-
-  const handleOpenEditModal = (salon) => {
-    setFormData({
-      salonId: salon.id,
-      salonName: salon.name,
-      salonAddress: salon.address,
-      salonStatus: salon.active ? "true" : "false",
-    });
-    setSelectedImage(null);
-    setCurrentImageUrl(salon.imageUrl);
-    setOpenEditModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenAddModal(false);
-    setOpenEditModal(false);
-    setSelectedImage(null);
-    setCurrentImageUrl("");
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const handleImageChange = (e) => {
-    setSelectedImage(e.target.files[0]);
-    setCurrentImageUrl("");
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      if (formData.salonId) {
-        // Cập nhật thông tin salon
-        await axios.put(`http://localhost:8080/salon/update/${formData.salonId}`, {
-          salonName: formData.salonName,
-          salonAddress: formData.salonAddress,
-          salonStatus: formData.salonStatus === "true",
-        });
-
-        // Upload ảnh nếu có ảnh mới
-        if (selectedImage) {
-          const formDataUpload = new FormData();
-          formDataUpload.append("image", selectedImage);
-          console.log(formData.salonId)
-          const uploadResponse = await axios.post(
-            `http://localhost:8080/salon/image/upload/${formData.salonId}`,
-            formDataUpload,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
-          console.log(uploadResponse);
+      const response = await axios.put(
+        `http://localhost:8080/user/update-status/${newCustomer.id}`,
+        null,
+        {
+          params: {
+            status: newCustomer.status,
+          },
         }
-
-      } else {
-        // Thêm salon mới
-        const createResponse = await axios.post("http://localhost:8080/salon/create", {
-          salonName: formData.salonName,
-          salonAddress: formData.salonAddress,
-          salonStatus: formData.salonStatus === "true",
-        });
-
-        // Upload ảnh nếu có
-        if (selectedImage) {
-          const formDataUpload = new FormData();
-          formDataUpload.append("image", selectedImage);
-
-          await axios.post(
-            `http://localhost:8080/salon/image/upload/${createResponse.data.salonId}`,
-            formDataUpload,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
-        }
+      );
+      if (response.status === 200) {
+        const customerResponse = await axios.get(
+          "http://localhost:8080/user/customers"
+        );
+        setCustomers(customerResponse.data);
+        handleClose();
       }
-
-      fetchSalonData();
-      handleCloseModal();
-    } catch (err) {
-      console.error("Error saving salon:", err);
-      setError("Failed to save salon.");
+    } catch (error) {
+      console.error("Error updating customer:", error);
     }
   };
+
+  const handleOpenEditModal = () => setOpenEditModal(true);
+  const handleClose = () => {
+    setOpenEditModal(false);
+    setNewCustomer({
+      id: "",
+      status: "",
+    });
+  };
+
+  // Tính tổng số trang sau khi lọc
+  const totalPages = Math.ceil(
+    customers.filter((customer) => {
+      const customerDate = new Date(customer.registerDate);
+      const isStatusMatch =
+        statusFilter === "All" || String(customer.status) === statusFilter;
+      const isDateInRange =
+        (!startDate || customerDate >= startDate) &&
+        (!endDate || customerDate <= endDate);
+
+      return isStatusMatch && isDateInRange;
+    }).length / customersPerPage
+  );
+
+  // Lọc và phân trang danh sách khách hàng
+  const paginatedCustomers = customers
+    .filter((customer) => {
+      const customerDate = new Date(customer.registerDate);
+      const isStatusMatch =
+        statusFilter === "All" || String(customer.status) === statusFilter;
+      const isDateInRange =
+        (!startDate || customerDate >= startDate) &&
+        (!endDate || customerDate <= endDate);
+
+      return isStatusMatch && isDateInRange;
+    })
+    .slice(
+      (currentPage - 1) * customersPerPage,
+      currentPage * customersPerPage
+    );
 
   return (
     <Box
@@ -171,84 +132,122 @@ const AdminSalon = () => {
       }}
     >
       <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
-        Salon Management
+        Manage Customer Account
       </Typography>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ backgroundColor: "#4CAF50" }}
-          onClick={handleOpenAddModal}
-        >
-          Add Salon
-        </Button>
+      {/* Phần lọc */}
+      <Box sx={{ mb: 2, display: "flex", gap: 2 }}>
+        <FormControl sx={{ minWidth: 200 }}>
+          <InputLabel>Status</InputLabel>
+          <Select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <MenuItem value="All">All</MenuItem>
+            <MenuItem value="true">Active</MenuItem>
+            <MenuItem value="false">Inactive</MenuItem>
+          </Select>
+        </FormControl>
+
+        {/* Bộ lọc thời gian đăng ký */}
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DatePicker
+            label="Start Date"
+            value={startDate}
+            onChange={(newValue) => setStartDate(newValue)}
+            renderInput={(params) => <TextField {...params} />}
+          />
+          <DatePicker
+            label="End Date"
+            value={endDate}
+            onChange={(newValue) => setEndDate(newValue)}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
       </Box>
 
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Paper sx={{ padding: 2, backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: "#4caf50", color: "#fff" }}>
-                    <TableCell sx={{ color: "#fff" }}>No</TableCell>
-                    <TableCell sx={{ color: "#fff" }}>Salon Name</TableCell>
-                    <TableCell sx={{ color: "#fff" }}>Address</TableCell>
-                    <TableCell sx={{ color: "#fff" }}>Status</TableCell>
-                    <TableCell sx={{ color: "#fff" }}>Image</TableCell>
-                    <TableCell sx={{ color: "#fff" }}>Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {salonList.map((salon, index) => (
-                    <TableRow key={salon.id}>
+      {/* Bảng khách hàng */}
+      <TableContainer component={Paper} sx={{ backgroundColor: "#f5f5f5" }}>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ backgroundColor: "#4caf50", color: "#fff" }}>
+              <TableCell sx={{ color: "#fff" }}>No</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Name</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Email</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Register Date</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Status</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Action</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {paginatedCustomers.map((customer, index) => (
+              <TableRow key={customer.id}>
+                <TableCell>
+                  {(currentPage - 1) * customersPerPage + index + 1}
+                </TableCell>
+                <TableCell>{customer.name}</TableCell>
+                <TableCell>{customer.email}</TableCell>
+                <TableCell>
+                  {new Date(customer.registerDate).toLocaleDateString()}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: customer.status ? "#4CAF50" : "#F44336",
+                  }}
+                >
+                  {customer.status ? "Active" : "Inactive"}
+                </TableCell>
+                <TableCell>
+                  {customer.status ? (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      sx={{ backgroundColor: "#F44336" }}
+                      onClick={() => {
+                        setNewCustomer({
+                          id: customer.id,
+                          status: false,
+                        });
+                        handleOpenEditModal();
+                      }}
+                    >
+                      Disable
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      sx={{ backgroundColor: "#4CAF50" }}
+                      onClick={() => {
+                        setNewCustomer({
+                          id: customer.id,
+                          status: true,
+                        });
+                        handleOpenEditModal();
+                      }}
+                    >
+                      Active
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-                      <TableCell>
-                        {index + 1}
-                      </TableCell>
-                      <TableCell>{salon.name}</TableCell>
-                      <TableCell>{salon.address}</TableCell>
-                      <TableCell sx={{ color: salon.active ? "#4CAF50" : "#F44336" }}>
-                        {salon.active ? "Active" : "Inactive"}
-                      </TableCell>
-                      <TableCell>
-                        {salon.imageUrl ? (
-                          <img
-                            src={salon.imageUrl}
-                            alt={salon.name}
-                            style={{ width: "50px", height: "50px" }}
-                          />
-                        ) : (
-                          "No image"
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          sx={{ backgroundColor: "#4CAF50" }}
-                          onClick={() => handleOpenEditModal(salon)}
-                        >
-                          Edit
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </Grid>
-      </Grid>
+      {/* Phân trang */}
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={(event, value) => setCurrentPage(value)}
+          color="primary"
+        />
+      </Box>
 
-      {/* Modal for Add/Edit Salon */}
-      <Modal
-        open={openAddModal || openEditModal}
-        onClose={handleCloseModal}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      {/* Modal chỉnh sửa */}
+      <Modal open={openEditModal} onClose={handleClose}>
         <Box
           sx={{
             position: "absolute",
@@ -257,81 +256,37 @@ const AdminSalon = () => {
             transform: "translate(-50%, -50%)",
             width: 400,
             bgcolor: "background.paper",
-            borderRadius: 2,
+            borderRadius: 1,
             boxShadow: 24,
             p: 4,
           }}
         >
-          <Typography variant="h6" component="h2" sx={{ mb: 3 }}>
-            {openEditModal ? "Edit Salon" : "Add New Salon"}
+          <Typography variant="h6" mb={2}>
+            {newCustomer.status
+              ? "Activate this account?"
+              : "Deactivate this account?"}
           </Typography>
-
-          <form onSubmit={handleSubmit}>
-            <Stack spacing={3}>
-              <TextField
-                fullWidth
-                label="Salon Name"
-                name="salonName"
-                value={formData.salonName}
-                onChange={handleChange}
-                required
-              />
-              <TextField
-                fullWidth
-                label="Address"
-                name="salonAddress"
-                value={formData.salonAddress}
-                onChange={handleChange}
-                required
-              />
-              <FormControl fullWidth>
-                <Select
-                  name="salonStatus"
-                  value={formData.salonStatus}
-                  onChange={handleChange}
-                  required
-                >
-                  <MenuItem value="true">Active</MenuItem>
-                  <MenuItem value="false">Inactive</MenuItem>
-                </Select>
-              </FormControl>
-
-              {currentImageUrl && !selectedImage && (
-                <Box sx={{ mt: 2 }}>
-                  <Typography>Current Image:</Typography>
-                  <img
-                    src={currentImageUrl}
-                    alt={formData.salonName}
-                    style={{ width: "100%", height: "auto", marginTop: 8 }}
-                  />
-                </Box>
-              )}
-
-              <Typography>Upload Image:</Typography>
-              <input type="file" onChange={handleImageChange} />
-
-              <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
-                <Button
-                  variant="outlined"
-                  onClick={handleCloseModal}
-                  sx={{ color: "#F44336", borderColor: "#F44336" }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  sx={{ bgcolor: "#4CAF50" }}
-                >
-                  {openEditModal ? "Save changes" : "Add Salon"}
-                </Button>
-              </Box>
-            </Stack>
-          </form>
+          <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
+            <Button
+              variant="outlined"
+              onClick={handleClose}
+              sx={{ color: "#F44336", borderColor: "#F44336" }}
+            >
+              No
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ bgcolor: "#4CAF50" }}
+              onClick={updateCustomer}
+            >
+              Yes
+            </Button>
+          </Box>
         </Box>
       </Modal>
     </Box>
   );
 };
 
-export default AdminSalon;
+export default ManageCustomer;

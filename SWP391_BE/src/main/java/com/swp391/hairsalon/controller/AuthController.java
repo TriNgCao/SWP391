@@ -98,22 +98,24 @@ public class AuthController {
         return "{\"idToken\": \"" + idToken + "\"}";
     }
 
-    @PostMapping("/auth/google")
+    @PostMapping  ("/google")
     public ResponseEntity<JwtResponse> authenticateGoogleUser(@RequestBody GoogleAuthRequest request) {
         String idToken = request.getIdToken();
 
         // Xác thực Google ID Token
         try {
-            String email = googleTokenVerifierService.verifyToken(idToken);
+            String email = idToken;
+            MyUserDetails myUserDetails = myUserDetailsService.loadUserByUsername(email);
 
 
-                String token = this.helper.generateToken(email);
 
-                JwtResponse response = JwtResponse.builder()
-                        .token(token)
-                        .userID(email)
-                        .userRole(1)
-                        .build();
+            String token = this.helper.generateToken(email);
+
+            JwtResponse response = JwtResponse.builder()
+                    .token(token)
+                    .userID(myUserDetails.getUsername())
+                    .userRole(1)
+                    .build();
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Exception e) {

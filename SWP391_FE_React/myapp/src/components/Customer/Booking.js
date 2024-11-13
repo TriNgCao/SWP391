@@ -168,11 +168,11 @@ const Booking = () => {
       console.log("Fetching booked slots with:");
       console.log("Stylist ID:", selectedStylistId);
       console.log("Selected Date:", selectedDate);
-
+  
       const fetchStylistBookedSlots = async () => {
         try {
           let response;
-
+  
           if (selectedStylistId === 0) {
             response = await axios.get(
               `http://localhost:8080/book-schedule/${selectedDate}`
@@ -182,7 +182,7 @@ const Booking = () => {
               `http://localhost:8080/book-schedule/booked/${selectedStylistId}/${selectedDate}`
             );
           }
-
+  
           if (response.status === 200) {
             console.log("Booked Slots Response:", response.data);
             setStylistBookedSlots(response.data);
@@ -191,10 +191,11 @@ const Booking = () => {
           console.error("Error fetching booked slots:", error);
         }
       };
-
+  
       fetchStylistBookedSlots();
     }
   }, [selectedStylistId, selectedDate]);
+  
 
   const handleSalonSelect = (salonName, salonId) => {
     setSelectedSalon(salonName);
@@ -239,50 +240,61 @@ const Booking = () => {
 
   const timeSlots = generateTimeSlots();
 
-  const getDisabledSlots = (
-    bookedTime,
-    duration,
-    startTime,
-    endTime,
-    selectedDate
-  ) => {
-    const disabledSlots = [];
 
-    // Disable working slot
-    for (let hour = 0; hour < startTime; hour++) {
-      disabledSlots.push(`${hour}:00`);
-    }
-    for (let hour = endTime + 1; hour <= 23; hour++) {
-      disabledSlots.push(`${hour}:00`);
-    }
-
-    // Disable booked
-    for (let i = 0; i < duration; i++) {
-      const hour = bookedTime + i;
-      if (hour >= startTime && hour <= endTime) {
-        disabledSlots.push(`${hour}:00`);
-      }
-    }
-
-    //disable past time
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentDate = now.toDateString();
-
-    if (currentDate === new Date().toDateString()) {
-      for (let hour = startTime; hour <= currentHour; hour++) {
-        disabledSlots.push(`${hour < 8 ? `0${hour}` : hour}:00`);
-      }
-    }
-
-    return disabledSlots;
-  };
+  
 
   useEffect(() => {
+    const getDisabledSlots = (bookedTime, duration, startTime, endTime) => {
+      const disabledSlots = [];
+      const currentDate = new Date();
+      const selectedDateObj = new Date(selectedDate);
+  
+      // Disable past slots for the current day
+      if (
+        selectedDateObj.toDateString() === currentDate.toDateString() &&
+        currentDate.getHours() >= 8
+      ) {
+        const currentHour = currentDate.getHours();
+        const currentMinute = currentDate.getMinutes();
+  
+        for (let hour = 8; hour <= currentHour; hour++) {
+          if (hour === currentHour) {
+            for (let minute = 0; minute <= currentMinute; minute++) {
+              disabledSlots.push(`${hour}:${minute < 10 ? '0' + minute : minute}`);
+            }
+          } else {
+            disabledSlots.push(`${hour}:00`);
+          }
+        }
+      }
+  
+      // Disable slots outside working hours
+      for (let hour = 0; hour < startTime; hour++) {
+        disabledSlots.push(`${hour}:00`);
+      }
+      for (let hour = endTime + 1; hour <= 23; hour++) {
+        disabledSlots.push(`${hour}:00`);
+      }
+  
+      // Disable booked slots if bookedTime is provided
+      if (bookedTime !== null && duration) {
+        for (let i = 0; i < duration; i++) {
+          const hour = bookedTime + i;
+          if (hour >= startTime && hour <= endTime) {
+            disabledSlots.push(`${hour}:00`);
+          }
+        }
+      }
+  
+      return disabledSlots;
+    };
+  
+    const allDisabledSlots = new Set();
+  
     if (stylistBookedSlots.length === 0) {
-      setDisabledSlotsSet(new Set());
+      const disabledSlots = getDisabledSlots(null, 0);
+      disabledSlots.forEach((slot) => allDisabledSlots.add(slot));
     } else {
-      const allDisabledSlots = new Set();
       stylistBookedSlots.forEach((slotData) => {
         const disabledSlots = getDisabledSlots(
           slotData.bookedTime,
@@ -290,16 +302,15 @@ const Booking = () => {
           slotData.startTime,
           slotData.endTime
         );
-        disabledSlots.forEach((disabledSlot) =>
-          allDisabledSlots.add(disabledSlot)
-        );
+        disabledSlots.forEach((disabledSlot) => allDisabledSlots.add(disabledSlot));
       });
-      setDisabledSlotsSet(allDisabledSlots);
     }
-  }, [stylistBookedSlots]);
+  
+    setDisabledSlotsSet(allDisabledSlots);
+  }, [selectedDate, stylistBookedSlots]);
+  
 
   const handleSlotClick = (slot) => {
-    console.log("Slot clicked:", slot);
     if (!disabledSlotsSet.has(slot)) {
       console.log("Slot is available:", slot);
       setSelectedSlot(slot);
@@ -382,8 +393,8 @@ const Booking = () => {
       );
 
       if (response.status === 201) {
-        toast.success("Booking Successfully!");
         navigate("/viewappointment");
+        toast.success("Booking Successfully!");
       } else {
         toast.error("Booking failed. Please try again.");
       }

@@ -23,6 +23,11 @@ const StaffSidebar = () => {
             <PaidIcon /> View Salary
           </Link>
         </li>
+        <li style={listItemStyle}>
+          <Link to="staff-supportTicket" style={linkStyle}>
+            <PaidIcon /> Support Ticket
+          </Link>
+        </li>
       </ul>
     </div>
   );

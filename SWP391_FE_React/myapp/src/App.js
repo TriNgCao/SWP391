@@ -5,7 +5,6 @@ import Contact from "./components/Customer/Contact";
 import Services from "./components/Customer/Services";
 import Booking from "./components/Customer/Booking";
 import { AuthProvider } from "./components/Customer/AuthContext";
-import { ToastContainer } from "react-toastify";
 import ManagerAppointments from "./Pages/Manager/ManagerAppointments";
 import ManagerPayroll from "./Pages/Manager/ManagerPayroll";
 import ManagerLayout from "./Layouts/Manager/ManagerLayout";
@@ -38,11 +37,11 @@ import CustomerPrivateRoute from "./components/PrivateRoute/CustomerPrivateRoute
 import ViewAppointment from "./components/Customer/ViewAppointment";
 import Success from "./components/Dashboard/Success";
 import Fail from "./components/Dashboard/Fail";
-
+import StaffSupportTicket from "./Pages/Staff/StaffSupportTicket";
+import StylistPrivateRoute from "./components/PrivateRoute/StylistPrivateRoute";
 function App() {
   return (
     <div>
-      <ToastContainer autoClose={2000} />
       <AuthProvider>
         <Routes>
           {/* Customer routes */}
@@ -98,26 +97,30 @@ function App() {
               }
             />
           </Route>
-          <Route
-            path="/profile"
-            element={
-              <>
-                <Navbar />
-                <UserProfile />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/viewappointment"
-            element={
-              <>
-                <Navbar />
-                <ViewAppointment />
-                <Footer />
-              </>
-            }
-          />
+          <Route path="/profile" element={<CustomerPrivateRoute />}>
+            <Route
+              path=""
+              element={
+                <>
+                  <Navbar />
+                  <UserProfile />
+                  <Footer />
+                </>
+              }
+            />
+          </Route>
+          <Route path="/viewappointment" element={<CustomerPrivateRoute />}>
+            <Route
+              path=""
+              element={
+                <>
+                  <Navbar />
+                  <ViewAppointment />
+                  <Footer />
+                </>
+              }
+            />
+          </Route>
           <Route
             path="/blog"
             element={
@@ -128,29 +131,23 @@ function App() {
               </>
             }
           />
-          <Route
-            path="/blogpost"
-            element={
-              <>
-                <Navbar />
-                <BlogPost />
-                <Footer />
-              </>
-            }
-          />
+          <Route path="/blogpost" element={<CustomerPrivateRoute />}>
+            <Route
+              path=""
+              element={
+                <>
+                  <Navbar />
+                  <BlogPost />
+                  <Footer />
+                </>
+              }
+            />
+          </Route>  
 
-          <Route
-            path="/payment/success"
-            element=
-            {< Success />}
+          {/* Payment */}
 
-          />
-          <Route
-            path="/payment/fail"
-            element=
-            {< Fail />}
-
-          />
+          <Route path="/payment/success" element={<Success />} />
+          <Route path="/payment/fail" element={<Fail />} />
 
           {/* DASHBOARD MANAGER */}
           <Route path="/manager" element={<ManagerLayout />}>
@@ -162,18 +159,10 @@ function App() {
             <Route
               path="manager-transaction"
               element={<ManagerTransaction />}
-            /><Route
-              path="manager-blog"
-              element={<ManagerBlogs />}
             />
-            <Route
-              path="view-appointments"
-              element={<ManagerAppointments />}
-            /><Route
-              path="manager-schedule"
-              element={<ManagerSchedule />}
-            />
-
+            <Route path="manager-blog" element={<ManagerBlogs />} />
+            <Route path="view-appointments" element={<ManagerAppointments />} />
+            <Route path="manager-schedule" element={<ManagerSchedule />} />
           </Route>
 
           {/* DASHBOARD ADMIN */}
@@ -181,24 +170,59 @@ function App() {
             <Route path="admin-profile" element={<AdminProfilePage />} />
             <Route path="admin-personnel" element={<AdminPersonnel />} />
             <Route path="admin-salon" element={<AdminSalon />} />
-            <Route path="admin-customer"
-              element={<ManageCustomer />}
-            />
+            <Route path="admin-customer" element={<ManageCustomer />} />
           </Route>
 
           {/* DASHBOARD STAFF */}
           <Route path="/staff" element={<StaffLayout />}>
             <Route path="staff-profile" element={<StaffProfilePage />} />
             <Route path="staff-appointments" element={<StaffAppointments />} />
+
             <Route path="staff-salary" element={<StaffSalary />} />
+            <Route
+              path="staff-supportTicket"
+              element={<StaffSupportTicket />}
+            />
           </Route>
 
           {/* DASHBOARD STYLIST */}
-          <Route path="/stylist" element={<StylistLayout />}>
-            <Route path="stylist-profile" element={<StylistProfilePage />} />
-            <Route path="stylist-salary" element={<StylistSalary />} />
-            <Route path="stylist-schedule" element={<StylistSchedule />} />
-          </Route>
+          <Route path="/stylist" element={<StylistPrivateRoute />}>
+        <Route
+          path=""
+          element={
+            <>
+              <StylistLayout />
+            </>
+          }
+        />
+        <Route
+          path="stylist-profile"
+          element={
+            <>
+              <StylistLayout />
+              <StylistProfilePage />
+            </>
+          }
+        />
+        <Route
+          path="stylist-salary"
+          element={
+            <>
+              <StylistLayout />
+              <StylistSalary />
+            </>
+          }
+        />
+        <Route
+          path="stylist-schedule"
+          element={
+            <>
+              <StylistLayout />
+              <StylistSchedule />
+            </>
+          }
+        />
+      </Route>
         </Routes>
       </AuthProvider>
     </div>

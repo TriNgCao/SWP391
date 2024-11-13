@@ -54,8 +54,7 @@ const InternalLoginModal = () => {
 
         setLoading(false);
         toast.success("Login Successfully!");
-
-        switch (userRole) {
+          switch (userRole) {
           case 2:
             navigate('/stylist');
             break;

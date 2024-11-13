@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function Services() {
   const [services, setServices] = useState([]);
@@ -8,6 +9,12 @@ export default function Services() {
   const [searchColoringTerm, setSearchColoringTerm] = useState("");
   const [searchTreatmentTerm, setSearchTreatmentTerm] = useState("");
   const [searchSpaSkinTerm, setSearchSpaSkinTerm] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleBookNow = () => {
+    navigate("/booking");
+  };
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -81,7 +88,15 @@ export default function Services() {
             >
               Price: {service.servicePrice}
             </p>
-            <button className="btn btn-primary mt-auto">Book Now</button>
+            <button
+              className="btn btn-primary mt-auto"
+              type="button"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              onClick={handleBookNow}
+            >
+              Book Now
+            </button>
           </div>
         </div>
       </div>

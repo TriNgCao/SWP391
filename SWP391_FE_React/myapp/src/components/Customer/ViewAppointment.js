@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaStar } from "react-icons/fa";
 
@@ -80,7 +80,7 @@ const ViewAppointment = () => {
       ]);
   
       if (cancelResponse.status === 200 && additionalInfoResponse.status === 200) {
-        toast.success("Appointment status updated successfully");
+        toast.success("Appointment cancel successfully");
         const response = await axios.get(
           `http://localhost:8080/api/appointment/customer/${accountId}`
         );
@@ -137,6 +137,8 @@ const ViewAppointment = () => {
     }
   };
   return (
+    <div>
+    <ToastContainer autoClose={1300} />
     <div style={styles.appointmentContainer}>
       <h1 style={styles.title}>Your Appointments</h1>
       <div style={styles.filterContainer}>
@@ -368,6 +370,7 @@ const ViewAppointment = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

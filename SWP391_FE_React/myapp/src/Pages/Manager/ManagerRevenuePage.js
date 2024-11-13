@@ -5,7 +5,6 @@ import {
   Paper,
   Typography,
   TextField,
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -43,10 +42,10 @@ const ManageRevenuePage = () => {
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
   const [dailyRevenue, setDailyRevenue] = useState([]);
-  const [dailyProfit, setDailyProfit] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [days, setDays] = useState(10);
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+  const [maxRevenue, setMaxRevenue] = useState(0);
 
   const formatVietnamDate = (date) => {
     return new Intl.DateTimeFormat("vi-VN", {
@@ -79,34 +78,6 @@ const ManageRevenuePage = () => {
     }
   };
 
-  const fetchDailyRevenue = async (date) => {
-    if (date) {
-      const dateOnly = date.toLocaleDateString("en-CA");
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/revenue/daily-revenue?date=${dateOnly}`
-        );
-        setDailyRevenue([{ date: dateOnly, total: response.data }]);
-      } catch (error) {
-        console.error("Error fetching daily revenue:", error);
-      }
-    }
-  };
-
-  const fetchDailyProfit = async (date) => {
-    if (date) {
-      const dateOnly = date.toLocaleDateString("en-CA");
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/revenue/daily-profit?date=${dateOnly}`
-        );
-        setDailyProfit([{ date: dateOnly, profit: response.data }]);
-      } catch (error) {
-        console.error("Error fetching daily profit:", error);
-      }
-    }
-  };
-
   const fetchLastXDaysData = async () => {
     try {
       const response = await axios.get(
@@ -114,10 +85,13 @@ const ManageRevenuePage = () => {
       );
       const data = response.data || {};
 
-      const labels = Object.keys(data).reverse();
+      const labels = Object.keys(data).sort(
+        (a, b) => new Date(a) - new Date(b)
+      );
       const revenueData = labels.map((date) => data[date]?.revenue || 0);
-      const profitData = labels.map((date) => data[date]?.profit || 0);
+      const maxRevenueValue = Math.max(...revenueData); // Tìm giá trị cao nhất của doanh thu
 
+      setMaxRevenue(maxRevenueValue); // Lưu giá trị cao nhất vào state
       setChartData({
         labels,
         datasets: [
@@ -126,13 +100,6 @@ const ManageRevenuePage = () => {
             data: revenueData,
             borderColor: "#007BFF",
             backgroundColor: "rgba(0, 123, 255, 0.1)",
-            fill: true,
-          },
-          {
-            label: "Profit",
-            data: profitData,
-            borderColor: "#28a745",
-            backgroundColor: "rgba(40, 167, 69, 0.1)",
             fill: true,
           },
         ],
@@ -146,30 +113,24 @@ const ManageRevenuePage = () => {
     fetchTotalRevenue();
     fetchTotalProfit();
     fetchLastXDaysData();
-    if (selectedDate) {
-      fetchDailyRevenue(selectedDate);
-      fetchDailyProfit(selectedDate);
-    }
-  }, [selectedDate, days]);
+  }, [days]);
 
-  const lineChartData = {
-    labels: dailyRevenue.map((item) => formatVietnamDate(item.date)),
-    datasets: [
-      {
-        label: "Revenue",
-        data: dailyRevenue.map((item) => item.total),
-        fill: false,
-        backgroundColor: "#007BFF",
-        borderColor: "#007BFF",
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
       },
-      {
-        label: "Profit",
-        data: dailyProfit.map((item) => item.profit),
-        fill: false,
-        backgroundColor: "#28a745",
-        borderColor: "#28a745",
+    },
+    scales: {
+      y: {
+        min: 0,
+        max: maxRevenue * 1.5, // Thiết lập chiều cao tối đa là 2 lần giá trị cao nhất
+        ticks: {
+          stepSize: maxRevenue / 5, // Điều chỉnh khoảng cách giữa các giá trị trên trục y
+        },
       },
-    ],
+    },
   };
 
   return (
@@ -189,12 +150,12 @@ const ManageRevenuePage = () => {
         Revenue Management
       </Typography>
 
-      {/* Date Filter for Daily Revenue & Profit */}
+      {/* Date Filter for Daily Revenue */}
       <Grid container spacing={2} sx={{ mb: 4 }}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <Grid item xs={12} sm={6} md={3}>
             <DatePicker
-              label="Daily Revenue & Profit"
+              label="Daily Revenue"
               value={selectedDate}
               onChange={(newValue) => setSelectedDate(newValue)}
               renderInput={(params) => <TextField {...params} fullWidth />}
@@ -240,53 +201,20 @@ const ManageRevenuePage = () => {
         </Grid>
       </Grid>
 
-      {/* Line Chart for Revenue and Profit */}
+      {/* Line Chart for Revenue */}
       <Grid container spacing={2} sx={{ mt: 4 }}>
         <Grid item xs={12}>
           <Paper
-            sx={{ padding: 2, backgroundColor: "#f5f5f5", borderRadius: "8px" }}
+            sx={{
+              padding: 2,
+              backgroundColor: "#f5f5f5",
+              borderRadius: "8px",
+            }}
           >
             <Typography variant="h6" color="primary">
-              Revenue & Profit Over the Last {days} Days
+              Revenue Over the Last {days} Days
             </Typography>
-            <Line data={chartData} />
-          </Paper>
-        </Grid>
-      </Grid>
-
-      {/* Daily Revenue and Profit Table */}
-      <Grid container spacing={2} sx={{ mt: 4 }}>
-        <Grid item xs={12}>
-          <Paper
-            sx={{ padding: 2, backgroundColor: "#f5f5f5", borderRadius: "8px" }}
-          >
-            <Typography variant="h6" color="primary">
-              Daily Revenue & Profit
-            </Typography>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell align="right">Daily Revenue</TableCell>
-                    <TableCell align="right">Daily Profit</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {dailyRevenue.map((item, index) => (
-                    <TableRow key={item.date}>
-                      <TableCell>{formatVietnamDate(item.date)}</TableCell>
-                      <TableCell align="right">
-                        {item.total.toLocaleString()} USD
-                      </TableCell>
-                      <TableCell align="right">
-                        {(dailyProfit[index]?.profit || 0).toLocaleString()} USD
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <Line data={chartData} options={chartOptions} />
           </Paper>
         </Grid>
       </Grid>

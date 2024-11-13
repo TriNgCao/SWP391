@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Contact = () => {
@@ -161,6 +161,8 @@ const Contact = () => {
   }, [errors]);
 
   return (
+    <div>
+    <ToastContainer autoClose={1300} />
     <section className="ftco-section bg-light">
       <div className="container">
         <div className="row justify-content-center">
@@ -320,6 +322,7 @@ const Contact = () => {
         </div>
       </div>
     </section>
+    </div>
   );
 };
 

@@ -152,6 +152,7 @@ public class AccountService implements IAccountService {
     public void setPassword(String email, String password) {
         Account a = iAccountRepository.searchByEmail(email);
         a.setPassword(passwordEncoder.encode(password));
+        iAccountRepository.save(a);
     }
 
     @Override

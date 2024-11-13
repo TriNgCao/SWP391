@@ -39,7 +39,7 @@ public class SecurityCofig {
                    
                            auth.requestMatchers("/auth/login", "/home").permitAll();
                            
-                           auth.anyRequest().authenticated();
+                           auth.anyRequest().permitAll();
                        })
                 .oauth2Login(
                         oauth -> {

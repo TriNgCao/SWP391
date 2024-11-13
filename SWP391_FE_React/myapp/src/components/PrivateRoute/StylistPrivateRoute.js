@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import {Outlet } from 'react-router-dom';
-import CustomerLoginModal from '../Customer/CustomerLoginModal';
+import InternalLoginModal from '../Customer/InternalLoginModal';
+import {toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const CustomerPrivateRoute = () => {
+const StylistPrivateRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');
     const userRole = sessionStorage.getItem('userRole');
 
-    if (token && userRole === '1') {
+    if (token && userRole === '2') {
       setIsAuthenticated(true);
     } else {
       setIsAuthenticated(false);
+      toast.warn('Please log in to continue.', { autoClose: 1300 });
     }
   }, []);
 
@@ -21,13 +24,13 @@ const CustomerPrivateRoute = () => {
       <>
         <div
           className="modal fade show"
-          id="customerLoginModal"
+          id="internalLoginModal"
           tabIndex="-1"
-          aria-labelledby="customerLoginModalLabel"
+          aria-labelledby="internalLoginModalLabel"
           aria-hidden="true"
           style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
         >
-          <CustomerLoginModal />
+          <InternalLoginModal />
         </div>
       </>
     );
@@ -36,4 +39,4 @@ const CustomerPrivateRoute = () => {
   return <Outlet />;
 };
 
-export default CustomerPrivateRoute;
+export default StylistPrivateRoute;

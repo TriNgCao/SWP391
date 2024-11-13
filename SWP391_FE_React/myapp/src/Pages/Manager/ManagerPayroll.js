@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   Box,
   Paper,
@@ -20,20 +20,32 @@ import {
   FormControl,
 } from "@mui/material";
 import { format, subMonths } from "date-fns";
+import * as XLSX from "xlsx";
 
-const API_URL = "http://localhost:8080/api/payroll/salon/manager";
+const accountID = sessionStorage.getItem("userID");
+const API_URL = `http://localhost:8080/api/payroll/salon/${accountID}`;
 
 const ManagerPayroll = () => {
   const [payrollData, setPayrollData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPayrollId, setSelectedPayrollId] = useState(null);
-  const [selectedMonth, setSelectedMonth] = useState(format(new Date(), "yyyy-MM"));
+  const [selectedMonth, setSelectedMonth] = useState(
+    format(new Date(), "yyyy-MM")
+  );
+  const exportToExcel = () => {
+    const wb = XLSX.utils.book_new(); // Tạo một workbook mới
+    const ws = XLSX.utils.json_to_sheet(filteredData); // Chuyển đổi filteredData thành sheet Excel
+    XLSX.utils.book_append_sheet(wb, ws, "Payroll"); // Thêm sheet vào workbook
 
+    // Tải xuống file Excel
+    XLSX.writeFile(wb, "payroll_data.xlsx");
+  };
   const fetchPayrollData = useCallback(async () => {
     try {
       const response = await axios.get(API_URL);
       const data = response.data;
+      console.log("🚀 ~ data:", data);
       setPayrollData(data);
       filterPayrollByMonth(data, selectedMonth);
     } catch (error) {
@@ -46,8 +58,8 @@ const ManagerPayroll = () => {
   }, [fetchPayrollData]);
 
   const filterPayrollByMonth = (data, month) => {
-    const filtered = data.filter((item) =>
-      format(new Date(item.payrollDate), "yyyy-MM") === month
+    const filtered = data.filter(
+      (item) => format(new Date(item.payrollDate), "yyyy-MM") === month
     );
     setFilteredData(filtered);
   };
@@ -84,7 +96,10 @@ const ManagerPayroll = () => {
     const months = [];
     for (let i = 0; i < 6; i++) {
       const date = subMonths(new Date(), i);
-      months.push({ value: format(date, "yyyy-MM"), label: format(date, "MMMM yyyy") });
+      months.push({
+        value: format(date, "yyyy-MM"),
+        label: format(date, "MMMM yyyy"),
+      });
     }
     return months;
   };
@@ -212,14 +227,21 @@ const ManagerPayroll = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={exportToExcel}
+        sx={{ mt: 3 }}
+      >
+        Export to Excel
+      </Button>
       {/* Confirmation Modal */}
       <Modal open={modalOpen} onClose={closeModal}>
         <Box sx={styles.modal}>
           <Typography variant="h6" component="h2" gutterBottom>
             Are you sure you want to set this payroll as paid?
           </Typography>
-          <Box display="flex" justifyContent="flex-end" mt={2}>
+          <Box display="flex" justifyContent="center" mt={2}>
             <Button
               variant="outlined"
               sx={styles.cancelButton}
@@ -231,7 +253,7 @@ const ManagerPayroll = () => {
               variant="contained"
               sx={styles.confirmButton}
               onClick={() => updateStatus(selectedPayrollId)}
-              style={{ marginLeft: '10px' }}
+              style={{ marginLeft: "10px" }}
             >
               Yes
             </Button>
@@ -243,3 +265,4 @@ const ManagerPayroll = () => {
 };
 
 export default ManagerPayroll;
+// ĐÃ XONG HẾT TẤT CẢ

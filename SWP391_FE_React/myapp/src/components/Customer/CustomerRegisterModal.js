@@ -255,6 +255,20 @@ const CustomerRegisterModal = () => {
             )}
             {step === 2 && (
               <>
+              <div className="mb-3">
+                  <label htmlFor="customerEmail" className="form-label">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="customerEmail"
+                    placeholder="Enter your email"
+                    style={{ borderRadius: "10px", padding: "10px" }}
+                    value={email}
+                    disabled
+                  />
+                </div>
                 <div className="mb-3">
                   <label htmlFor="otp" className="form-label">
                     OTP
@@ -268,20 +282,6 @@ const CustomerRegisterModal = () => {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="customerEmail" className="form-label">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="customerEmail"
-                    placeholder="Enter your email"
-                    style={{ borderRadius: "10px", padding: "10px" }}
-                    value={email}
-                    disabled
                   />
                 </div>
               </>

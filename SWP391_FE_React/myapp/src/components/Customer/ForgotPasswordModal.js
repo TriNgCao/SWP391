@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
-import { useRef, useEffect } from "react";
 
 const ForgotPasswordModal = () => {
   const [email, setEmail] = useState("");
@@ -12,9 +11,10 @@ const ForgotPasswordModal = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [step, setStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateEmail = (email) =>
-    /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+    /^[a-zA-Z0-9._-]+@[a-zAZ0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 
   const resetForm = () => {
     setEmail("");
@@ -23,6 +23,7 @@ const ForgotPasswordModal = () => {
     setConfirmPassword("");
     setStep(1);
   };
+
   const modalRef = useRef(null);
 
   useEffect(() => {
@@ -40,56 +41,74 @@ const ForgotPasswordModal = () => {
 
   const handleSendEmail = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
     try {
-      const response = await axios.post("https://example.com/api/send-email/", {
-        email,
-      });
+      const response = await axios.post(
+        `http://localhost:8080/api/email/send-code/verify/${encodeURIComponent(email)}`
+      );
       if (response.status === 200) {
         setStep(2);
-        toast.success("OTP sent to your email");
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "An error occurred");
+    } finally {
+      setIsLoading(false);
+      toast.success("OTP sent to your email");
     }
   };
 
   const handleSubmitOtp = async (e) => {
     e.preventDefault();
+    setIsLoading(true); 
+
     try {
-      const response = await axios.post("https://example.com/api/verify-otp", {
-        email,
-        otp,
-      });
+      const response = await axios.post(
+        `http://localhost:8080/api/email/verify-code/${encodeURIComponent(email)}/${encodeURIComponent(otp)}`
+      );
       if (response.status === 200) {
         setStep(3);
-        toast.success("OTP verified, please enter new password");
+
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "An error occurred");
+    } finally {
+      setIsLoading(false);
+      toast.success("OTP verified, please enter new password");
     }
   };
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
+        toast.error("Passwords do not match");
+        return;
     }
+    setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        "https://example.com/api/reset-password",
-        { email, password }
-      );
-      if (response.status === 200) {
-        toast.success("Password reset successful");
-        document.getElementById("backToLoginLink").click();
-        resetForm();
-      }
+        const response = await axios.put(
+            `http://localhost:8080/user/reset-pass`,
+            null,
+            {
+                params: { email, password }
+            }
+        );
+        
+        if (response.status === 200) {
+            toast.success("Password reset successful");
+            document.getElementById("backToLoginLink").click(); // Triggering modal redirection
+            resetForm(); // Resetting form fields
+        } else {
+            toast.error("Password reset failed, please try again.");
+        }
     } catch (error) {
-      toast.error(error.response?.data?.error || "An error occurred");
+        toast.error(error.response?.data?.error || "An error occurred");
+    } finally {
+        setIsLoading(false);
     }
-  };
+};
+
 
   return (
     <div ref={modalRef} className="modal-dialog modal-dialog-centered">
@@ -246,6 +265,24 @@ const ForgotPasswordModal = () => {
             )}
             {step === 3 && (
               <>
+              <div className="mb-3">
+                  <label htmlFor="emailDisabled" className="form-label">
+                    Email
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="emailDisabled"
+                    style={{
+                      borderRadius: "10px",
+                      padding: "10px",
+                      backgroundColor: "#e9ecef",
+                      color: "#6c757d",
+                    }}
+                    value={email}
+                    disabled
+                  />
+                </div>
                 <div className="mb-3">
                   <label htmlFor="password" className="form-label">
                     New Password
@@ -286,8 +323,11 @@ const ForgotPasswordModal = () => {
                 backgroundColor: "#6dbe45",
                 borderColor: "#6dbe45",
               }}
+              disabled={isLoading} 
             >
-              {step === 1
+              {isLoading
+                ? "Loading..."
+                : step === 1
                 ? "Send Email"
                 : step === 2
                 ? "Submit OTP"

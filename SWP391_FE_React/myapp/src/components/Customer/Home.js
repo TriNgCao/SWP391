@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import AboutUs from "./AboutUs";
+import { ToastContainer } from "react-toastify";
 
 export default function Home() {
   return (
     <div>
+    <ToastContainer autoClose={1300} />
       <section>
         <div
           className="hero-wrap js-fullheight d-flex align-items-center"
@@ -68,6 +70,8 @@ export default function Home() {
                       profession: "Profession",
                       image: "images/person_2.jpg",
                     },
+
+                    
                     {
                       quote:
                         "Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod magna dolore erat amet.",

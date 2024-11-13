@@ -1,163 +1,165 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, CircularProgress, Grid } from "@mui/material";
+import {
+  Box,
+  Typography,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Pagination,
+  PaginationItem,
+} from "@mui/material";
+import axios from "axios";
 
 export default function StylistSalary() {
-  const [salary, setSalary] = useState(null);
+  const [salaryData, setSalaryData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const accountId = sessionStorage.getItem("userID");
-  // Dữ liệu giả cho lương cá nhân stylist
-  const fakeData = {
-    name: "Nguyễn Văn A",
-    position: "Senior Stylist",
-    baseSalary: 8000000,
-    bonus: 2000000,
-  };
+  const [page, setPage] = useState(1); // Bắt đầu từ trang 1
+  const rowsPerPage = 5; // Số dòng trên mỗi trang cố định là 5
+  const currentYear = new Date().getFullYear();
+  const accountID = sessionStorage.getItem("userID");
 
   useEffect(() => {
-    // Giả lập việc tải dữ liệu
-    const fetchData = () => {
-      setTimeout(() => {
-        setSalary(fakeData);
+    // Lấy dữ liệu lương của stylist từ API
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/salary/stylist/${accountID}`
+        );
+        console.log("Dữ liệu lương:", response.data);
+
+        // Lọc dữ liệu chỉ lấy những bản ghi trong năm hiện tại
+        const filteredData = response.data.filter((salary) => {
+          const salaryYear = new Date(salary.payrollDate).getFullYear();
+          return salaryYear === currentYear;
+        });
+
+        setSalaryData(filteredData);
         setLoading(false);
-      }, 1000);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu lương:", error);
+        setLoading(false);
+      }
     };
 
     fetchData();
-  }, []);
+  }, [accountID, currentYear]);
+
+  // Tổng số trang dựa trên số dữ liệu và số dòng trên mỗi trang
+  const pageCount = Math.ceil(salaryData.length / rowsPerPage);
+
+  // Xử lý thay đổi trang
+  const handleChangePage = (event, value) => {
+    setPage(value);
+  };
 
   return (
     <Box
       sx={{
-        position: "relative",
         padding: 4,
-
         minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#f9f9f9",
       }}
     >
-      {/* Overlay màu đen mờ */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.5)", // Overlay màu đen với độ trong suốt
-        }}
-      />
-
-      <Box
-        sx={{
-          position: "relative", // Đặt lại vị trí cho Box nội dung
-          padding: 4,
-          borderRadius: 2,
-          boxShadow: 3,
-          width: "100%",
-          maxWidth: "600px", // Giới hạn chiều rộng tối đa
-          zIndex: 1, // Đảm bảo nội dung hiển thị trên overlay
-          backgroundColor: "rgba(255, 255, 255, 0.9)", // Khung nội dung trong suốt
-        }}
-      >
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          sx={{ mb: 3, textAlign: "center", color: "#4CAF50" }} // Màu chữ xanh lá cây
-        >
-          Personal Salary Overview
-        </Typography>
-
-        {loading ? (
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            minHeight="60vh"
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <Box sx={{ width: "100%", maxWidth: "800px" }}>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            sx={{ mb: 3, textAlign: "center", color: "#4CAF50" }}
           >
-            <CircularProgress />
+            Personal Salary Overview - {currentYear}
+          </Typography>
+
+          {/* Bảng lương */}
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: "#4CAF50" }}>
+                  <TableCell sx={{ color: "#fff" }}>Payroll Date</TableCell>
+                  <TableCell sx={{ color: "#fff" }}>Position</TableCell>
+                  <TableCell sx={{ color: "#fff" }}>Salary (Hourly)</TableCell>
+                  <TableCell sx={{ color: "#fff" }}>Commission (%)</TableCell>
+                  <TableCell sx={{ color: "#fff" }}>
+                    Commission Amount
+                  </TableCell>
+                  <TableCell sx={{ color: "#fff" }}>Total Earnings</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {salaryData
+                  .slice((page - 1) * rowsPerPage, page * rowsPerPage)
+                  .map((salary, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        {new Date(salary.payrollDate).toLocaleDateString(
+                          "vi-VN"
+                        )}
+                      </TableCell>
+                      <TableCell>{salary.name || "N/A"}</TableCell>
+                      <TableCell>
+                        {salary.salary
+                          ? salary.salary.toLocaleString() + " VNĐ"
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell>
+                        {salary.commission
+                          ? (salary.commission * 100).toFixed(1) + " %"
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell>
+                        {salary.commissionAmount
+                          ? salary.commissionAmount.toLocaleString() + " VNĐ"
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell>
+                        {salary.earning
+                          ? salary.earning.toLocaleString() + " VNĐ"
+                          : "N/A"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {/* Phân trang */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              mt: 2,
+            }}
+          >
+            <Pagination
+              count={pageCount}
+              page={page}
+              onChange={handleChangePage}
+              color="primary"
+              renderItem={(item) => (
+                <PaginationItem
+                  {...item}
+                  sx={{
+                    "&.Mui-selected": {
+                      backgroundColor: "#4CAF50",
+                      color: "#fff",
+                    },
+                  }}
+                />
+              )}
+            />
           </Box>
-        ) : (
-          <Grid container spacing={2} justifyContent="center">
-            <Grid item xs={12}>
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                sx={{ textAlign: "center", color: "#4CAF50" }} // Màu chữ xanh lá cây
-              >
-                Stylist Name:
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ marginBottom: 2, textAlign: "center", color: "#333" }} // Màu chữ tối cho giá trị
-              >
-                {salary.name}
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                sx={{ textAlign: "center", color: "#4CAF50" }} // Màu chữ xanh lá cây
-              >
-                Position:
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ marginBottom: 2, textAlign: "center", color: "#333" }} // Màu chữ tối cho giá trị
-              >
-                {salary.position}
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                sx={{ textAlign: "center", color: "#4CAF50" }} // Màu chữ xanh lá cây
-              >
-                Base Salary:
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ marginBottom: 2, textAlign: "center", color: "#333" }} // Màu chữ tối cho giá trị
-              >
-                {salary.baseSalary.toLocaleString()} VNĐ
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                sx={{ textAlign: "center", color: "#4CAF50" }} // Màu chữ xanh lá cây
-              >
-                Bonus:
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ marginBottom: 2, textAlign: "center", color: "#333" }} // Màu chữ tối cho giá trị
-              >
-                {salary.bonus.toLocaleString()} VNĐ
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                sx={{ textAlign: "center", color: "#4CAF50" }} // Màu chữ xanh lá cây
-              >
-                Total Salary:
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ marginBottom: 2, textAlign: "center", color: "#333" }} // Màu chữ tối cho giá trị
-              >
-                {(salary.baseSalary + salary.bonus).toLocaleString()} VNĐ
-              </Typography>
-            </Grid>
-          </Grid>
-        )}
-      </Box>
+        </Box>
+      )}
     </Box>
   );
 }

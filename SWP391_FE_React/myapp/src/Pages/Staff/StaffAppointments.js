@@ -56,20 +56,11 @@ const StaffAppointments = () => {
   const [totalAfterDiscount, setTotalAfterDiscount] = useState(0); // Tổng tiền sau khi trừ điểm
   const [useLoyaltyPoint, setUseLoyaltyPoint] = useState(false); // Biến để quản lý việc sử dụng loyaltyPoint
   // Fetch dữ liệu từ API
-  const fetchAppointments1 = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8080/api/appointment/staff/STA1`
-      );
-      setAppointments(response.data);
-    } catch (error) {
-      console.error("Failed to fetch appointments:", error);
-    }
-  };
+  const accountID = sessionStorage.getItem("userID");
   const fetchAppointments = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/appointment/staff/STA1"
+        `http://localhost:8080/api/appointment/staff/${accountID}`
       );
       setAppointments(response.data);
     } catch (error) {
@@ -77,23 +68,12 @@ const StaffAppointments = () => {
     }
   };
   useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/api/appointment/staff/STA1"
-        );
-        setAppointments(response.data);
-      } catch (error) {
-        console.error("Failed to fetch appointments:", error);
-      }
-    };
-
     fetchAppointments();
   }, []);
   const handleClosePaymentConfirmation = () => {
     setOpenPaymentConfirmation(false);
     setUseLoyaltyPoint(false);
-    fetchAppointments1();
+    fetchAppointments();
   };
 
   const handleOpenModal = async (appointment) => {
@@ -133,7 +113,11 @@ const StaffAppointments = () => {
       );
 
       // Đóng modal nếu trạng thái được cập nhật là "Pending" sang "Ready"
-      if (newStatus === "Ready" || newStatus === "Cancelled" || newStatus === "Processing") {
+      if (
+        newStatus === "Ready" ||
+        newStatus === "Cancelled" ||
+        newStatus === "Processing"
+      ) {
         setOpenModal(false);
       }
 
@@ -160,7 +144,6 @@ const StaffAppointments = () => {
 
     setTotalAfterDiscount(total); // Cập nhật tổng tiền sau giảm
     setOpenPaymentConfirmation(true);
-
   };
 
   const fetchLoyaltyPoint = async () => {
@@ -185,9 +168,10 @@ const StaffAppointments = () => {
     try {
       if (useLoyaltyPoint) {
         console.log("hello");
-        await axios.put(`http://localhost:8080/payment/point/${selectedAppointment.customerId}`, {
-
-        });
+        await axios.put(
+          `http://localhost:8080/payment/point/${selectedAppointment.customerId}`,
+          {}
+        );
       }
 
       await axios.put(
@@ -204,18 +188,18 @@ const StaffAppointments = () => {
       );
 
       setShowSuccessSnackbar(true);
-
     } catch (error) {
       console.error("Failed to complete payment:", error);
     }
 
     setOpenPaymentConfirmation(false);
-    fetchAppointments1();
+    fetchAppointments();
   };
   const handleBankTransfer = async () => {
     try {
-
-      const amountToPay = useLoyaltyPoint ? selectedAppointment.totalPrice - loyaltyPoint : selectedAppointment.totalPrice;
+      const amountToPay = useLoyaltyPoint
+        ? selectedAppointment.totalPrice - loyaltyPoint
+        : selectedAppointment.totalPrice;
       const response = await axios.get("http://localhost:8080/payment/vn-pay", {
         params: {
           amount: amountToPay,
@@ -223,33 +207,22 @@ const StaffAppointments = () => {
       });
 
       const paymentUrl = response.data.data.paymentUrl;
-      window.open(paymentUrl, '_blank')
-
-
+      window.open(paymentUrl, "_blank");
     } catch (error) {
       console.error("Failed to initiate payment:", error);
     }
   };
-
-
-
-
-
-
-
 
   const renderPaymentModal = () => (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <Typography variant="h5" sx={{ mb: 2, textAlign: "center" }}>
         Select Payment Method
       </Typography>
-      {
-        loyaltyPoint > 0 && (
-          <Typography variant="body1" sx={{ mb: 1, textAlign: "center" }}>
-            Điểm LoyaltyPoint hiện tại: {loyaltyPoint}
-          </Typography>
-        )
-      }
+      {loyaltyPoint > 0 && (
+        <Typography variant="body1" sx={{ mb: 1, textAlign: "center" }}>
+          Điểm LoyaltyPoint hiện tại: {loyaltyPoint}
+        </Typography>
+      )}
 
       {/* Tùy chọn sử dụng LoyaltyPoint */}
       <Button
@@ -270,8 +243,10 @@ const StaffAppointments = () => {
       <Button
         variant="contained"
         sx={{ backgroundColor: "#2196F3", color: "#fff" }}
-        onClick={() => { handleOpenPaymentConfirmation(); handleBankTransfer(); }}
-
+        onClick={() => {
+          handleOpenPaymentConfirmation();
+          handleBankTransfer();
+        }}
       >
         Bank Transfer
       </Button>
@@ -417,7 +392,7 @@ const StaffAppointments = () => {
       </Grid>
 
       {/* Modal chỉnh sửa trạng thái hoặc thanh toán */}
-      <Modal open={openModal} onClose={handleCloseModal}>
+      {/* <Modal open={openModal} onClose={handleCloseModal}>
         <Box
           sx={{
             position: "absolute",
@@ -450,6 +425,54 @@ const StaffAppointments = () => {
                 Edit Appointment Status
               </Typography>
               {renderStatusButtons()}
+            </>
+          )}
+        </Box>
+      </Modal> */}
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}
+        >
+          <IconButton
+            onClick={handleCloseModal}
+            sx={{ position: "absolute", top: 8, right: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+
+          {selectedAppointment?.status === "Processing" ? (
+            renderPaymentModal()
+          ) : (
+            <>
+              <Typography
+                variant="h5"
+                fontWeight="bold"
+                sx={{ mb: 2, color: "#4CAF50", textAlign: "center" }} // Center the title
+              >
+                Edit Appointment Status
+              </Typography>
+
+              {/* Center the buttons */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center", // Centers the buttons horizontally
+                  gap: 2, // Adds spacing between the buttons
+                  mt: 2, // Adds margin at the top for spacing
+                }}
+              >
+                {renderStatusButtons()} {/* This will render your buttons */}
+              </Box>
             </>
           )}
         </Box>
@@ -516,3 +539,4 @@ const StaffAppointments = () => {
 };
 
 export default StaffAppointments;
+// CHUA

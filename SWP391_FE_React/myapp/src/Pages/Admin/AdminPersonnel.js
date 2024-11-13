@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   Box,
-  Grid,
-  Paper,
   Typography,
   Table,
   TableBody,
@@ -19,7 +17,47 @@ import {
   Pagination,
   TextField,
   Modal,
+  Paper,
+  Grid,
 } from "@mui/material";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
+const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const fullNamePattern = /^[a-zA-Z\s]+$/;
+
+const validationSchema = Yup.object({
+  name: Yup.string()
+    .max(50, "Name must be 50 characters or less")
+    .required("Name is required")
+    .test(
+      "is-valid-fullname",
+      "Name can only contain letters and spaces",
+      (value) => fullNamePattern.test(value)
+    )
+    .trim("Name should not have leading or trailing spaces"),
+
+  email: Yup.string()
+    .max(70, "Email must be 70 characters or less")
+    .required("Email is required")
+    .test("is-valid-email", "Invalid email format", (value) =>
+      emailPattern.test(value)
+    ),
+
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .max(30, "Password must be 30 characters or less")
+    .required("Password is required")
+    .test(
+      "is-valid-password",
+      "Password should not contain spaces",
+      (value) => value && value.length >= 6 && !/\s/.test(value)
+    ),
+
+  role: Yup.string().required("Role is required"),
+
+  salonId: Yup.string().required("Salon selection is required"),
+});
 
 const AdminPersonnel = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
@@ -30,22 +68,38 @@ const AdminPersonnel = () => {
   const [roleFilter, setRoleFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const employeesPerPage = 5;
-  const [selectedEmployee, setSelectedEmployee] = useState(null); // For editing
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
-  const [selectedId, setSelectedId] = useState(null);
-  const [selected, setSelected] = useState({
-    id: "",
-    name: "",
-  });
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+      role: "",
+      salonId: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      try {
+        const response = await axios.post(
+          `http://localhost:8080/user/insert/${values.salonId}`,
+          values
+        );
+        if (response.status === 201) {
+          const newEmployee = response.data;
 
-  // State cho modal thêm nhân viên
-  const [open, setOpen] = useState(false);
-  const [newEmployee, setNewEmployee] = useState({
-    id: "",
-    name: "",
-    email: "",
-    password: "",
-    role: "",
+          const salon = salons.find((salon) => salon.id === values.salonId);
+          if (salon) {
+            newEmployee.salonName = salon.name;
+          }
+
+          setEmployees((prevEmployees) => [newEmployee, ...prevEmployees]);
+          handleClose();
+        }
+      } catch (error) {
+        console.error("Error adding employee:", error);
+      }
+    },
   });
 
   useEffect(() => {
@@ -66,6 +120,7 @@ const AdminPersonnel = () => {
           "http://localhost:8080/salon/salon-active"
         );
         setSalons(salonResponse.data);
+        console.log("🚀 ~ salonResponse:", salonResponse.data);
       } catch (error) {
         console.error("Error fetching salon data:", error);
       }
@@ -75,36 +130,28 @@ const AdminPersonnel = () => {
     fetchSalons();
   }, []);
 
-  const addEmployee = async () => {
-    try {
-      // Gửi yêu cầu thêm nhân viên đến API Salon
-
-      const salonResponse = await axios.post(
-        `http://localhost:8080/user/insert/${selectedId}`,
-        newEmployee
-      );
-
-      if (salonResponse.status === 201) {
-        // Sau khi thêm thành công vào Salon, lấy lại danh sách nhân viên từ API Employee
-        const employeeResponse = await axios.get(
-          "http://localhost:8080/user/fetchAllEmployees"
-        );
-        setEmployees(employeeResponse.data);
-        handleClose();
-      }
-    } catch (error) {
-      console.error("Error adding employee:", error);
-    }
+  const handleOpenAddModal = () => setOpenAddModal(true);
+  const handleClose = () => {
+    setOpenAddModal(false);
+    setOpenEditModal(false);
+    formik.resetForm();
   };
 
-  const updateEmployee = async () => {
+  const handleOpenEditModal = (employee) => {
+    setSelectedEmployee(employee);
+    setOpenEditModal(true);
+  };
+
+  const updateEmployeeStatus = async () => {
+    if (!selectedEmployee) return;
+
     try {
       const response = await axios.put(
-        `http://localhost:8080/user/update-status/${newEmployee.id}`,
+        `http://localhost:8080/user/update-status/${selectedEmployee.id}`,
         null,
         {
           params: {
-            status: newEmployee.status,
+            status: !selectedEmployee.status,
           },
         }
       );
@@ -116,48 +163,31 @@ const AdminPersonnel = () => {
         handleClose();
       }
     } catch (error) {
-      console.error("Error updating employee:", error);
+      console.error("Error updating employee status:", error);
     }
   };
 
-  const handleOpenAddModal = () => setOpenAddModal(true);
-  const handleOpenEditModal = () => setOpenEditModal(true);
-
-  const handleClose = () => {
-    setOpenAddModal(false);
-    setOpenEditModal(false);
-    setNewEmployee({
-      id: "",
-      name: "",
-      email: "",
-      password: "",
-      role: "",
-      status: "Active",
-      salonId: "",
-    });
-  };
-
-  const totalPages = Math.ceil(
-    employees.filter(
-      (employee) =>
-        (statusFilter === "All" ||
-          employee.status === (statusFilter === "true")) &&
-        (roleFilter === "All" || employee.role.toString() === roleFilter)
-    ).length / employeesPerPage
-  );
-
   const paginatedEmployees = employees
-    .filter(
-      (employee) =>
-        (statusFilter === "All" ||
-          employee.status === (statusFilter === "true")) &&
-        (roleFilter === "All" || employee.role.toString() === roleFilter)
-    )
+    .filter((employee) => {
+      const matchesStatus =
+        statusFilter === "All" || employee.status === (statusFilter === "true");
+      const matchesRole =
+        roleFilter === "All" || employee.role.toString() === roleFilter;
+      return matchesStatus && matchesRole;
+    })
     .slice(
       (currentPage - 1) * employeesPerPage,
       currentPage * employeesPerPage
     );
-
+  const totalPages = Math.ceil(
+    employees.filter((employee) => {
+      const matchesStatus =
+        statusFilter === "All" || employee.status === (statusFilter === "true");
+      const matchesRole =
+        roleFilter === "All" || employee.role.toString() === roleFilter;
+      return matchesStatus && matchesRole;
+    }).length / employeesPerPage
+  );
   return (
     <Box
       sx={{
@@ -170,15 +200,13 @@ const AdminPersonnel = () => {
       <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
         Manage Personnel Account
       </Typography>
-
-      {/* Filter Section */}
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid item xs={12} sm={3}>
           <FormControl fullWidth>
             <InputLabel>Status</InputLabel>
             <Select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={(e) => setStatusFilter(e.target.value)} // Lưu trạng thái khi thay đổi
             >
               <MenuItem value="All">All</MenuItem>
               <MenuItem value="true">Active</MenuItem>
@@ -186,12 +214,13 @@ const AdminPersonnel = () => {
             </Select>
           </FormControl>
         </Grid>
+
         <Grid item xs={12} sm={3}>
           <FormControl fullWidth>
             <InputLabel>Role</InputLabel>
             <Select
               value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
+              onChange={(e) => setRoleFilter(e.target.value)} // Lưu vai trò khi thay đổi
             >
               <MenuItem value="All">All</MenuItem>
               <MenuItem value="2">Stylist</MenuItem>
@@ -201,8 +230,6 @@ const AdminPersonnel = () => {
           </FormControl>
         </Grid>
       </Grid>
-
-      {/* Add Employee Button */}
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
         <Button
           variant="contained"
@@ -214,17 +241,14 @@ const AdminPersonnel = () => {
         </Button>
       </Box>
 
-      {/* Employees Table */}
       <TableContainer component={Paper} sx={{ backgroundColor: "#f5f5f5" }}>
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#4caf50", color: "#fff" }}>
               <TableCell sx={{ color: "#fff" }}>No</TableCell>
-              {/* <TableCell sx={{ color: "#fff" }}>ID</TableCell> */}
               <TableCell sx={{ color: "#fff" }}>Name</TableCell>
               <TableCell sx={{ color: "#fff" }}>Email</TableCell>
               <TableCell sx={{ color: "#fff" }}>Role</TableCell>
-
               <TableCell sx={{ color: "#fff" }}>Status</TableCell>
               <TableCell sx={{ color: "#fff" }}>Salon</TableCell>
               <TableCell sx={{ color: "#fff" }}>Action</TableCell>
@@ -236,7 +260,6 @@ const AdminPersonnel = () => {
                 <TableCell>
                   {(currentPage - 1) * employeesPerPage + index + 1}
                 </TableCell>
-                {/* <TableCell>{employee.id}</TableCell> */}
                 <TableCell>{employee.name}</TableCell>
                 <TableCell>{employee.email}</TableCell>
                 <TableCell>
@@ -257,45 +280,22 @@ const AdminPersonnel = () => {
                 </TableCell>
                 <TableCell>{employee.salonName}</TableCell>
                 <TableCell>
-                  {employee.status ? (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      sx={{ backgroundColor: "#F44336" }} // Nút Disable có màu đỏ
-                      onClick={() => {
-                        setNewEmployee({
-                          id: employee.id,
-                          status: false, // Cập nhật trạng thái thành false khi disable
-                        });
-                        handleOpenEditModal(); // Mở modal xác nhận
-                      }}
-                    >
-                      Disable
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      sx={{ backgroundColor: "#4CAF50" }} // Nút Active có màu xanh
-                      onClick={() => {
-                        setNewEmployee({
-                          id: employee.id,
-                          status: true, // Cập nhật trạng thái thành true khi active
-                        });
-                        handleOpenEditModal(); // Mở modal xác nhận
-                      }}
-                    >
-                      Active
-                    </Button>
-                  )}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    sx={{
+                      backgroundColor: employee.status ? "#F44336" : "#4CAF50",
+                    }}
+                    onClick={() => handleOpenEditModal(employee)}
+                  >
+                    {employee.status ? "Disable" : "Active"}
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-
-      {/* Pagination */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
         <Pagination
           count={totalPages}
@@ -305,9 +305,10 @@ const AdminPersonnel = () => {
         />
       </Box>
 
-      {/* Modal for Adding Employee */}
       <Modal open={openAddModal} onClose={handleClose}>
         <Box
+          component="form"
+          onSubmit={formik.handleSubmit}
           sx={{
             position: "absolute",
             top: "50%",
@@ -327,58 +328,70 @@ const AdminPersonnel = () => {
           <TextField
             label="Name"
             fullWidth
-            value={newEmployee.name}
-            onChange={(e) =>
-              setNewEmployee({ ...newEmployee, name: e.target.value })
-            }
+            name="name"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.name && Boolean(formik.errors.name)}
+            helperText={formik.touched.name && formik.errors.name}
             sx={{ mb: 2 }}
           />
           <TextField
             label="Email"
             fullWidth
-            value={newEmployee.email}
-            onChange={(e) =>
-              setNewEmployee({ ...newEmployee, email: e.target.value })
-            }
+            name="email"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.email && Boolean(formik.errors.email)}
+            helperText={formik.touched.email && formik.errors.email}
             sx={{ mb: 2 }}
           />
           <TextField
             label="Password"
             fullWidth
             type="password"
-            value={newEmployee.password}
-            onChange={(e) =>
-              setNewEmployee({ ...newEmployee, password: e.target.value })
-            }
+            name="password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+            helperText={formik.touched.password && formik.errors.password}
             sx={{ mb: 2 }}
           />
-          <FormControl fullWidth sx={{ mb: 2 }}>
+          <FormControl
+            fullWidth
+            sx={{ mb: 2 }}
+            error={formik.touched.role && Boolean(formik.errors.role)}
+          >
             <InputLabel>Role</InputLabel>
             <Select
-              value={newEmployee.role}
-              onChange={(e) =>
-                setNewEmployee({ ...newEmployee, role: e.target.value })
-              }
+              name="role"
+              value={formik.values.role}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             >
               <MenuItem value="2">Stylist</MenuItem>
               <MenuItem value="3">Staff</MenuItem>
               <MenuItem value="4">Manager</MenuItem>
             </Select>
+            {formik.touched.role && formik.errors.role && (
+              <Typography color="error" variant="caption">
+                {formik.errors.role}
+              </Typography>
+            )}
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 2 }}>
+          <FormControl
+            fullWidth
+            sx={{ mb: 2 }}
+            error={formik.touched.salonId && Boolean(formik.errors.salonId)}
+          >
             <InputLabel>Salon</InputLabel>
             <Select
-              value={selectedId || ""}
-              onChange={(e) => {
-                const id = e.target.value; // Lấy id của salon đã chọn
-                const selectedSalon = salons.find((salon) => salon.id === id); // Tìm salon trong danh sách
-                setSelected({ ...selectedSalon }); // Cập nhật selected với salon đã chọn
-                setSelectedId(id); // Lưu selectedId là biến toàn cục
-                setSelected({ ...selected, name: e.target.value });
-
-                // const selectedSalon = salons.find((salon) => salon.id === selectedId);
-                // setSelected(selected);
-              }}
+              name="salonId"
+              value={formik.values.salonId}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             >
               {salons.map((salon) => (
                 <MenuItem key={salon.id} value={salon.id}>
@@ -386,6 +399,11 @@ const AdminPersonnel = () => {
                 </MenuItem>
               ))}
             </Select>
+            {formik.touched.salonId && formik.errors.salonId && (
+              <Typography color="error" variant="caption">
+                {formik.errors.salonId}
+              </Typography>
+            )}
           </FormControl>
 
           <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
@@ -397,17 +415,18 @@ const AdminPersonnel = () => {
               Cancel
             </Button>
             <Button
+              type="submit"
               variant="contained"
               color="primary"
               fullWidth
-              onClick={addEmployee}
+              disabled={!formik.isValid || !formik.dirty}
             >
               Add Employee
             </Button>
           </Box>
         </Box>
       </Modal>
-      {/* Edit Modal */}
+
       <Modal open={openEditModal} onClose={handleClose}>
         <Box
           sx={{
@@ -423,9 +442,9 @@ const AdminPersonnel = () => {
           }}
         >
           <Typography variant="h6" mb={2}>
-            {newEmployee.status
-              ? "Are you sure to activate this account?"
-              : "Are you sure to disable this account?"}
+            {selectedEmployee?.status
+              ? "Are you sure you want to disable this account?"
+              : "Are you sure you want to activate this account?"}
           </Typography>
           <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
             <Button
@@ -436,10 +455,10 @@ const AdminPersonnel = () => {
               No
             </Button>
             <Button
-              type="submit"
               variant="contained"
+              color="primary"
               sx={{ bgcolor: "#4CAF50" }}
-              onClick={updateEmployee}
+              onClick={updateEmployeeStatus}
             >
               Yes
             </Button>
@@ -451,3 +470,4 @@ const AdminPersonnel = () => {
 };
 
 export default AdminPersonnel;
+// XONG

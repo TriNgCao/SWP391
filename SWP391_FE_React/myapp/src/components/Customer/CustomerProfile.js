@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const validatePhoneNumber = (phoneNumber) => {
@@ -84,7 +84,6 @@ const UserProfile = () => {
             setInitialUser(user);
           }
         } catch (error) {
-          console.error("Error updating user data:", error);
           toast.error("Failed to update profile!");
         }
       }
@@ -95,6 +94,8 @@ const UserProfile = () => {
   };
 
   return (
+    <div>
+    <ToastContainer autoClose={1300} />
     <div style={{
       padding: "30px",
       border: "2px solid #ddd",
@@ -215,6 +216,7 @@ const UserProfile = () => {
       >
         {isEditing ? "Save" : "Edit"}
       </button>
+    </div>
     </div>
   );
 };

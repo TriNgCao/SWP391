@@ -6,176 +6,377 @@ import {
   IconButton,
   Paper,
   Container,
+  Snackbar,
+  Alert,
+  Button,
+  TextField,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-
-// Mock staff data for demonstration
-const fetchStaffData = (accountId) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Mock data
-      const data = {
-        1: {
-          name: "Danish Helium",
-          email: "danish@example.com",
-          phone: "+1234567890",
-          aboutMe: "Lorem ipsum dolor sit amet...",
-        },
-      };
-      resolve(data[accountId] || null); // Return null if accountId not found
-    }, 1000); // Simulated delay
-  });
-};
+import axios from "axios";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 const StylistProfilePage = () => {
-  // State to store uploaded images
-  const [backgroundImage, setBackgroundImage] = useState(
-    "https://img.freepik.com/free-photo/businessman-texting_53876-89027.jpg?t=st=1728840437~exp=1728844037~hmac=8ba97c28f10568b7da0b5652516f85b9689e65c5d5cde3afa13579a1edcbdae1&w=1380"
-  );
-  const [profileImage, setProfileImage] = useState(
-    "https://img.freepik.com/free-vector/elegant-businessman-office-scene_24877-57719.jpg?t=st=1728840469~exp=1728844069~hmac=84913255acd309d8247d0267f01afc6ac8b4f1f826c30cc4b4f1d7cfce135819&w=740"
-  );
-  const accountId = sessionStorage.getItem("userID");
-  // State for staff data
-  const [staffData, setStaffData] = useState({});
+  const [isEditing, setIsEditing] = useState(false); // State to manage edit mode
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    profileImage: "",
+  });
+  const accountID = sessionStorage.getItem("userID");
+  // useEffect(() => {
+  //   const fetchProfileData = async () => {
+  //     if (accountID) {
+  //       try {
+  //         const response = await axios.get(
+  //           `http://localhost:8080/user/profile/${accountID}`
+  //         );
+  //         const { name, email, phone, profileImage } = response.data;
+  //         setProfile({
+  //           name: name || "No Name Available",
+  //           email: email || "No Email Available",
+  //           phone: phone || "No Phone Available",
+  //           profileImage: profileImage || "https://via.placeholder.com/150",
+  //         });
+  //       } catch (error) {
+  //         console.error("Error fetching profile data:", error);
+  //       }
+  //     }
+  //   };
 
-  // Fetch staff data when the component mounts
+  //   fetchProfileData();
+  // }, []);
+
+  // const handleProfileUpload = async (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     const formData = new FormData();
+  //     formData.append("image", file);
+
+  //     try {
+  //       const response = await axios.post(
+  //         `http://localhost:8080/user/image/profile/${accountID}`,
+  //         formData,
+  //         {
+  //           headers: { "Content-Type": "multipart/form-data" },
+  //         }
+  //       );
+
+  //       const imageUrl = response.data.imageUrl;
+  //       setProfile((prevProfile) => ({
+  //         ...prevProfile,
+  //         profileImage: imageUrl,
+  //       }));
+  //       setSnackbarMessage("Profile image uploaded successfully!");
+  //       setSnackbarSeverity("success");
+  //       setSnackbarOpen(true);
+  //     } catch (error) {
+  //       console.error("Error uploading profile image:", error);
+  //       setSnackbarMessage("Failed to upload profile image.");
+  //       setSnackbarSeverity("error");
+  //       setSnackbarOpen(true);
+  //     }
+  //   }
+  // };
   useEffect(() => {
-    const accountId = sessionStorage.getItem("account_id");
-    if (accountId) {
-      fetchStaffData(accountId).then((data) => {
-        if (data) {
-          setStaffData(data);
-        } else {
-          console.error("No data found for account ID:", accountId);
+    const fetchProfileData = async () => {
+      if (accountID) {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/user/profile/${accountID}`
+          );
+          const { name, email, phone, profileImage } = response.data;
+
+          // Tạo URL đầy đủ từ `imageName` nếu `profileImage` chứa tên ảnh
+          const profileImageUrl = profileImage
+            ? `http://localhost:8080/user/image/${encodeURIComponent(
+                profileImage
+              )}`
+            : "https://via.placeholder.com/150";
+
+          setProfile({
+            name: name || "No Name Available",
+            email: email || "No Email Available",
+            phone: phone || "No Phone Available",
+            profileImage: profileImageUrl,
+          });
+        } catch (error) {
+          console.error("Error fetching profile data:", error);
         }
-      });
+      }
+    };
 
-      // MO CAI NAY RA DE THAY API VAO NHA TH HOI NGU
-      // TODO: Replace the mock API call with your real API call.
-      // Example:
-      // fetch(`https://your-api.com/staff/${accountId}`)
-      //   .then((response) => response.json())
-      //   .then((data) => {
-      //     setStaffData(data);
-      //   })
-      //   .catch((error) => console.error("Error fetching staff data:", error));
-    }
-  }, []);
+    fetchProfileData();
+  }, [accountID]);
 
-  // Handle background image upload
-  const handleBackgroundUpload = (e) => {
+  // const handleProfileUpload = async (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     const formData = new FormData();
+  //     formData.append("image", file);
+
+  //     try {
+  //       const response = await axios.post(
+  //         `http://localhost:8080/user/image/profile/${accountID}`,
+  //         formData,
+  //         {
+  //           headers: { "Content-Type": "multipart/form-data" },
+  //         }
+  //       );
+
+  //       const imageUrl = response.data.imageUrl; // URL ảnh được trả về từ API
+  //       setProfile((prevProfile) => ({
+  //         ...prevProfile,
+  //         profileImage: imageUrl, // Lưu lại URL ảnh vào state
+  //       }));
+
+  //       // Cập nhật URL ảnh vào profile trong API để lưu vĩnh viễn
+  //       await axios.put(`http://localhost:8080/user/profile/${accountID}`, {
+  //         ...profile,
+  //         profileImage: imageUrl,
+  //       });
+
+  //       setSnackbarMessage("Profile image uploaded and saved successfully!");
+  //       setSnackbarSeverity("success");
+  //       setSnackbarOpen(true);
+  //     } catch (error) {
+  //       console.error("Error uploading profile image:", error);
+  //       setSnackbarMessage("Failed to upload profile image.");
+  //       setSnackbarSeverity("error");
+  //       setSnackbarOpen(true);
+  //     }
+  //   }
+  // };
+  const handleProfileUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file); // Convert file to URL
-      setBackgroundImage(imageUrl); // Update state with new background image
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        const response = await axios.post(
+          `http://localhost:8080/user/image/profile/${accountID}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+
+        const imageUrl =
+          response.data.imageUrl ||
+          `http://localhost:8080/user/image/${file.name}`;
+        if (imageUrl) {
+          setProfile((prevProfile) => ({
+            ...prevProfile,
+            profileImage: imageUrl,
+          }));
+        }
+      } catch (error) {
+        console.error("Error uploading profile image:", error);
+      }
     }
   };
 
-  // Handle profile image upload
-  const handleProfileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file); // Convert file to URL
-      setProfileImage(imageUrl); // Update state with new profile image
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string()
+      .matches(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces")
+      .required("Name is required"),
+    phone: Yup.string()
+      .matches(/^[0-9]+$/, "Phone must contain only numbers")
+      .required("Phone is required"),
+  });
+
+  const handleSubmit = async (values) => {
+    try {
+      const accountID = sessionStorage.getItem("userID");
+      await axios.put(
+        `http://localhost:8080/user/update-profile/${accountID}`,
+        values
+      );
+      setSnackbarMessage("Profile updated successfully!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+      setProfile((prev) => ({ ...prev, ...values }));
+      setIsEditing(false); // Exit edit mode after saving
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setSnackbarMessage("Failed to update profile.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
+  };
+
+  const handleEditToggle = () => {
+    setIsEditing((prev) => !prev);
   };
 
   return (
-    <Container maxWidth="md">
-      {/* Header Section */}
-      <Box sx={{ marginTop: 4, marginBottom: 4 }}>
-        <Typography variant="h4" component="h1" fontWeight="bold">
-          Profile
-        </Typography>
-      </Box>
-
-      {/* Profile Section */}
-      <Paper elevation={3}>
-        <Box
-          sx={{
-            position: "relative",
-            height: "200px",
-            background: `url(${backgroundImage}) center/cover no-repeat`,
-          }}
+    <Box
+      sx={{
+        backgroundColor: "#f7f7f7",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+        padding: 4,
+      }}
+    >
+      <Container maxWidth="sm" sx={{ position: "relative", zIndex: 2 }}>
+        <Paper
+          elevation={3}
+          sx={{ borderRadius: "8px", textAlign: "center", padding: 3, mt: -1 }}
         >
-          <IconButton
-            color="primary"
-            sx={{ position: "absolute", top: 10, right: 10 }}
-            aria-label="edit background"
-            component="label"
-          >
-            <EditIcon />
-            <input
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={handleBackgroundUpload}
-            />
-          </IconButton>
-        </Box>
-
-        <Box sx={{ textAlign: "center", padding: 3 }}>
-          <Avatar
-            src={profileImage}
-            alt="Profile Image"
+          <Box
             sx={{
-              width: 150,
-              height: 150,
-              marginTop: "-75px",
-              border: "4px solid white",
-              display: "inline-block",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: 2,
             }}
-          />
-          <IconButton
-            color="primary"
-            sx={{
-              position: "relative",
-              marginTop: "-25px",
-              transform: "translateY(-10px)",
-            }}
-            aria-label="edit profile image"
-            component="label"
           >
-            <EditIcon />
-            <input
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={handleProfileUpload}
+            <Avatar
+              src={profile.profileImage}
+              alt="Profile Image"
+              sx={{ width: 150, height: 150, border: "4px solid white" }}
             />
-          </IconButton>
+            <IconButton
+              color="primary"
+              component="label"
+              aria-label="edit profile image"
+            >
+              <EditIcon />
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={handleProfileUpload}
+              />
+            </IconButton>
+          </Box>
 
           <Typography
             variant="h5"
             component="h2"
-            sx={{ marginTop: 1, fontWeight: "bold" }}
+            sx={{ mt: 2, fontWeight: "bold" }}
           >
-            {staffData.name}
-          </Typography>
-          <Typography variant="body1" color="textSecondary">
-            Email: {staffData.email}
-          </Typography>
-          <Typography variant="body1" color="textSecondary">
-            Phone: {staffData.phone}
+            {profile.name}
           </Typography>
 
-          {/* About Section */}
-          <Box sx={{ marginTop: 4 }}>
-            <Typography variant="h6" fontWeight="bold">
-              About Me
-            </Typography>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              sx={{ marginTop: 2 }}
+          {!isEditing ? (
+            <>
+              <Typography variant="body1" color="textSecondary">
+                Phone: {profile.phone}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                Email: {profile.email}
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={handleEditToggle}
+              >
+                Edit Profile
+              </Button>
+            </>
+          ) : (
+            <Formik
+              initialValues={{ name: profile.name, phone: profile.phone }}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+              enableReinitialize
             >
-              {staffData.aboutMe}
-            </Typography>
-          </Box>
-        </Box>
-      </Paper>
-    </Container>
+              {({ isSubmitting }) => (
+                <Form>
+                  <Box mt={2}>
+                    <Field
+                      as={TextField}
+                      fullWidth
+                      name="name"
+                      label="Name"
+                      variant="outlined"
+                      margin="dense"
+                    />
+                    <ErrorMessage
+                      name="name"
+                      component="div"
+                      style={{ color: "red" }}
+                    />
+                  </Box>
+                  <Box mt={2}>
+                    <Field
+                      as={TextField}
+                      fullWidth
+                      name="phone"
+                      label="Phone"
+                      variant="outlined"
+                      margin="dense"
+                    />
+                    <ErrorMessage
+                      name="phone"
+                      component="div"
+                      style={{ color: "red" }}
+                    />
+                  </Box>
+                  <Box mt={2}>
+                    <TextField
+                      fullWidth
+                      name="email"
+                      label="Email"
+                      variant="outlined"
+                      margin="dense"
+                      value={profile.email}
+                      disabled
+                    />
+                  </Box>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    sx={{ mt: 2 }}
+                    disabled={isSubmitting}
+                  >
+                    Save Changes
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    sx={{ mt: 2, ml: 2 }}
+                    onClick={handleEditToggle}
+                  >
+                    Cancel
+                  </Button>
+                </Form>
+              )}
+            </Formik>
+          )}
+        </Paper>
+      </Container>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 };
 

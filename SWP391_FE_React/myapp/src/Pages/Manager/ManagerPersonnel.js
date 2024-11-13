@@ -20,7 +20,9 @@ import {
   Modal,
   TextField,
 } from "@mui/material";
-
+import { Snackbar, Alert } from "@mui/material";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import * as Yup from "yup";
 const ManagerPersonnel = () => {
   const [employees, setEmployees] = useState([]);
   const [roleFilter, setRoleFilter] = useState("3");
@@ -33,14 +35,18 @@ const ManagerPersonnel = () => {
   const [tempSalary, setTempSalary] = useState("");
   const tempSalaryRef = useRef(selectedEmployee?.salary || "");
   const tempCommissionRef = useRef(selectedEmployee?.commission || "");
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const accountID = sessionStorage.getItem("userID");
-  
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
         const employeeResponse = await axios.get(
           `http://localhost:8080/user/fetchEmployees/${accountID}`
         );
+        console.log(employeeResponse.data);
         setEmployees(employeeResponse.data);
       } catch (error) {
         console.error("Error fetching employee data:", error);
@@ -49,6 +55,21 @@ const ManagerPersonnel = () => {
 
     fetchEmployees();
   }, []);
+  const staffValidationSchema = Yup.object({
+    salary: Yup.number()
+      .required("Salary is required")
+      .min(0, "Salary must be a positive number"),
+  });
+  const stylistValidationSchema = Yup.object({
+    salary: Yup.number()
+      .required("Salary is required")
+      .min(0, "Salary must be a positive number"),
+    commission: Yup.number()
+      .required("Commission is required")
+      .min(0.1, "Commission must be at least 0.1")
+      .max(1, "Commission must be at most 1"),
+  });
+
   // Đóng modal và đặt lại nhân viên được chọn
 
   // -----------------------------------------------------------------------------------------
@@ -95,6 +116,76 @@ const ManagerPersonnel = () => {
   };
 
   //----------------------------------------------------------------------------
+  // const EditStaffModal = () => (
+  //   <Modal open={editStaffModalOpen} onClose={handleCloseModal}>
+  //     <Box
+  //       sx={{
+  //         position: "absolute",
+  //         top: "50%",
+  //         left: "50%",
+  //         transform: "translate(-50%, -50%)",
+  //         width: 400,
+  //         bgcolor: "background.paper",
+  //         border: "2px solid #000",
+  //         boxShadow: 24,
+  //         p: 4,
+  //       }}
+  //     >
+  //       <Typography variant="h6" sx={{ mb: 2 }}>
+  //         Edit Salary for Staff
+  //       </Typography>
+  //       <TextField
+  //         fullWidth
+  //         label="Salary"
+  //         defaultValue={selectedEmployee?.salary || ""} // Giá trị ban đầu từ state chính
+  //         onChange={(e) => {
+  //           tempSalaryRef.current = e.target.value; // Lưu giá trị vào ref thay vì state
+  //         }}
+  //         sx={{ mb: 2 }}
+  //       />
+  //       <Button
+  //         variant="contained"
+  //         color="primary"
+  //         onClick={async () => {
+  //           // Lấy giá trị từ ref và chuyển đổi thành số
+  //           const updatedSalary = parseInt(tempSalaryRef.current, 10);
+
+  //           // Kiểm tra tính hợp lệ
+  //           if (isNaN(updatedSalary) || updatedSalary < 0) {
+  //             setSnackbarMessage("Please enter a valid salary.");
+  //             setSnackbarSeverity("error");
+  //             setSnackbarOpen(true);
+  //             return;
+  //           }
+
+  //           // Cập nhật state chính từ giá trị tạm trong ref
+  //           setSelectedEmployee((prev) => ({
+  //             ...prev,
+  //             salary: updatedSalary,
+  //           }));
+
+  //           // Gửi yêu cầu API để cập nhật salary
+  //           try {
+  //             await axios.put(
+  //               `http://localhost:8080/salary/staff/update/${selectedEmployee.id}`,
+  //               { salary: updatedSalary }
+  //             );
+  //             setSnackbarMessage("Staff salary updated successfully");
+  //             setSnackbarSeverity("success");
+  //             setSnackbarOpen(true);
+  //             handleCloseModal();
+  //             refreshData();
+  //           } catch (error) {
+  //             console.error("Error updating staff salary:", error);
+  //           }
+  //         }}
+  //         sx={{ mr: 2 }}
+  //       >
+  //         Save
+  //       </Button>
+  //     </Box>
+  //   </Modal>
+  // );
   const EditStaffModal = () => (
     <Modal open={editStaffModalOpen} onClose={handleCloseModal}>
       <Box
@@ -105,7 +196,6 @@ const ManagerPersonnel = () => {
           transform: "translate(-50%, -50%)",
           width: 400,
           bgcolor: "background.paper",
-          border: "2px solid #000",
           boxShadow: 24,
           p: 4,
         }}
@@ -113,55 +203,157 @@ const ManagerPersonnel = () => {
         <Typography variant="h6" sx={{ mb: 2 }}>
           Edit Salary for Staff
         </Typography>
-        <TextField
-          fullWidth
-          label="Salary"
-          defaultValue={selectedEmployee?.salary || ""} // Giá trị ban đầu từ state chính
-          onChange={(e) => {
-            tempSalaryRef.current = e.target.value; // Lưu giá trị vào ref thay vì state
-          }}
-          sx={{ mb: 2 }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={async () => {
-            // Lấy giá trị từ ref và chuyển đổi thành số
-            const updatedSalary = parseInt(tempSalaryRef.current, 10);
 
-            // Kiểm tra tính hợp lệ
-            if (isNaN(updatedSalary) || updatedSalary < 0) {
-              alert("Please enter a valid salary.");
-              return;
-            }
-
-            // Cập nhật state chính từ giá trị tạm trong ref
-            setSelectedEmployee((prev) => ({
-              ...prev,
-              salary: updatedSalary,
-            }));
-
-            // Gửi yêu cầu API để cập nhật salary
+        <Formik
+          initialValues={{ salary: selectedEmployee?.salary || "" }}
+          validationSchema={staffValidationSchema}
+          onSubmit={async (values) => {
             try {
               await axios.put(
                 `http://localhost:8080/salary/staff/update/${selectedEmployee.id}`,
-                { salary: updatedSalary }
+                { salary: values.salary }
               );
-              alert("Staff salary updated successfully");
+              setSnackbarMessage("Staff salary updated successfully");
+              setSnackbarSeverity("success");
+              setSnackbarOpen(true);
               handleCloseModal();
               refreshData();
             } catch (error) {
-              console.error("Error updating staff salary:", error);
+              setSnackbarMessage("Failed to update staff salary");
+              setSnackbarSeverity("error");
+              setSnackbarOpen(true);
             }
           }}
-          sx={{ mr: 2 }}
         >
-          Save
-        </Button>
+          {({ handleChange, handleBlur, values, errors, touched }) => (
+            <Form>
+              <TextField
+                fullWidth
+                label="Salary"
+                name="salary"
+                value={values.salary}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                sx={{ mb: 2 }}
+                error={Boolean(errors.salary && touched.salary)}
+                helperText={<ErrorMessage name="salary" />}
+              />
+              <Button variant="contained" color="primary" type="submit">
+                Save
+              </Button>
+            </Form>
+          )}
+        </Formik>
       </Box>
     </Modal>
   );
 
+  // const EditStylistModal = () => (
+  //   <Modal open={editStylistModalOpen} onClose={handleCloseModal}>
+  //     <Box
+  //       sx={{
+  //         position: "absolute",
+  //         top: "50%",
+  //         left: "50%",
+  //         transform: "translate(-50%, -50%)",
+  //         width: 400,
+  //         bgcolor: "background.paper",
+  //         border: "2px solid #000",
+  //         boxShadow: 24,
+  //         p: 4,
+  //       }}
+  //     >
+  //       <Typography variant="h6" sx={{ mb: 2 }}>
+  //         Edit Salary and Commission for Stylist
+  //       </Typography>
+
+  //       {/* Sử dụng ref cho Salary */}
+  //       <TextField
+  //         fullWidth
+  //         label="Salary"
+  //         type="text"
+  //         defaultValue={selectedEmployee?.salary || ""}
+  //         onChange={(e) => {
+  //           tempSalaryRef.current = e.target.value; // Lưu giá trị tạm thời vào ref
+  //         }}
+  //         inputProps={{ min: 0 }} // Giới hạn giá trị tối thiểu là 0
+  //         sx={{ mb: 2 }}
+  //       />
+
+  //       {/* Sử dụng ref cho Commission */}
+  //       <TextField
+  //         fullWidth
+  //         label="Commission"
+  //         type="text"
+  //         defaultValue={selectedEmployee?.commission || ""}
+  //         onChange={(e) => {
+  //           tempCommissionRef.current = e.target.value; // Lưu giá trị tạm thời vào ref
+  //         }}
+  //         inputProps={{ step: 0.1, min: 0.1, max: 1 }}
+  //         sx={{ mb: 2 }}
+  //       />
+
+  //       <Button
+  //         variant="contained"
+  //         color="primary"
+  //         onClick={async () => {
+  //           const updatedSalary = parseFloat(tempSalaryRef.current);
+  //           const updatedCommission = parseFloat(tempCommissionRef.current);
+
+  //           // Kiểm tra tính hợp lệ của giá trị
+  //           if (isNaN(updatedSalary) || updatedSalary < 0) {
+  //             setSnackbarMessage("Please enter a valid salary.");
+  //             setSnackbarSeverity("error");
+  //             setSnackbarOpen(true);
+  //             return;
+  //           }
+
+  //           if (
+  //             isNaN(updatedCommission) ||
+  //             updatedCommission < 0.1 ||
+  //             updatedCommission > 1
+  //           ) {
+  //             setSnackbarMessage("Please enter a valid commission (0.1 to 1).");
+  //             setSnackbarSeverity("error");
+  //             setSnackbarOpen(true);
+  //             return;
+  //           }
+
+  //           try {
+  //             await axios.put(
+  //               `http://localhost:8080/salary/stylist/update/${selectedEmployee.id}`,
+  //               {
+  //                 salary: updatedSalary,
+  //                 commission: updatedCommission,
+  //               }
+  //             );
+  //             setSnackbarMessage(
+  //               "Stylist salary and commission updated successfully"
+  //             );
+  //             setSnackbarSeverity("success");
+  //             setSnackbarOpen(true);
+  //             handleCloseModal();
+  //             refreshData();
+  //           } catch (error) {
+  //             console.error("Error updating stylist:", error);
+  //             setSnackbarMessage(
+  //               "Failed to update stylist salary and commission"
+  //             );
+  //             setSnackbarSeverity("error");
+  //             setSnackbarOpen(true); // Mở Snackbar
+  //           }
+  //         }}
+  //         sx={{ mr: 2 }}
+  //       >
+  //         Save
+  //       </Button>
+
+  //       <Button variant="outlined" onClick={handleCloseModal}>
+  //         Cancel
+  //       </Button>
+  //     </Box>
+  //   </Modal>
+  // );
   const EditStylistModal = () => (
     <Modal open={editStylistModalOpen} onClose={handleCloseModal}>
       <Box
@@ -172,7 +364,6 @@ const ManagerPersonnel = () => {
           transform: "translate(-50%, -50%)",
           width: 400,
           bgcolor: "background.paper",
-          border: "2px solid #000",
           boxShadow: 24,
           p: 4,
         }}
@@ -181,81 +372,70 @@ const ManagerPersonnel = () => {
           Edit Salary and Commission for Stylist
         </Typography>
 
-        {/* Sử dụng ref cho Salary */}
-        <TextField
-          fullWidth
-          label="Salary"
-          type="text"
-          defaultValue={selectedEmployee?.salary || ""}
-          onChange={(e) => {
-            tempSalaryRef.current = e.target.value; // Lưu giá trị tạm thời vào ref
+        <Formik
+          initialValues={{
+            salary: selectedEmployee?.salary || "",
+            commission: selectedEmployee?.commission || "",
           }}
-          inputProps={{ min: 0 }} // Giới hạn giá trị tối thiểu là 0
-          sx={{ mb: 2 }}
-        />
-
-        {/* Sử dụng ref cho Commission */}
-        <TextField
-          fullWidth
-          label="Commission"
-          type="text"
-          defaultValue={selectedEmployee?.commission || ""}
-          onChange={(e) => {
-            tempCommissionRef.current = e.target.value; // Lưu giá trị tạm thời vào ref
-          }}
-          inputProps={{ step: 0.1, min: 0.1, max: 1 }}
-          sx={{ mb: 2 }}
-        />
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={async () => {
-            const updatedSalary = parseFloat(tempSalaryRef.current);
-            const updatedCommission = parseFloat(tempCommissionRef.current);
-
-            // Kiểm tra tính hợp lệ của giá trị
-            if (isNaN(updatedSalary) || updatedSalary < 0) {
-              alert("Please enter a valid salary.");
-              return;
-            }
-
-            if (
-              isNaN(updatedCommission) ||
-              updatedCommission < 0.1 ||
-              updatedCommission > 1
-            ) {
-              alert("Please enter a valid commission (0.1 to 1).");
-              return;
-            }
-
+          validationSchema={stylistValidationSchema}
+          onSubmit={async (values) => {
             try {
               await axios.put(
                 `http://localhost:8080/salary/stylist/update/${selectedEmployee.id}`,
                 {
-                  salary: updatedSalary,
-                  commission: updatedCommission,
+                  salary: values.salary,
+                  commission: values.commission,
                 }
               );
-              alert("Stylist salary and commission updated successfully");
+              setSnackbarMessage(
+                "Stylist salary and commission updated successfully"
+              );
+              setSnackbarSeverity("success");
+              setSnackbarOpen(true);
               handleCloseModal();
               refreshData();
             } catch (error) {
-              console.error("Error updating stylist:", error);
+              setSnackbarMessage(
+                "Failed to update stylist salary and commission"
+              );
+              setSnackbarSeverity("error");
+              setSnackbarOpen(true);
             }
           }}
-          sx={{ mr: 2 }}
         >
-          Save
-        </Button>
-
-        <Button variant="outlined" onClick={handleCloseModal}>
-          Cancel
-        </Button>
+          {({ handleChange, handleBlur, values, errors, touched }) => (
+            <Form>
+              <TextField
+                fullWidth
+                label="Salary"
+                name="salary"
+                value={values.salary}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                sx={{ mb: 2 }}
+                error={Boolean(errors.salary && touched.salary)}
+                helperText={<ErrorMessage name="salary" />}
+              />
+              <TextField
+                fullWidth
+                label="Commission"
+                name="commission"
+                value={values.commission}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                sx={{ mb: 2 }}
+                error={Boolean(errors.commission && touched.commission)}
+                helperText={<ErrorMessage name="commission" />}
+              />
+              <Button variant="contained" color="primary" type="submit">
+                Save
+              </Button>
+            </Form>
+          )}
+        </Formik>
       </Box>
     </Modal>
   );
-
   // ---------------------------------------------------------------------
   return (
     <Box
@@ -353,8 +533,23 @@ const ManagerPersonnel = () => {
       {/* Edit Modal */}
       <EditStaffModal />
       <EditStylistModal />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={1200}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
 
 export default ManagerPersonnel;
+// THÔNG BÁO CÒN LOCALHOST
