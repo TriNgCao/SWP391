@@ -76,7 +76,7 @@ public class PayrollService implements IPayrollService {
             double earning = staff.getSalary(); 
 
             Payroll payroll = new Payroll();
-            payroll.setEmployeeId(staff.getStaffId());
+            payroll.setEmployeeId(staff.getSatffId());
             payroll.setEarning(earning);
             payroll.setPayrollDate(LocalDate.now());
             payroll.setStatus(false); 

@@ -59,4 +59,8 @@ public class StylistService implements IStylistservice{
     public List<Stylist> getAllStylists(){
         return iStylistRepository.findAll();
     }
+
+    public Stylist findByStylistAccountId(String accountId){
+        return iStylistRepository.findByStylistAccountId(accountId);
+    }
 }
