@@ -168,9 +168,9 @@ public class AppointmentController {
         appointment.setStartTime(convertToLocalTime(appointmentRequest.getStartTime()));
         appointment.setStatus("Pending");
         appointment = appointmentService.addAppointment(appointment);
-        String msgStaff = "A booking request has just been created by <b>"
+        String msgStaff = "A booking request has just been created by"
                 + iCustomerService.getCustomerById(iAccountService.getCustomerIdByAccountID(appointmentRequest.getUserID())).getAccount().getName()
-                + "</b>, please check and process it.";
+                + ", please check and process it.";
         List<Staff> staffList = iStaffService.getStaffsBySalonId(appointmentRequest.getSalonId());
         for (Staff staff : staffList) {
             iNotificationService.addNewNotification("Appointment Request Created", msgStaff, staff.getAccount());
@@ -179,7 +179,21 @@ public class AppointmentController {
     }
 
 
-
+    @GetMapping("/stylist/{accountId}")
+    public List<AppointmentResponseDTO> getAppointmentsByStylist(@PathVariable String accountId) {
+        List<Appointment> list = appointmentService.getAppointmentsByStylistId(iStylistservice.findByStylistAccountId (accountId).getStylistId());
+        List<AppointmentResponseDTO> listAppointmentResponseDTOs = new ArrayList<>();
+        for (Appointment appointment : list) {
+            List<String> serviceName = new ArrayList<>();
+            double totalPrice = 0;
+            for (SalonService service : appointment.getServices()) {
+                serviceName.add(service.getServiceName());
+                totalPrice = totalPrice + service.getServicePrice();
+            }
+            listAppointmentResponseDTOs.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getCustomerId(), appointment.getCustomer().getAccount().getName(),appointment.getStylist().getStylistId(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback(), appointment.getBranch().getSalonName()));
+        }
+        return listAppointmentResponseDTOs;
+    }
     @PutMapping("/{id}")
     public ResponseEntity<String> updateAppointment(@PathVariable int id,
             @RequestBody AppointmentRequestDTO appointmentRequest) {

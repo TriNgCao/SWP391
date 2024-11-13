@@ -32,11 +32,11 @@ public class PayrollService implements IPayrollService {
 
     @Transactional
     public void savePayroll(Payroll payroll) {
-        iPayrollRepository.save(payroll); 
+        iPayrollRepository.save(payroll);
     }
 
     public List<Payroll> getPayrollBySalon(int salonId) {
-        return iPayrollRepository.findBySalon_SalonId(salonId); 
+        return iPayrollRepository.findBySalon_SalonId(salonId);
     }
 
     @Override
@@ -45,42 +45,42 @@ public class PayrollService implements IPayrollService {
     }
 
 
-    // @Scheduled(cron = "0 * * * * ?") 
+//     @Scheduled(cron = "0 * * * * ?")
     @Scheduled(cron = "0 0 0 1 * ?")
     @Transactional
     public void calculateMonthlyPayroll() {
         List<Stylist> stylists = stylistService.getAllStylists();
         for (Stylist stylist : stylists) {
-            double totalRevenue = calculateTotalRevenue(stylist.getStylistId()); 
+            double totalRevenue = calculateTotalRevenue(stylist.getStylistId());
             double commission = stylist.getCommission();
             
-            double earning = (commission * totalRevenue) + stylist.getSalary(); 
+            double earning = (commission * totalRevenue) + stylist.getSalary();
     
             Payroll payroll = new Payroll();
             payroll.setEmployeeId(stylist.getStylistId());
             payroll.setEarning(earning);
             payroll.setPayrollDate(LocalDate.now());
-            payroll.setStatus(false); 
-            payroll.setSalon(stylist.getSalon()); 
+            payroll.setStatus(false);
+            payroll.setSalon(stylist.getSalon());
             Account account = stylist.getAccount();
             payroll.setName(account.getName());
             payroll.setEmail(account.getEmail());
             payroll.setPhone(account.getPhone());
             payroll.setRole(account.getRole());
             
-            iPayrollRepository.save(payroll); 
+            iPayrollRepository.save(payroll);
         }
 
         List<Staff> staffMembers = staffService.getAllStaffs();
         for (Staff staff : staffMembers) {
-            double earning = staff.getSalary(); 
+            double earning = staff.getSalary();
 
             Payroll payroll = new Payroll();
             payroll.setEmployeeId(staff.getSatffId());
             payroll.setEarning(earning);
             payroll.setPayrollDate(LocalDate.now());
-            payroll.setStatus(false); 
-            payroll.setSalon(staff.getSalon()); 
+            payroll.setStatus(false);
+            payroll.setSalon(staff.getSalon());
 
             Account account = staff.getAccount();
             payroll.setName(account.getName());
@@ -88,7 +88,7 @@ public class PayrollService implements IPayrollService {
             payroll.setPhone(account.getPhone());
             payroll.setRole(account.getRole());
 
-            iPayrollRepository.save(payroll); 
+            iPayrollRepository.save(payroll);
         }
     }
 
@@ -96,19 +96,19 @@ public class PayrollService implements IPayrollService {
         LocalDate now = LocalDate.now();
         int currentMonth = now.getMonthValue();
         int currentYear = now.getYear();
-        
+
         List<Appointment> completedAppointments = appointmentService.getCompletedAppointmentsByStylistForMonth(stylistId, currentMonth, currentYear);
     
         double totalRevenue = 0.0;
         for (Appointment appointment : completedAppointments) {
-            List<SalonService> services = appointment.getServices(); 
+            List<SalonService> services = appointment.getServices();
             for (SalonService service : services) {
                 totalRevenue += service.getServicePrice();
             }
         }
         return totalRevenue;
     }
-    
+
 
     @Override
     @Transactional

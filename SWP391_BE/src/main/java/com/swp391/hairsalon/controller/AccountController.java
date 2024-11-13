@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -79,8 +80,16 @@ public class AccountController {
 //    }
 
     @GetMapping("/fetchAllEmployees")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<EmployeeInfoDto>> getAllEmployees() {
         return ResponseEntity.ok(iAccountService.getAllEmployees());
+    }
+
+    @PutMapping("/reset-pass")
+    public ResponseEntity<String> resetPass(@RequestParam String email, @RequestParam String password) {
+        iAccountService.setPassword(email, password);
+        return ResponseEntity.ok("Reset password successful");
+
     }
 
     @GetMapping("/fetchEmployees/{id}")

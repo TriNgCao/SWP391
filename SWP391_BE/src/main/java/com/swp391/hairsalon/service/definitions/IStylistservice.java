@@ -4,6 +4,8 @@ import com.swp391.hairsalon.dto.StylistInfoForBooking;
 import com.swp391.hairsalon.dto.StylistListDto;
 import com.swp391.hairsalon.pojo.Staff;
 import com.swp391.hairsalon.pojo.Stylist;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
