@@ -39,6 +39,9 @@ import Success from "./components/Dashboard/Success";
 import Fail from "./components/Dashboard/Fail";
 import StaffSupportTicket from "./Pages/Staff/StaffSupportTicket";
 import StylistPrivateRoute from "./components/PrivateRoute/StylistPrivateRoute";
+import StaffPrivateRoute from "./components/PrivateRoute/StaffPrivateRoute";
+import AdminPrivateRoute from "./components/PrivateRoute/AdminPrivateRoute";
+import ManagerPrivateRoute from "./components/PrivateRoute/ManagerPrivateRoute";
 function App() {
   return (
     <div>
@@ -142,7 +145,7 @@ function App() {
                 </>
               }
             />
-          </Route>  
+          </Route>
 
           {/* Payment */}
 
@@ -150,79 +153,60 @@ function App() {
           <Route path="/payment/fail" element={<Fail />} />
 
           {/* DASHBOARD MANAGER */}
-          <Route path="/manager" element={<ManagerLayout />}>
-            <Route path="manager-services" element={<ManagerServices />} />
-            <Route path="manager-profile" element={<ManagerProfilePage />} />
-            <Route path="manager-personnel" element={<ManagerPersonnel />} />
-            <Route path="manager-revenue" element={<ManageRevenuePage />} />
-            <Route path="manager-payroll" element={<ManagerPayroll />} />
-            <Route
-              path="manager-transaction"
-              element={<ManagerTransaction />}
-            />
-            <Route path="manager-blog" element={<ManagerBlogs />} />
-            <Route path="view-appointments" element={<ManagerAppointments />} />
-            <Route path="manager-schedule" element={<ManagerSchedule />} />
+          <Route path="/manager" element={<ManagerPrivateRoute />}>
+            <Route path="" element={<ManagerLayout />}>
+              <Route path="manager-services" element={<ManagerServices />} />
+              <Route path="manager-profile" element={<ManagerProfilePage />} />
+              <Route path="manager-personnel" element={<ManagerPersonnel />} />
+              <Route path="manager-revenue" element={<ManageRevenuePage />} />
+              <Route path="manager-payroll" element={<ManagerPayroll />} />
+              <Route
+                path="manager-transaction"
+                element={<ManagerTransaction />}
+              />
+              <Route path="manager-blog" element={<ManagerBlogs />} />
+              <Route
+                path="view-appointments"
+                element={<ManagerAppointments />}
+              />
+              <Route path="manager-schedule" element={<ManagerSchedule />} />
+            </Route>
           </Route>
 
           {/* DASHBOARD ADMIN */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="admin-profile" element={<AdminProfilePage />} />
-            <Route path="admin-personnel" element={<AdminPersonnel />} />
-            <Route path="admin-salon" element={<AdminSalon />} />
-            <Route path="admin-customer" element={<ManageCustomer />} />
+          <Route path="/admin" element={<AdminPrivateRoute />}>
+            <Route path="" element={<AdminLayout />}>
+              <Route path="admin-profile" element={<AdminProfilePage />} />
+              <Route path="admin-personnel" element={<AdminPersonnel />} />
+              <Route path="admin-salon" element={<AdminSalon />} />
+              <Route path="admin-customer" element={<ManageCustomer />} />
+            </Route>
           </Route>
 
           {/* DASHBOARD STAFF */}
-          <Route path="/staff" element={<StaffLayout />}>
-            <Route path="staff-profile" element={<StaffProfilePage />} />
-            <Route path="staff-appointments" element={<StaffAppointments />} />
-
-            <Route path="staff-salary" element={<StaffSalary />} />
-            <Route
-              path="staff-supportTicket"
-              element={<StaffSupportTicket />}
-            />
+          <Route path="/staff" element={<StaffPrivateRoute />}>
+            <Route path="" element={<StaffLayout />}>
+              <Route path="staff-profile" element={<StaffProfilePage />} />
+              <Route
+                path="staff-appointments"
+                element={<StaffAppointments />}
+              />
+              <Route path="staff-salary" element={<StaffSalary />} />
+              <Route
+                path="staff-supportTicket"
+                element={<StaffSupportTicket />}
+              />
+            </Route>
           </Route>
 
           {/* DASHBOARD STYLIST */}
           <Route path="/stylist" element={<StylistPrivateRoute />}>
-        <Route
-          path=""
-          element={
-            <>
-              <StylistLayout />
-            </>
-          }
-        />
-        <Route
-          path="stylist-profile"
-          element={
-            <>
-              <StylistLayout />
-              <StylistProfilePage />
-            </>
-          }
-        />
-        <Route
-          path="stylist-salary"
-          element={
-            <>
-              <StylistLayout />
-              <StylistSalary />
-            </>
-          }
-        />
-        <Route
-          path="stylist-schedule"
-          element={
-            <>
-              <StylistLayout />
-              <StylistSchedule />
-            </>
-          }
-        />
-      </Route>
+            <Route path="" element={<StylistLayout />}>
+              <Route path="stylist-profile" element={<StylistProfilePage />} />
+              <Route path="stylist-salary" element={<StylistSalary />} />
+              <Route path="stylist-schedule" element={<StylistSchedule />} />
+            </Route>
+          </Route>
         </Routes>
       </AuthProvider>
     </div>

@@ -933,7 +933,7 @@ const Booking = () => {
                                           color: "#d9534f",
                                         }}
                                       >
-                                        Price: {service.servicePrice} VND
+                                        Price: {service.servicePrice.toLocaleString()} VND
                                       </p>
                                       <button
                                         className={`btn ${
@@ -978,7 +978,7 @@ const Booking = () => {
                                     : ""
                                 }`}
                                 style={{
-                                  minHeight: "400px",
+                                  minHeight: "450px",
                                 }}
                               >
                                 <img
@@ -1005,7 +1005,7 @@ const Booking = () => {
                                       color: "#d9534f",
                                     }}
                                   >
-                                    Price: ${service.servicePrice}
+                                    Price: {service.servicePrice.toLocaleString()} VND
                                   </p>
                                   <button
                                     className={`btn ${

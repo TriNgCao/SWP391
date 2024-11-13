@@ -56,12 +56,6 @@ public class AccountController {
 
         return iAccountService.insertAccount(salonId, account);
     }
-    @PutMapping("/reset-pass")
-    public ResponseEntity<String> resetPass(@RequestParam String email, @RequestParam String password) {
-        iAccountService.setPassword(email, password);
-        return ResponseEntity.ok("Reset password successful");
-
-    }
     @GetMapping("/{id}")
     public ResponseEntity<Account> getAccount(@PathVariable String id) {
 

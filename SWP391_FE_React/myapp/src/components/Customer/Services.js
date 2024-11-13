@@ -86,7 +86,7 @@ export default function Services() {
                 color: "#d9534f",
               }}
             >
-              Price: {service.servicePrice}
+              Price: {service.servicePrice.toLocaleString()} VND
             </p>
             <button
               className="btn btn-primary mt-auto"

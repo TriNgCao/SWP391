@@ -47,7 +47,7 @@ const InternalLoginModal = () => {
         sessionStorage.setItem('userRole', userRole);
         window.dispatchEvent(new Event('storage'));
 
-        const closeButton = document.querySelector('#internalLoginModal .btn-close');
+        const closeButton = document.querySelector("#internalLoginModal .btn-close");
         if (closeButton) {
           closeButton.click();
         }
@@ -57,15 +57,19 @@ const InternalLoginModal = () => {
           switch (userRole) {
           case 2:
             navigate('/stylist');
+             window.location.reload();
             break;
           case 3:
             navigate('/staff');
+            window.location.reload();
             break;
           case 4:
             navigate('/manager');
+            window.location.reload();
             break;
           case 5:
             navigate('/admin');
+            window.location.reload();
             break;
           default:
             setError('Access Denied: Invalid role for internal login.');
