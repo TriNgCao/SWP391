@@ -188,6 +188,6 @@ public class AccountService implements IAccountService {
 
     @Override
     public boolean emailExists(String email) {
-        return false;
+        return iAccountRepository.existsByEmail(email);
     }
 }
