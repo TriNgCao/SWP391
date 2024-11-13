@@ -9,4 +9,5 @@ public interface IStaffService{
     public Staff getStaffByAccountId (String accountId);
     public Staff updateSalary(String id, Staff staff);
     public List<Staff> getAllStaffs();
+    Integer getSalary(String id);
 }

@@ -6,6 +6,7 @@ import com.swp391.hairsalon.repository.IStaffRepository;
 import com.swp391.hairsalon.service.definitions.IStaffService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class StaffService implements   IStaffService{
 
     @Override
     public Staff updateSalary(String id, Staff staff) {
-        int staffId = iAccountRepository.getById(id).getStaff().getSatffId();
+        int staffId = iAccountRepository.getById(id).getStaff().getStaffId();
         Staff s = iStaffRepository.getReferenceById(staffId);
         s.setSalary(staff.getSalary());
         return iStaffRepository.save(s);
@@ -41,5 +42,9 @@ public class StaffService implements   IStaffService{
         return iStaffRepository.findAll();
     }
 
+    @Override
+    public Integer getSalary(String id){
+        return iStaffRepository.getStaffSalaryByAccountId(id);
+    }
 
 }

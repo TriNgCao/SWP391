@@ -30,7 +30,7 @@ public interface IStylistRepository extends JpaRepository<Stylist, Integer> {
         List<StylistListDto> getStylistList(@Param("id") String id);
 
         @Query("Select s FROM Stylist s WHERE s.account.id = :account_id")
-        List<Stylist> getStylistByAccountId(@Param("account_id") String accountId);
+        Stylist getStylistByAccountId(@Param("account_id") String accountId);
 
         @Query("SELECT s FROM Stylist s WHERE s.account.id = :accountId")
         Stylist findByStylistAccountId(@Param("accountId") String accountId);

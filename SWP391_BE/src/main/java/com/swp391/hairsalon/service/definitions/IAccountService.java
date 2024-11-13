@@ -13,6 +13,9 @@ public interface IAccountService {
     public Account addAccount(Account account);
     public Account insertAccount(int salonId, Account account);
     public Account updateAccount(String id, Account account);
+
+    Account updateAccountProfile(String id, AccountProfileDTO request);
+
     public boolean isEmailExist(String email);
     public void deleteAccount(String id);
     public void setPassword(String email, String password);
