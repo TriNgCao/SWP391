@@ -34,12 +34,13 @@ public class SecurityCofig {
 
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
-//                .authorizeHttpRequests(
-//                        auth -> {
-////                            auth.requestMatchers("/test").authenticated();
-//                            auth.requestMatchers("/auth/login", "/home").permitAll();
-////                            auth.anyRequest().authenticated();
-////                        })
+               .authorizeHttpRequests(
+                       auth -> {
+                   
+                           auth.requestMatchers("/auth/login", "/home").permitAll();
+                           
+                           auth.anyRequest().authenticated();
+                       })
                 .oauth2Login(
                         oauth -> {
                             Customizer.withDefaults();
