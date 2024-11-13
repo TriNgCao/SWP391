@@ -1,6 +1,7 @@
 package com.swp391.hairsalon.pojo;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,6 +37,8 @@ public class Account {
 
     @Column(name = "status")
     private boolean active;
+
+    private String imageName;
 
     @Column(name = "register_date", nullable = true)
     private Date registerDate;

@@ -31,4 +31,6 @@ public interface IAppointmentService {
     public List<Appointment> getCompletedAppointmentsByStylist(int stylistId);
 
     public List<Appointment> getAppointmentsByCustomerAccountId (String accountId);
+
+    public List<Appointment> getCompletedAppointmentsByStylistForMonth(int stylistId, int month, int year);
 }

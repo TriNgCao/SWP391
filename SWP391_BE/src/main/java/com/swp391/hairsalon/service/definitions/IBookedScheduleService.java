@@ -13,5 +13,6 @@ public interface IBookedScheduleService {
     void addBookedSchedule(BookedSchedule bookedSchedule);
     void updateStatusBookedSchedule(int id);
     int getBookedId(int bookedTime, int scheduleId);
+    boolean existsByStylistAndStartTime(int stylistId, int startTime);
 
 }

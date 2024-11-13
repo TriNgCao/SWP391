@@ -11,5 +11,7 @@ public interface IPayrollService {
 
     public Payroll findPayrollById (int payrollId);
 
+    List<Payroll> getPayrollByStylist(int stylistId);
+
     public Payroll updatePayroll(Payroll payRoll);
 }

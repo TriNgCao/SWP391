@@ -1,5 +1,6 @@
 package com.swp391.hairsalon.controller;
 
+import com.swp391.hairsalon.pojo.SalonService;
 import com.swp391.hairsalon.pojo.Staff;
 import com.swp391.hairsalon.pojo.SupportTicket;
 import com.swp391.hairsalon.service.definitions.INotificationService;
@@ -36,12 +37,16 @@ public class SupportTicketController {
         return ResponseEntity.ok(createdTicket);
     }
 
-
+    
     @GetMapping
     public ResponseEntity<List<SupportTicket>> getAllSupportTickets() {
         List<SupportTicket> tickets = supportTicketService.getAllSupportTickets();
         return ResponseEntity.ok(tickets);
     }
 
+    @PutMapping("/update/{id}")
+    public SupportTicket updateSupportTicket(@PathVariable int id, @RequestBody SupportTicket supportTicket){
+        return supportTicketService.updateSupportTicket(supportTicket);
+    }
 }
 

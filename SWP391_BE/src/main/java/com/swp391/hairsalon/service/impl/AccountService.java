@@ -1,13 +1,9 @@
 package com.swp391.hairsalon.service.impl;
 
-import com.swp391.hairsalon.dto.CustomerInfoDto;
-import com.swp391.hairsalon.dto.CustomerProfileDto;
-import com.swp391.hairsalon.dto.EmployeeInfoDto;
-import com.swp391.hairsalon.dto.PersonnelBySalonDto;
+import com.swp391.hairsalon.dto.*;
 import com.swp391.hairsalon.pojo.*;
 import com.swp391.hairsalon.repository.*;
 import com.swp391.hairsalon.service.definitions.IAccountService;
-import com.swp391.hairsalon.service.definitions.ISalonService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -119,6 +115,11 @@ public class AccountService implements IAccountService {
     }
 
     @Override
+    public AccountProfileDTO getProfileById(String id) {
+        return iAccountRepository.getProfileById(id);
+    }
+
+    @Override
     public Account updateAccount(String id, Account naccount) {
 
         Account a = iAccountRepository.searchById(id);
@@ -184,5 +185,10 @@ public class AccountService implements IAccountService {
     @Override
     public int getCustomerIdByAccountID(String accountID) {
         return iAccountRepository.getCusIdByAccountId(accountID);
+    }
+
+    @Override
+    public boolean emailExists(String email) {
+        return iAccountRepository.existsByEmail(email);
     }
 }

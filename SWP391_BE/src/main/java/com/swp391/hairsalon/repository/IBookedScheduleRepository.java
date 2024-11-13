@@ -28,4 +28,11 @@ public interface IBookedScheduleRepository extends JpaRepository<BookedSchedule,
 
     @Query("select count(*) from Schedule where date = :date")
     int countByDate(@Param("date") Date date);
+
+
+    @Query("SELECT CASE WHEN COUNT(bs) > 0 THEN true ELSE false END " +
+           "FROM BookedSchedule bs " +
+           "WHERE bs.schedule.stylist.stylistId = :stylistId AND bs.bookedTime = :startTime")
+    boolean existsByStylistAndStartTime(@Param("stylistId") int stylistId, 
+                                        @Param("startTime") int startTime);
 }

@@ -32,82 +32,83 @@ public class PayrollService implements IPayrollService {
 
     @Transactional
     public void savePayroll(Payroll payroll) {
-        iPayrollRepository.save(payroll); // Lưu payroll vào cơ sở dữ liệu
+        iPayrollRepository.save(payroll);
     }
 
     public List<Payroll> getPayrollBySalon(int salonId) {
-        return iPayrollRepository.findBySalon_SalonId(salonId); // Lấy payroll theo salonId
+        return iPayrollRepository.findBySalon_SalonId(salonId);
     }
+
+    @Override
+    public List<Payroll> getPayrollByStylist(int stylistId) {
+        return iPayrollRepository.get(stylistId);
+    }
+
 
 //     @Scheduled(cron = "0 * * * * ?")
     @Scheduled(cron = "0 0 0 1 * ?")
     @Transactional
     public void calculateMonthlyPayroll() {
-        // Tính lương cho Stylist
         List<Stylist> stylists = stylistService.getAllStylists();
         for (Stylist stylist : stylists) {
-            // Tính tổng doanh thu từ các dịch vụ hoàn thành
-            double totalRevenue = calculateTotalRevenue(stylist.getStylistId()); // Phương thức này sẽ tính tổng doanh thu
+            double totalRevenue = calculateTotalRevenue(stylist.getStylistId());
             double commission = stylist.getCommission();
             
-            // Tính toán thu nhập của stylist
-            double earning = (commission * totalRevenue) + stylist.getSalary(); // Hoa hồng cộng lương cơ bản
+            double earning = (commission * totalRevenue) + stylist.getSalary();
     
             Payroll payroll = new Payroll();
             payroll.setEmployeeId(stylist.getStylistId());
             payroll.setEarning(earning);
             payroll.setPayrollDate(LocalDate.now());
-            payroll.setStatus(false); // Trạng thái đã thanh toán
-            payroll.setSalon(stylist.getSalon()); // Gán salon
-            
-            // Lấy thông tin từ Account
+            payroll.setStatus(false);
+            payroll.setSalon(stylist.getSalon());
             Account account = stylist.getAccount();
             payroll.setName(account.getName());
             payroll.setEmail(account.getEmail());
             payroll.setPhone(account.getPhone());
             payroll.setRole(account.getRole());
             
-            iPayrollRepository.save(payroll); // Lưu payroll vào cơ sở dữ liệu
+            iPayrollRepository.save(payroll);
         }
 
-        // Tính lương cho Staff
         List<Staff> staffMembers = staffService.getAllStaffs();
         for (Staff staff : staffMembers) {
-            double earning = staff.getSalary(); // Không có hoa hồng
+            double earning = staff.getSalary();
 
             Payroll payroll = new Payroll();
             payroll.setEmployeeId(staff.getSatffId());
             payroll.setEarning(earning);
             payroll.setPayrollDate(LocalDate.now());
-            payroll.setStatus(false); // Trạng thái đã thanh toán
-            payroll.setSalon(staff.getSalon()); // Gán salon
+            payroll.setStatus(false);
+            payroll.setSalon(staff.getSalon());
 
-            // Lấy thông tin từ Account
             Account account = staff.getAccount();
             payroll.setName(account.getName());
             payroll.setEmail(account.getEmail());
             payroll.setPhone(account.getPhone());
             payroll.setRole(account.getRole());
 
-            iPayrollRepository.save(payroll); // Lưu payroll vào cơ sở dữ liệu
+            iPayrollRepository.save(payroll);
         }
     }
 
     public double calculateTotalRevenue(int stylistId) {
-    // Giả sử bạn có một phương thức trong service để lấy danh sách các dịch vụ hoàn thành của stylist
-    List<Appointment> completedAppointments = appointmentService.getCompletedAppointmentsByStylist(stylistId);
+        LocalDate now = LocalDate.now();
+        int currentMonth = now.getMonthValue();
+        int currentYear = now.getYear();
+
+        List<Appointment> completedAppointments = appointmentService.getCompletedAppointmentsByStylistForMonth(stylistId, currentMonth, currentYear);
     
-    double totalRevenue = 0.0;
-    for (Appointment appointment : completedAppointments) {
-        // Giả sử Appointment có một phương thức để lấy danh sách dịch vụ
-        List<SalonService> services = appointment.getServices(); // Giả sử Appointment có phương thức này
-        
-        for (SalonService service : services) {
-            totalRevenue += service.getServicePrice(); // Cộng giá dịch vụ vào tổng doanh thu
+        double totalRevenue = 0.0;
+        for (Appointment appointment : completedAppointments) {
+            List<SalonService> services = appointment.getServices();
+            for (SalonService service : services) {
+                totalRevenue += service.getServicePrice();
+            }
         }
+        return totalRevenue;
     }
-    return totalRevenue;
-}
+
 
     @Override
     @Transactional

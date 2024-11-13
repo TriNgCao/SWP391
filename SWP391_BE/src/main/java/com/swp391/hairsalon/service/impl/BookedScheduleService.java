@@ -117,20 +117,14 @@ public class BookedScheduleService implements IBookedScheduleService {
     public static int[] findCommonElements(int[] array1, int[] array2) {
         Set<Integer> set1 = new HashSet<>();
         Set<Integer> commonElements = new HashSet<>();
-
-        // Thêm tất cả các phần tử của array1 vào set1
         for (int num : array1) {
             set1.add(num);
         }
-
-        // Kiểm tra các phần tử của array2 trong set1, nếu có thì thêm vào commonElements
         for (int num : array2) {
             if (set1.contains(num)) {
                 commonElements.add(num);
             }
         }
-
-        // Chuyển set thành mảng
         int[] result = new int[commonElements.size()];
         int index = 0;
         for (int num : commonElements) {
@@ -144,7 +138,7 @@ public class BookedScheduleService implements IBookedScheduleService {
     public static List<Integer> convertArrayToList(int[] array) {
         List<Integer> list = new ArrayList<>();
         for (int num : array) {
-            list.add(num);  // Thêm từng phần tử vào List
+            list.add(num);  
         }
         return list;
     }
@@ -161,22 +155,17 @@ public class BookedScheduleService implements IBookedScheduleService {
     }
 
     public Integer chooseRandomAvailableStylist(int startBookedTime, int duration, int salonId, Date date) {
-        // Lấy danh sách tất cả stylists theo salonId
         List<Stylist> allStylists = iStylistRepository.getStylistsBySalonId(salonId);
 
-        // Lọc stylist trống hoặc có thời gian trống trong ngày
         List<Stylist> availableStylists = allStylists.stream()
                 .filter(stylist -> stylist.getSchedules().stream()
                         .filter(schedule -> schedule.getDate().equals(date))
                         .allMatch(schedule -> isStylistAvailableForDuration(schedule, startBookedTime, duration))
                 )
                 .collect(Collectors.toList());
-
-        // Nếu không có stylist nào rảnh vào khoảng thời gian đó, trả về null hoặc xử lý khác
         if (availableStylists.isEmpty()) {
             return null;
         }
-        // Chọn stylist ngẫu nhiên từ danh sách stylist khả dụng
         Random random = new Random();
         int randomIndex = random.nextInt(availableStylists.size());
         return availableStylists.get(randomIndex).getStylistId();
@@ -184,24 +173,25 @@ public class BookedScheduleService implements IBookedScheduleService {
 
 
     private boolean isStylistAvailableForDuration(Schedule schedule, int startBookedTime, int duration) {
-        // Tính toán thời gian kết thúc dự kiến
         int endBookedTime = startBookedTime + duration;
 
-        // Duyệt qua tất cả các BookedSchedule của lịch trình để kiểm tra xung đột
         for (BookedSchedule bookedSchedule : schedule.getBookedSchedules()) {
             int bookedStartTime = bookedSchedule.getBookedTime();
             int bookedEndTime = bookedStartTime + bookedSchedule.getDuration();
 
-            // Kiểm tra xung đột thời gian: stylist không khả dụng nếu khoảng thời gian yêu cầu trùng lặp
             if ((startBookedTime >= bookedStartTime && startBookedTime < bookedEndTime) ||
                     (endBookedTime > bookedStartTime && endBookedTime <= bookedEndTime) ||
                     (startBookedTime <= bookedStartTime && endBookedTime >= bookedEndTime)) {
-                return false; // Không khả dụng do trùng lặp thời gian
+                return false; 
             }
         }
 
-        // Nếu không có xung đột thời gian nào, stylist khả dụng
         return true;
+    }
+
+    @Override
+    public boolean existsByStylistAndStartTime(int stylistId, int startTime) {
+        return iBookedScheduleRepository.existsByStylistAndStartTime(stylistId, startTime);
     }
 
 

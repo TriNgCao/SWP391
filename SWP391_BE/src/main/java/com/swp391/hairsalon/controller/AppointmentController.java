@@ -61,6 +61,7 @@ public class AppointmentController {
     @Autowired
     private IBookedScheduleService iBookedScheduleService;
 
+
     public AppointmentController(IAppointmentService appointmentService) {
         this.appointmentService = appointmentService;
     }
@@ -148,6 +149,10 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<String> addAppointment(@RequestBody AppointmentRequestDTO appointmentRequest) {
+        if (iBookedScheduleService.existsByStylistAndStartTime(appointmentRequest.getStylistId(), appointmentRequest.getStartTime())){
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                             .body("This time slot is already booked for the selected stylist.");
+        }
         if (appointmentRequest.getStylistId() == 0){
             int duration = calculateTotalDuration(appointmentRequest);
             appointmentRequest.setStylistId(iBookedScheduleService.chooseRandomAvailableStylist(appointmentRequest.getStartTime(),duration , appointmentRequest.getSalonId(), appointmentRequest.getDate()));
@@ -283,6 +288,23 @@ public class AppointmentController {
         return appointmentService.getAppointmentsByDate(sqlDate);
     }
 
+    @GetMapping("/stylist/{accountId}")
+    public List<AppointmentResponseDTO> getAppointmentsByStylist(@PathVariable String accountId) {
+        List<Appointment> list = appointmentService.getAppointmentsByStylistId(iStylistservice.findByStylistAccountId(accountId).getStylistId());
+        List<AppointmentResponseDTO> listAppointmentResponseDTOs = new ArrayList<>();
+        for (Appointment appointment : list) {
+            List<String> serviceName = new ArrayList<>();
+            double totalPrice = 0;
+            for (SalonService service : appointment.getServices()) {
+                serviceName.add(service.getServiceName());
+                totalPrice = totalPrice + service.getServicePrice();
+            }
+            listAppointmentResponseDTOs.add(new AppointmentResponseDTO(appointment.getId(), appointment.getCustomer().getCustomerId(), appointment.getCustomer().getAccount().getName(),appointment.getStylist().getStylistId(), appointment.getStylist().getAccount().getName(), appointment.getDate(), appointment.getStartTime(), appointment.getEndTime(), serviceName, totalPrice, appointment.getStatus(), appointment.getRating(), appointment.getFeedback(), appointment.getBranch().getSalonName()));
+        }
+        return listAppointmentResponseDTOs;
+    }
+
+
     private List<SalonService> getSalonServicesById(AppointmentRequestDTO appointmentRequest) {
         List<SalonService> services = new ArrayList<>();
         for (int serviceId : appointmentRequest.getServiceId()) {
@@ -304,14 +326,16 @@ public class AppointmentController {
         } 
         return loyalPoint;
     }
-    public LocalTime convertToLocalTime(int startTime) {
+    private LocalTime convertToLocalTime(int startTime) {
         return LocalTime.of(startTime, 00);
     }
 
     private int calculateTotalDuration(AppointmentRequestDTO appointmentRequest) {
         List<SalonService> services = getSalonServicesById(appointmentRequest);
         return services.stream()
-                       .mapToInt(SalonService::getMaxTime)  // Lấy giá trị maxTime của từng dịch vụ
-                       .sum();                             // Tính tổng
+                       .mapToInt(SalonService::getMaxTime)  
+                       .sum();                             
     }
+
+
 }

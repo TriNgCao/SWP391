@@ -5,7 +5,7 @@ export default function Success() {
     const navigate = useNavigate();
 
     const handleBackToHome = () => {
-        navigate("/"); // Điều hướng về trang chủ, thay đổi URL nếu cần
+        navigate("/");
     };
 
     return (

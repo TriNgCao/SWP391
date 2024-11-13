@@ -58,7 +58,7 @@ const CustomerRegisterModal = () => {
     setIsLoading(true);
   
     try {
-      const response = await axios.post(`http://localhost:8080/api/email/send-code/${encodeURIComponent(email)}`);
+      const response = await axios.post(`http://localhost:8080/api/email/send-code/register/${encodeURIComponent(email)}`);
       
       if (response.status === 200) {
         setStep(2);

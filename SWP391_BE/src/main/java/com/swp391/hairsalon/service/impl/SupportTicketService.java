@@ -19,57 +19,24 @@ public class SupportTicketService implements ISupportTicketService {
     @Override
     public SupportTicket createSupportTicket(SupportTicket ticket) {
         ticket.setCreatedAt(LocalDateTime.now());
+        ticket.setStatus(false);
         return supportTicketRepository.save(ticket);
     }
 
     @Override
-    public SupportTicket updateSupportTicketStatus(Long id, boolean status) {
-        Optional<SupportTicket> existingTicket = supportTicketRepository.findById(id);
-        if (existingTicket.isPresent()) {
-            SupportTicket ticket = existingTicket.get();
-            ticket.setStatus(status);
-            supportTicketRepository.save(ticket);
-            return ticket;
-        } else {
-            throw new IllegalArgumentException("Ticket not found.");
-        }
-    }
-
-    @Override
-    public SupportTicket updateSupportTicket(SupportTicket ticket) {
-        Optional<SupportTicket> existingTicket = supportTicketRepository.findById(ticket.getId());
-        if (existingTicket.isPresent()) {
-            return supportTicketRepository.save(ticket);
-        } else {
-            throw new IllegalArgumentException("Ticket not found.");
-        }
-    }
-
-    @Override
     public List<SupportTicket> getAllSupportTickets() {
+
         return supportTicketRepository.findAll();
     }
 
     @Override
-    public SupportTicket getSupportTicketById(Long id) {
-        return supportTicketRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Ticket not found."));
+    public SupportTicket getSupportTicketById(int id) {
+        return supportTicketRepository.getSupportTicketById(id);
     }
 
     @Override
-    public boolean deleteSupportTicket(Long id) {
-        Optional<SupportTicket> ticket = supportTicketRepository.findById(id);
-        if (ticket.isPresent()) {
-            supportTicketRepository.delete(ticket.get());
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public List<SupportTicket> findSupportTicketsByStatus(boolean status) { // Changed status type to boolean
-        return supportTicketRepository.findByStatus(status);
+    public SupportTicket updateSupportTicket(SupportTicket supportTicket) {
+        return supportTicketRepository.save(supportTicket);
     }
 }
 

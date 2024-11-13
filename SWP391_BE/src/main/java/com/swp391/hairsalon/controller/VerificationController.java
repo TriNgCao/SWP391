@@ -28,29 +28,51 @@ public class VerificationController {
     @Autowired
     private IAccountService iAccountService;
 
-    @PostMapping("/send-code/{accountId}")
-    public ResponseEntity<?> sendVerificationCode(@PathVariable String accountId) {
-        String code = CodeGenerator.generateCode(); // Giả định bạn có một lớp CodeGenerator để tạo mã
-        String email = iAccountService.getAccountById(accountId).getEmail();
+    @PostMapping("/send-code/verify/{email}")
+    public ResponseEntity<?> sendVerificationCodeForResetPassword(@PathVariable String email) {
+        if (!iAccountService.emailExists(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "Email does not exist", "status", "failure"));
+        }
+
+        String code = CodeGenerator.generateCode();
         boolean emailSent = emailService.sendVerificationCode(email, code);
-        
         if (emailSent) {
-            verificationService.saveCode(email, code); // Lưu mã sau khi gửi
-            return ResponseEntity.ok(Map.of("message", "Code sended", "status", "success"));
+            verificationService.saveCode(email, code);
+            return ResponseEntity.ok(Map.of("message", "Code sent", "status", "success"));
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Cannot Send Email", "status", "failure"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Cannot Send Email", "status", "failure"));
         }
     }
 
-    @PostMapping("/verify-code/{accountId}/{code}")
-    public ResponseEntity<?> verifyCode(@PathVariable String accountId, @PathVariable String code) {
-        String email = iAccountService.getAccountById(accountId).getEmail();
+    @PostMapping("/send-code/register/{email}")
+    public ResponseEntity<?> sendVerificationCodeForRegister(@PathVariable String email) {
+        if (iAccountService.emailExists(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "Email already exists", "status", "failure"));
+        }
+
+        String code = CodeGenerator.generateCode();
+        boolean emailSent = emailService.sendVerificationCode(email, code);
+        if (emailSent) {
+            verificationService.saveCode(email, code);
+            return ResponseEntity.ok(Map.of("message", "Code sent", "status", "success"));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Cannot Send Email", "status", "failure"));
+        }
+    }
+
+    @PostMapping("/verify-code/{email}/{code}")
+    public ResponseEntity<?> verifyCode(@PathVariable String email, @PathVariable String code) {
         boolean isValid = verificationService.verifyCode(email, code);
 
         if (isValid) {
             return ResponseEntity.ok(Map.of("message", "Code valid", "status", "success"));
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Code invalid or out of time", "status", "failure"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Code invalid or out of time", "status", "failure"));
         }
     }
 }
