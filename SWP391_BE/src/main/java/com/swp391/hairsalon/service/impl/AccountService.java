@@ -133,6 +133,18 @@ public class AccountService implements IAccountService {
     }
 
     @Override
+    public Account updateAccountProfile(String id, AccountProfileDTO request) {
+        Account account = iAccountRepository.searchById(id);
+        if (account != null) {
+        account.setName(request.getName());
+        account.setEmail(request.getEmail());
+        account.setPhone(request.getPhone());
+        }
+        return iAccountRepository.save(account);
+    }
+
+
+    @Override
     public boolean isEmailExist(String email) {
         boolean check = false;
         Account a = iAccountRepository.searchByEmail(email);

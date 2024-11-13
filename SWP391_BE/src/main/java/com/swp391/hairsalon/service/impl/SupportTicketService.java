@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SupportTicketService implements ISupportTicketService {
@@ -30,13 +29,10 @@ public class SupportTicketService implements ISupportTicketService {
     }
 
     @Override
-    public SupportTicket getSupportTicketById(int id) {
-        return supportTicketRepository.getSupportTicketById(id);
-    }
-
-    @Override
-    public SupportTicket updateSupportTicket(SupportTicket supportTicket) {
-        return supportTicketRepository.save(supportTicket);
+    public SupportTicket updateStatus(int id, boolean status){
+        SupportTicket st = supportTicketRepository.getSupportTicketById(id);
+        st.setStatus(status);
+        return supportTicketRepository.save(st);
     }
 }
 

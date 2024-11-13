@@ -52,11 +52,13 @@ public class StylistService implements IStylistservice{
     }
 
     @Override
-    public List<Stylist> getStylistByAccountId(String accountId) {
+    public Stylist getStylistByAccountId(String accountId) {
         return iStylistRepository.getStylistByAccountId(accountId);
     }
 
     public List<Stylist> getAllStylists(){
         return iStylistRepository.findAll();
     }
+
+
 }
