@@ -10,14 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-public interface ISupportTicketRepository extends JpaRepository<SupportTicket, Long> {
+public interface ISupportTicketRepository extends JpaRepository<SupportTicket, Integer> {
     @Query("Select st FROM SupportTicket st WHERE st.status = :status")
     List<SupportTicket> findByStatus(boolean status);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE SupportTicket st SET st.status = ?2 WHERE st.id = ?1")
-    int updateStatusById(Long id, boolean status);
+//
+//    @Modifying
+//    @Transactional
+//    @Query("UPDATE SupportTicket st SET st.status = ?2 WHERE st.id = ?1")
+//    int updateStatusById(int id, boolean status);
 
     @Query("Select st FROM SupportTicket st WHERE st.id = :id")
     SupportTicket getSupportTicketById(int id);

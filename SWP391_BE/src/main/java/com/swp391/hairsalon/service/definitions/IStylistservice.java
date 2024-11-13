@@ -24,7 +24,7 @@ public interface IStylistservice {
 
     List<StylistListDto> getStylistLists(String id);
 
-    List<Stylist> getStylistByAccountId(String accountId);
+    Stylist getStylistByAccountId(String accountId);
 
     @Query("SELECT s FROM Stylist s WHERE s.account.id = :accountId")
     Stylist findByStylistAccountId(@Param("accountId") String accountId);

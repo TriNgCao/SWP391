@@ -8,6 +8,7 @@ import com.swp391.hairsalon.service.definitions.IPayrollService;
 import com.swp391.hairsalon.service.definitions.IStaffService;
 import com.swp391.hairsalon.service.definitions.IStylistservice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,28 +44,31 @@ public class SalaryController {
 
     @GetMapping("/stylist/{accountId}")
     public ResponseEntity<List<StylistEarningsDTO>> getSalaryAndCommission(@PathVariable String accountId) {
-        List<Stylist> stylists = iStylistService.getStylistByAccountId(accountId);
+        Stylist stylists = iStylistService.getStylistByAccountId(accountId);
         List<StylistEarningsDTO> earningsList = new ArrayList<>();
 
-        if (stylists.isEmpty()) {
+        if (stylists == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
         }
-        for (Stylist stylist : stylists) {
-            List<Payroll> payrollList = iPayrollService.getPayrollByStylist(stylist.getStylistId());
+            List<Payroll> payrollList = iPayrollService.getPayrollByStylist(stylists.getStylistId());
 
             for (Payroll payroll : payrollList) {
                 LocalDate payrollDate = payroll.getPayrollDate();
-                    StylistEarningsDTO earningsDTO = new StylistEarningsDTO();
-                    earningsDTO.setSalary(stylist.getSalary());
-                    earningsDTO.setCommission(stylist.getCommission());
-                    earningsDTO.setCommissionAmount(stylist.getCommission() * payroll.getEarning());
-                    earningsDTO.setName(payroll.getName());
-                    earningsDTO.setEarning(payroll.getEarning());
-                    earningsDTO.setPayrollDate(payrollDate);
-                    earningsList.add(earningsDTO);
+                StylistEarningsDTO earningsDTO = new StylistEarningsDTO();
+                earningsDTO.setSalary(stylists.getSalary());
+                earningsDTO.setCommission(stylists.getCommission());
+                earningsDTO.setCommissionAmount(stylists.getCommission() * payroll.getEarning());
+                earningsDTO.setName(payroll.getName());
+                earningsDTO.setEarning(payroll.getEarning());
+                earningsDTO.setPayrollDate(payrollDate);
+                earningsList.add(earningsDTO);
             }
-        }
         return ResponseEntity.ok(earningsList);
+    }
+
+    @GetMapping("/staff/{accountId}")
+    public ResponseEntity<Integer> getSalary(@PathVariable String accountId){
+        return ResponseEntity.ok(iStaffService.getSalary(accountId));
     }
 
 }
