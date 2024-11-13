@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
-import { useRef, useEffect } from "react";
 
 const ForgotPasswordModal = () => {
   const [email, setEmail] = useState("");
@@ -12,9 +11,10 @@ const ForgotPasswordModal = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [step, setStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateEmail = (email) =>
-    /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+    /^[a-zA-Z0-9._-]+@[a-zAZ0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 
   const resetForm = () => {
     setEmail("");
@@ -23,6 +23,7 @@ const ForgotPasswordModal = () => {
     setConfirmPassword("");
     setStep(1);
   };
+
   const modalRef = useRef(null);
 
   useEffect(() => {
@@ -40,32 +41,40 @@ const ForgotPasswordModal = () => {
 
   const handleSendEmail = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
     try {
-      const response = await axios.post("https://example.com/api/send-email", {
-        email,
-      });
+      const response = await axios.post(
+        `http://localhost:8080/api/email/send-code/verify/${encodeURIComponent(email)}`
+      );
       if (response.status === 200) {
         setStep(2);
-        toast.success("OTP sent to your email");
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "An error occurred");
+    } finally {
+      setIsLoading(false);
+      toast.success("OTP sent to your email");
     }
   };
 
   const handleSubmitOtp = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
     try {
-      const response = await axios.post("https://example.com/api/verify-otp", {
-        email,
-        otp,
-      });
+      const response = await axios.post(
+        `http://localhost:8080/api/email/verify-code/${encodeURIComponent(email)}/${encodeURIComponent(otp)}`
+      );
       if (response.status === 200) {
         setStep(3);
-        toast.success("OTP verified, please enter new password");
+
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "An error occurred");
+    } finally {
+      setIsLoading(false);
+      toast.success("OTP verified, please enter new password");
     }
   };
 
@@ -75,10 +84,11 @@ const ForgotPasswordModal = () => {
       toast.error("Passwords do not match");
       return;
     }
+    setIsLoading(true);
 
     try {
       const response = await axios.post(
-        "https://example.com/api/reset-password",
+        `http://localhost:8080/user/reset-pass`,
         { email, password }
       );
       if (response.status === 200) {
@@ -88,6 +98,8 @@ const ForgotPasswordModal = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "An error occurred");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -184,8 +196,8 @@ const ForgotPasswordModal = () => {
               step === 1
                 ? handleSendEmail
                 : step === 2
-                ? handleSubmitOtp
-                : handleResetPassword
+                  ? handleSubmitOtp
+                  : handleResetPassword
             }
           >
             {step === 1 && (
@@ -195,9 +207,8 @@ const ForgotPasswordModal = () => {
                 </label>
                 <input
                   type="text"
-                  className={`form-control ${
-                    !validateEmail(email) && email ? "is-invalid" : ""
-                  }`}
+                  className={`form-control ${!validateEmail(email) && email ? "is-invalid" : ""
+                    }`}
                   id="email"
                   placeholder="Enter your email"
                   style={{ borderRadius: "10px", padding: "10px" }}
@@ -286,12 +297,15 @@ const ForgotPasswordModal = () => {
                 backgroundColor: "#6dbe45",
                 borderColor: "#6dbe45",
               }}
+              disabled={isLoading}
             >
-              {step === 1
-                ? "Send Email"
-                : step === 2
-                ? "Submit OTP"
-                : "Reset Password"}
+              {isLoading
+                ? "Loading..."
+                : step === 1
+                  ? "Send Email"
+                  : step === 2
+                    ? "Submit OTP"
+                    : "Reset Password"}
             </button>
           </form>
         </div>

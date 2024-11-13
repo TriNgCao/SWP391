@@ -12,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -45,18 +47,13 @@ public class OAuthAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
 
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
         OAuth2User user = oauthToken.getPrincipal();
-//        DefaultOAuth2User user = (DefaultOAuth2User) authentication.getPrincipal();
-//        String idToken = user.getAttribute("id_token");
-//        System.out.println(idToken);
+
         String email = user.getAttribute("email");
         System.out.println(email);
         String name = user.getAttribute("name");
         System.out.println(name);
-
-
         Account a2 = iAccountRepository.searchByEmail(email);
         if (a2 == null) {
-
             Account a = new Account();
             a.setId(UUID.randomUUID().toString());
             a.setName(name);
@@ -64,8 +61,6 @@ public class OAuthAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
             a.setActive(true);
             a.setRole(1);
             a.setRegisterDate(Date.valueOf(LocalDate.now()));
-
-
             iAccountRepository.save(a);
             Customer customer = new Customer();
             customer.setAccount(a); // Gán Account cho Customer
@@ -73,30 +68,16 @@ public class OAuthAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
             iCustomerRepository.save(customer); // Lưu Customer vào cơ sở dữ liệu
 
         }
-        response.sendRedirect("http://localhost:3000");
-    }
-//    public String getIdToken(String authorizationCode) {
-//        String tokenEndpoint = "https://oauth2.googleapis.com/token";
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        // Tạo body cho yêu cầu
-//        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
-//        requestParams.add("code", authorizationCode);
-//        requestParams.add("client_id", "YOUR_CLIENT_ID");
-//        requestParams.add("client_secret", "YOUR_CLIENT_SECRET");
-//        requestParams.add("redirect_uri", "YOUR_REDIRECT_URI");
-//        requestParams.add("grant_type", "authorization_code");
-//
-//        // Gửi yêu cầu đến Google
-//        ResponseEntity<Map> response = restTemplate.postForEntity(tokenEndpoint, requestParams, Map.class);
-//
-//        // Kiểm tra phản hồi và lấy id_token
-//        if (response.getStatusCode() == HttpStatus.OK) {
-//            Map<String, Object> responseBody = response.getBody();
-//            return (String) responseBody.get("id_token");
-//        } else {
-//            throw new RuntimeException("Failed to obtain token: " + response.getBody());
-//        }
-//    }
+        String redirectUrl = "http://localhost:3000/?token=" + email;
 
+        this.setDefaultTargetUrl(redirectUrl);
+        this.setAlwaysUseDefaultTargetUrl(true);
+//        response.sendRedirect(redirectUrl);
+        new DefaultRedirectStrategy().sendRedirect(request, response, this.getDefaultTargetUrl());
+        this.setAlwaysUseDefaultTargetUrl(true);
+        super.onAuthenticationSuccess(request, response, authentication);
+    }
+
+
+//
 }

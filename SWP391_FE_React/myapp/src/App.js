@@ -36,6 +36,8 @@ import StylistSchedule from "./Pages/Stylist/StylistSchedule";
 import StylistSalary from "./Pages/Stylist/StylistSalary";
 import CustomerPrivateRoute from "./components/PrivateRoute/CustomerPrivateRoute";
 import ViewAppointment from "./components/Customer/ViewAppointment";
+import Success from "./components/Dashboard/Success";
+import Fail from "./components/Dashboard/Fail";
 
 function App() {
   return (

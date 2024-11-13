@@ -73,4 +73,9 @@ public class ScheduleService implements IScheduleService {
         iScheduleRepository.deleteById(scheduleId);
     }
 
+    @Override
+    public List<Date> findById(String id) {
+        return iScheduleRepository.findByStylistId(id);
+    }
+
 }

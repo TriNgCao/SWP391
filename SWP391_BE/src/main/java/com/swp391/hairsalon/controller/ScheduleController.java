@@ -42,6 +42,12 @@ public class ScheduleController {
         }
     }
 
+
+    @GetMapping("/view/{id}")
+    public ResponseEntity<List<Date>> getAll(@PathVariable String id) {
+        return ResponseEntity.ok(iScheduleService.findById(id));
+    }
+
     @PostMapping("/book/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void bookSchedule(@PathVariable Integer id, @RequestBody BookedSchedule bookedSchedule) {
@@ -59,6 +65,8 @@ public class ScheduleController {
     public ResponseEntity<List<ScheduleViewAllDto>> getAll(@PathVariable String id, @PathVariable Date date) {
         return ResponseEntity.ok(iScheduleService.getAllSchedule(id, date));
     }
+
+
 
     @GetMapping("/view/stylist/{manId}")
     public ResponseEntity<List<StylistListDto>> getAllStylist(@PathVariable String manId) {

@@ -23,5 +23,6 @@ public interface IScheduleRepository extends JpaRepository<Schedule, Integer> {
             "(select m.salon.salonId from Manager m where m.account.id = :id) ")
     List<ScheduleViewAllDto> getSchedule(@Param("id") String id, @Param("date") Date date);
 
-
+    @Query("select s.date from Schedule s where s.stylist.account.id = :id")
+List<Date> findByStylistId(@Param("id") String id);
 }

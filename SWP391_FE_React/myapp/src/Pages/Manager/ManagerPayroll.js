@@ -20,8 +20,8 @@ import {
   FormControl,
 } from "@mui/material";
 import { format, subMonths } from "date-fns";
-
-const API_URL = "http://localhost:8080/api/payroll/salon/manager";
+const accountID = sessionStorage.getItem("userID")
+const API_URL = `http://localhost:8080/api/payroll/salon/${accountID}`;
 
 const ManagerPayroll = () => {
   const [payrollData, setPayrollData] = useState([]);

@@ -17,11 +17,6 @@ public class AppConfig {
     public AppConfig(MyUserDetailsService myUserDetailsService) {
         this.myUserDetailsService = myUserDetailsService;
     }
-//
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        return myUserDetailsService;
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

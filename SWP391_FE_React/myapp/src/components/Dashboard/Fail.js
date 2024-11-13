@@ -1,6 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error"; // Icon dấu X màu đỏ
 
 export default function Fail() {

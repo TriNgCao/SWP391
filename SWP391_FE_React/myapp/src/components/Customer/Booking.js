@@ -138,7 +138,7 @@ const Booking = () => {
           const defaultStylist = {
             stylistName: "Let's Us Choose For You",
             stylistId: 0,
-            imageUrl: "images/logo.png",
+            imageName: "/myapp/public/images/logo.png",
           };
 
           const stylistData = [
@@ -527,8 +527,8 @@ const Booking = () => {
                     backgroundColor: isDisabled
                       ? "#2c3e50" // black
                       : selectedSlot === slot
-                      ? "#3498db" // blue
-                      : "#ecf0f1", // green
+                        ? "#3498db" // blue
+                        : "#ecf0f1", // green
                     color: isDisabled ? "white" : "#2C3E50",
                     padding: "10px",
                     borderRadius: "5px",
@@ -572,7 +572,7 @@ const Booking = () => {
           color: "#d9534f",
         }}
       >
-        Total: ${calculateTotal()}
+        Total: {calculateTotal()} VND
       </div>
 
       {/* Booking Button */}
@@ -636,101 +636,101 @@ const Booking = () => {
                 <div className="row">
                   {filteredSalons.length > 0
                     ? filteredSalons.map((salon) => (
-                        <div className="col-md-4 mb-4" key={salon.id}>
-                          <div
-                            className="card text-center"
-                            style={{ minHeight: "350px" }}
-                          >
-                            <img
-                              src={salon.imageUrl}
-                              alt={salon.name}
-                              className="card-img-top"
-                              style={{ height: "150px", objectFit: "cover" }}
-                            />
-                            <div className="card-body">
-                              <h5
-                                className="card-title"
-                                style={{ fontSize: "1.5rem" }}
-                              >
-                                {salon.name}
-                              </h5>
-                              <p
-                                className="card-text"
-                                style={{ fontSize: "1.2rem" }}
-                              >
-                                {salon.address}
-                              </p>
-                              <button
-                                className="btn"
-                                style={{
-                                  backgroundColor: salon.active
-                                    ? "#4caf50"
-                                    : "#d3d3d3",
-                                  color: "#fff",
-                                  cursor: salon.active
-                                    ? "pointer"
-                                    : "not-allowed",
-                                }}
-                                onClick={() =>
-                                  handleSalonSelect(salon.name, salon.id)
-                                }
-                                data-bs-dismiss="modal"
-                                disabled={!salon.active}
-                              >
-                                Select
-                              </button>
-                            </div>
+                      <div className="col-md-4 mb-4" key={salon.id}>
+                        <div
+                          className="card text-center"
+                          style={{ minHeight: "350px" }}
+                        >
+                          <img
+                            src={salon.imageUrl}
+                            alt={salon.name}
+                            className="card-img-top"
+                            style={{ height: "150px", objectFit: "cover" }}
+                          />
+                          <div className="card-body">
+                            <h5
+                              className="card-title"
+                              style={{ fontSize: "1.5rem" }}
+                            >
+                              {salon.name}
+                            </h5>
+                            <p
+                              className="card-text"
+                              style={{ fontSize: "1.2rem" }}
+                            >
+                              {salon.address}
+                            </p>
+                            <button
+                              className="btn"
+                              style={{
+                                backgroundColor: salon.active
+                                  ? "#4caf50"
+                                  : "#d3d3d3",
+                                color: "#fff",
+                                cursor: salon.active
+                                  ? "pointer"
+                                  : "not-allowed",
+                              }}
+                              onClick={() =>
+                                handleSalonSelect(salon.name, salon.id)
+                              }
+                              data-bs-dismiss="modal"
+                              disabled={!salon.active}
+                            >
+                              Select
+                            </button>
                           </div>
                         </div>
-                      ))
+                      </div>
+                    ))
                     : salons.map((salon) => (
-                        <div className="col-md-4 mb-4" key={salon.id}>
-                          <div
-                            className="card text-center"
-                            style={{ minHeight: "350px" }}
-                          >
-                            <img
-                              src={salon.imageUrl}
-                              alt={salon.name}
-                              className="card-img-top"
-                              style={{ height: "150px", objectFit: "cover" }}
-                            />
-                            <div className="card-body">
-                              <h5
-                                className="card-title"
-                                style={{ fontSize: "1.5rem" }}
-                              >
-                                {salon.name}
-                              </h5>
-                              <p
-                                className="card-text"
-                                style={{ fontSize: "1.2rem" }}
-                              >
-                                {salon.address}
-                              </p>
-                              <button
-                                className="btn"
-                                style={{
-                                  backgroundColor: salon.active
-                                    ? "#4caf50"
-                                    : "#d3d3d3",
-                                  color: "#fff",
-                                  cursor: salon.active
-                                    ? "pointer"
-                                    : "not-allowed",
-                                }}
-                                onClick={() =>
-                                  handleSalonSelect(salon.name, salon.id)
-                                }
-                                data-bs-dismiss="modal"
-                                disabled={!salon.active}
-                              >
-                                Select
-                              </button>
-                            </div>
+                      <div className="col-md-4 mb-4" key={salon.id}>
+                        <div
+                          className="card text-center"
+                          style={{ minHeight: "350px" }}
+                        >
+                          <img
+                            src={salon.imageUrl}
+                            alt={salon.name}
+                            className="card-img-top"
+                            style={{ height: "150px", objectFit: "cover" }}
+                          />
+                          <div className="card-body">
+                            <h5
+                              className="card-title"
+                              style={{ fontSize: "1.5rem" }}
+                            >
+                              {salon.name}
+                            </h5>
+                            <p
+                              className="card-text"
+                              style={{ fontSize: "1.2rem" }}
+                            >
+                              {salon.address}
+                            </p>
+                            <button
+                              className="btn"
+                              style={{
+                                backgroundColor: salon.active
+                                  ? "#4caf50"
+                                  : "#d3d3d3",
+                                color: "#fff",
+                                cursor: salon.active
+                                  ? "pointer"
+                                  : "not-allowed",
+                              }}
+                              onClick={() =>
+                                handleSalonSelect(salon.name, salon.id)
+                              }
+                              data-bs-dismiss="modal"
+                              disabled={!salon.active}
+                            >
+                              Select
+                            </button>
                           </div>
                         </div>
-                      ))}
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
@@ -829,11 +829,10 @@ const Booking = () => {
                               key={service.serviceId}
                             >
                               <div
-                                className={`card d-flex flex-column text-center ${
-                                  selectedServices.includes(service.serviceName)
-                                    ? "selected-card"
-                                    : ""
-                                }`}
+                                className={`card d-flex flex-column text-center ${selectedServices.includes(service.serviceName)
+                                  ? "selected-card"
+                                  : ""
+                                  }`}
                                 style={{
                                   minHeight: "400px",
                                 }}
@@ -862,16 +861,15 @@ const Booking = () => {
                                       color: "#d9534f",
                                     }}
                                   >
-                                    Price: ${service.servicePrice}
+                                    Price: {service.servicePrice} VND
                                   </p>
                                   <button
-                                    className={`btn ${
-                                      selectedServices.includes(
-                                        service.serviceName
-                                      )
-                                        ? "btn-success"
-                                        : "btn-primary"
-                                    }`}
+                                    className={`btn ${selectedServices.includes(
+                                      service.serviceName
+                                    )
+                                      ? "btn-success"
+                                      : "btn-primary"
+                                      }`}
                                     onClick={() =>
                                       handleServiceSelect(service.serviceName)
                                     }
@@ -896,11 +894,10 @@ const Booking = () => {
                       {filteredServices.map((service) => (
                         <div className="col-md-4 mb-4" key={service.serviceId}>
                           <div
-                            className={`card d-flex flex-column text-center ${
-                              selectedServices.includes(service.serviceName)
-                                ? "selected-card"
-                                : ""
-                            }`}
+                            className={`card d-flex flex-column text-center ${selectedServices.includes(service.serviceName)
+                              ? "selected-card"
+                              : ""
+                              }`}
                             style={{
                               minHeight: "400px",
                             }}
@@ -929,14 +926,13 @@ const Booking = () => {
                                   color: "#d9534f",
                                 }}
                               >
-                                Price: ${service.servicePrice}
+                                Price: {service.servicePrice} VND
                               </p>
                               <button
-                                className={`btn ${
-                                  selectedServices.includes(service.serviceName)
-                                    ? "btn-success"
-                                    : "btn-primary"
-                                }`}
+                                className={`btn ${selectedServices.includes(service.serviceName)
+                                  ? "btn-success"
+                                  : "btn-primary"
+                                  }`}
                                 onClick={() =>
                                   handleServiceSelect(service.serviceName)
                                 }
@@ -1016,93 +1012,93 @@ const Booking = () => {
                 <div className="row">
                   {filteredStylists.length > 0
                     ? filteredStylists.map((stylist) => (
-                        <div className="col-md-4 mb-4" key={stylist.stylistId}>
-                          <div
-                            className="card text-center"
-                            style={{
-                              minHeight: "350px",
-                              backgroundColor:
-                                selectedStylist === stylist.stylistName
-                                  ? "#add5f0"
-                                  : "#fff",
-                              border:
-                                selectedStylist === stylist.stylistName
-                                  ? "2px solid #007bff"
-                                  : "none",
-                            }}
-                          >
-                            <img
-                              src={stylist.imageName}
-                              className="card-img-top"
-                              alt={stylist.stylistName}
-                              style={{ objectFit: "cover", height: "280px" }}
-                            />
-                            <div className="card-body">
-                              <h5 className="card-title">
-                                {stylist.stylistName}
-                              </h5>
-                              <button
-                                className="btn btn-primary"
-                                onClick={() =>
-                                  handleStylistSelect(
-                                    stylist.stylistName,
-                                    stylist.stylistId
-                                  )
-                                }
-                                data-bs-dismiss="modal"
-                              >
-                                {selectedStylist === stylist.stylistName
-                                  ? "Selected"
-                                  : "Select"}
-                              </button>
-                            </div>
+                      <div className="col-md-4 mb-4" key={stylist.stylistId}>
+                        <div
+                          className="card text-center"
+                          style={{
+                            minHeight: "350px",
+                            backgroundColor:
+                              selectedStylist === stylist.stylistName
+                                ? "#add5f0"
+                                : "#fff",
+                            border:
+                              selectedStylist === stylist.stylistName
+                                ? "2px solid #007bff"
+                                : "none",
+                          }}
+                        >
+                          <img
+                            src={stylist.imageName}
+                            className="card-img-top"
+                            alt={stylist.stylistName}
+                            style={{ objectFit: "cover", height: "280px" }}
+                          />
+                          <div className="card-body">
+                            <h5 className="card-title">
+                              {stylist.stylistName}
+                            </h5>
+                            <button
+                              className="btn btn-primary"
+                              onClick={() =>
+                                handleStylistSelect(
+                                  stylist.stylistName,
+                                  stylist.stylistId
+                                )
+                              }
+                              data-bs-dismiss="modal"
+                            >
+                              {selectedStylist === stylist.stylistName
+                                ? "Selected"
+                                : "Select"}
+                            </button>
                           </div>
                         </div>
-                      ))
+                      </div>
+                    ))
                     : stylists.map((stylist) => (
-                        <div className="col-md-4 mb-4" key={stylist.stylistId}>
-                          <div
-                            className="card text-center"
-                            style={{
-                              minHeight: "350px",
-                              backgroundColor:
-                                selectedStylist === stylist.stylistName
-                                  ? "#add5f0"
-                                  : "#fff",
-                              border:
-                                selectedStylist === stylist.stylistName
-                                  ? "2px solid #007bff"
-                                  : "none",
-                            }}
-                          >
-                            <img
-                              src={stylist.imageName}
-                              className="card-img-top"
-                              alt={stylist.stylistName}
-                              style={{ objectFit: "cover", height: "280px" }}
-                            />
-                            <div className="card-body">
-                              <h5 className="card-title">
-                                {stylist.stylistName}
-                              </h5>
-                              <button
-                                className="btn btn-primary"
-                                onClick={() =>
-                                  handleStylistSelect(
-                                    stylist.stylistName,
-                                    stylist.stylistId
-                                  )
-                                }
-                                data-bs-dismiss="modal"
-                              >
-                                {selectedStylist === stylist.stylistName
-                                  ? "Selected"
-                                  : "Select"}
-                              </button>
-                            </div>
+                      <div className="col-md-4 mb-4" key={stylist.stylistId}>
+                        <div
+                          className="card text-center"
+                          style={{
+                            minHeight: "350px",
+                            backgroundColor:
+                              selectedStylist === stylist.stylistName
+                                ? "#add5f0"
+                                : "#fff",
+                            border:
+                              selectedStylist === stylist.stylistName
+                                ? "2px solid #007bff"
+                                : "none",
+                          }}
+                        >
+                          <img
+                            src={stylist.imageName}
+                            className="card-img-top"
+                            alt={stylist.stylistName}
+                            style={{ objectFit: "cover", height: "280px" }}
+                          />
+                          <div className="card-body">
+                            <h5 className="card-title">
+                              {stylist.stylistName}
+                            </h5>
+                            <button
+                              className="btn btn-primary"
+                              onClick={() =>
+                                handleStylistSelect(
+                                  stylist.stylistName,
+                                  stylist.stylistId
+                                )
+                              }
+                              data-bs-dismiss="modal"
+                            >
+                              {selectedStylist === stylist.stylistName
+                                ? "Selected"
+                                : "Select"}
+                            </button>
                           </div>
                         </div>
-                      ))}
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>

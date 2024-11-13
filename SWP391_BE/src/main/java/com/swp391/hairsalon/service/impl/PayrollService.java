@@ -39,7 +39,7 @@ public class PayrollService implements IPayrollService {
         return iPayrollRepository.findBySalon_SalonId(salonId); // Lấy payroll theo salonId
     }
 
-    // @Scheduled(cron = "0 * * * * ?") 
+//     @Scheduled(cron = "0 * * * * ?")
     @Scheduled(cron = "0 0 0 1 * ?")
     @Transactional
     public void calculateMonthlyPayroll() {
