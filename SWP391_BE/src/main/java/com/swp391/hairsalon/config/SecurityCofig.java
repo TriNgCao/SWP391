@@ -38,7 +38,7 @@ public class SecurityCofig {
                        auth -> {
                    
                            auth.requestMatchers("/auth/login", "/home").permitAll();
-                           
+                           auth.requestMatchers("/user/admin/**").hasRole("ADMIN");
                            auth.anyRequest().permitAll();
                        })
                 .oauth2Login(

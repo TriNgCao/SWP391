@@ -32,7 +32,7 @@ public class SupportTicketController {
         SupportTicket createdTicket = supportTicketService.createSupportTicket(supportTicket);
         List<Staff> staffList = iStaffService.getAllStaffs();
         for(Staff staff:staffList){
-            iNotificationService.addNewNotification("Bạn có thông báo mới", "Một phiếu hỗ trợ vừa được tạo",staff.getAccount() );
+            iNotificationService.addNewNotification("Support Ticket", "A new support ticket has just been created",staff.getAccount() );
         }
         return ResponseEntity.ok(createdTicket);
     }

@@ -14,6 +14,7 @@ import lombok.Setter;
 public class Staff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "satff_id")
     private int staffId;
     private int salary;
 

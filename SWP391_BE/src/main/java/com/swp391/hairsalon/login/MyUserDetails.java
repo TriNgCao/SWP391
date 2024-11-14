@@ -22,7 +22,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()  {
-        return Collections.singletonList(new SimpleGrantedAuthority(mapRoleToAuthority(account.getRole())));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + mapRoleToAuthority(account.getRole())));
     }
 
     private String mapRoleToAuthority(int roleId) {

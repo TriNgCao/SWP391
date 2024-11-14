@@ -25,9 +25,11 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Component
 public class OAuthAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -59,7 +61,7 @@ public class OAuthAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
 
             Account a = new Account();
             a.setId(UUID.randomUUID().toString());
-            a.setName(name);
+            a.setName(removeVietnameseAccents(name));
             a.setEmail(email);
             a.setActive(true);
             a.setRole(1);
@@ -82,5 +84,11 @@ public class OAuthAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
         this.setAlwaysUseDefaultTargetUrl(true);
         super.onAuthenticationSuccess(request, response, authentication);
     }
-
+    public static String removeVietnameseAccents(String input) {
+        // Chuẩn hóa chuỗi (normalize) để chuyển các ký tự có dấu sang dạng không dấu.
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        // Loại bỏ các ký tự dấu đi kèm.
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(normalized).replaceAll("").replaceAll("đ", "d").replaceAll("Đ", "D");
+    }
 }

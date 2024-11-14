@@ -89,12 +89,12 @@ public class AccountController {
         return ResponseEntity.ok(iAccountService.getAllPersonnelBySalon(id));
     }
 
-    @PutMapping("update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<Account> updateEmployee(@PathVariable String id, @RequestBody Account account) {
         return ResponseEntity.ok(iAccountService.updateAccount(id, account));
     }
 
-    @PutMapping("update-status/{id}")
+    @PutMapping("/update-status/{id}")
     public ResponseEntity<Account> updateStatus(@PathVariable String id, @RequestParam boolean status) {
         return ResponseEntity.ok(iAccountService.updateStatus(id, status));
     }
@@ -120,7 +120,7 @@ public class AccountController {
         return ResponseEntity.ok(iStylistservice.getStylists(salonId));
     }
 
-    @PostMapping("image/profile/{id}")
+    @PostMapping("/image/profile/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Account> createNewAccount(@RequestParam("image") MultipartFile image, @PathVariable String id) throws IOException {
         String fileName = iFileService.uploadImage(path, image);
